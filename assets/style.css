@@ -104,6 +104,9 @@ article.body li { margin-bottom: 7px; }
 .info-table th, .info-table td { border: 1px solid var(--line); padding: 11px 14px; text-align: left; vertical-align: top; }
 .info-table th { background: #f2eee6; color: var(--navy); font-weight: 700; width: 130px; white-space: nowrap; }
 .tbl-scroll { overflow-x: auto; }
+.fee-table thead th { width: auto; text-align: center; }
+.fee-table tbody th { width: 80px; }
+.fee-table td { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* ── 카드/목록 ── */
 .list-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }

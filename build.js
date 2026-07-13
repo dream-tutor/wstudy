@@ -24,7 +24,17 @@ function write(rel, html) {
   fs.writeFileSync(p, html, 'utf8');
   urls.push(rel.replace(/index\.html$/, '').replace(/\\/g, '/'));
 }
-function man(price) { return price > 0 ? (price / 10000).toFixed(price % 10000 ? 1 : 0) + '만' : null; }
+// 수강료: wcoachingcenter.com과 동일한 회비 표 (와와회비A/B, 학년 × 주2·3·5회 월액)
+const FEE_TABLES = {
+  A: { 초등: ['160,000', '230,000', '370,000'], 중등: ['172,000', '247,000', '397,000'], 고등: ['195,000', '280,000', '450,000'] },
+  B: { 초등: ['140,000', '200,000', '320,000'], 중등: ['152,000', '217,000', '347,000'], 고등: ['175,000', '250,000', '400,000'] },
+};
+function feeSection(b) {
+  const t = FEE_TABLES[/A/.test(b.fee_type || '') ? 'A' : 'B'];
+  const rows = Object.entries(t).map(([lv, p]) => `<tr><th>${lv}</th><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr>`).join('');
+  return `<h2>수강료 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">교육청 등록 기준 공시 금액(월, 원)입니다. 자세한 시간, 횟수는 상담 시 조율합니다.</p>
+<div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th><th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
 
 // ── 데이터 구조화 ──
 // 학교명 정규화: "쌍용초.미라초." / "나곡중/보라중/상갈중" 처럼 붙은 항목을 분리 (경로 문자 제거)
@@ -247,8 +257,6 @@ function buildBranch(r, d, b) {
   ];
   const schoolChips = allSchools.map(([s]) => `<a href="../school/${encodeURIComponent(s)}/">${esc(s)}</a>`).join('');
   const gradeRows = Object.entries(b.grades_by_subject || {}).filter(([, g]) => g).map(([s, g]) => `<tr><th>${esc(s)}</th><td>${esc(g)}</td></tr>`).join('');
-  const prices = [['초등', man(b.price_elem)], ['중등', man(b.price_mid)], ['고등', man(b.price_high)]].filter(([, p]) => p);
-  const priceRow = prices.length ? `<tr><th>월 회비</th><td>${prices.map(([k, p]) => `${k} ${p} 원`).join(' · ')} <span style="color:var(--ink-soft);font-size:13.5px">(과목 수·일정에 따라 달라질 수 있어 상담 시 확정)</span></td></tr>` : '';
   const faq = faqHtml([COPY.faqPool.common[0], COPY.faqPool.common[1], COPY.faqPool.common[2]], { tel: TEL, branchName: b.name });
   const levels = levelsOf(b);
   const gradeBlocks = levels.map((lv) => pick(COPY.gradeBlock[lv], key + lv)()).join('');
@@ -263,9 +271,9 @@ ${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : ''}
 <tr><th>수업 과목</th><td>${esc((b.subjects || []).join(', '))}</td></tr>
 ${gradeRows}
 <tr><th>수업 시간</th><td>${esc(b.open_time || '상담 시 안내')}${b.weekend ? ` · ${esc(b.weekend)}` : ''}</td></tr>
-${priceRow}
 ${b.reg ? `<tr><th>등록번호</th><td>${esc(b.reg)}</td></tr>` : ''}
 </table></div>
+${feeSection(b)}
 ${gradeBlocks}
 <h2>과목별 수업 안내</h2>
 <p>과목을 선택하면 ${esc(b.dong)} 기준의 수업 방식과 내신 대비 흐름을 자세히 볼 수 있습니다.</p>
@@ -310,6 +318,7 @@ ${methodHtml}
 ${grades ? `<div class="note">${esc(b.name)} ${esc(subj)} 수업 대상: ${esc(grades)}</div>` : ''}
 ${gradeBlocks}
 ${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : ''}
+${feeSection(b)}
 <h2>지점 정보</h2>
 <div class="tbl-scroll"><table class="info-table">
 <tr><th>지점</th><td><a href="../" style="color:var(--brick);font-weight:600">${BRAND} ${esc(b.name)}</a></td></tr>
