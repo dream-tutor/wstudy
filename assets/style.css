@@ -249,6 +249,33 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .form-ok.on { display: block; }
 .form-ok .big { font-size: 19px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
 
+/* ── 플로팅 상담 버튼 ── */
+.float-cta { position: fixed; right: 14px; bottom: 14px; display: flex; flex-direction: column; gap: 8px; z-index: 900; }
+.float-cta a { display: block; padding: 12px 20px; border-radius: 30px; font-weight: 700; font-size: 14.5px; box-shadow: 0 6px 20px rgba(0,0,0,.25); text-align: center; }
+.float-cta .f-form { background: var(--brick); color: #fff; }
+.float-cta .f-tel { background: var(--navy); color: #fff; }
+
+/* ── 사진 ── */
+.photo { margin: 26px 0; }
+.photo img { width: 100%; height: auto; border-radius: 10px; display: block; border: 1px solid var(--line); }
+.photo .cap { font-size: 13px; color: var(--ink-soft); margin-top: 7px; }
+
+/* ── 푸터 등록번호 ── */
+.foot-reg { color: #78839e; font-size: 12px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #26324e; }
+
+/* ── 전문관 배지 ── */
+.tag.spec { background: var(--navy); color: #f0c9a8; margin-left: 6px; }
+
+/* ── 수강후기 ── */
+.rev-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 18px 0; }
+@media (max-width: 700px) { .rev-grid { grid-template-columns: 1fr; } }
+.rev { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+.rev .stars { color: #dfa437; font-size: 13px; letter-spacing: 2px; }
+.rev .rtags { margin: 9px 0 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+.rev .rtags span { background: var(--brick-soft); color: var(--brick); font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 4px; }
+.rev p { font-size: 14.5px; color: var(--ink); }
+.rev .who { margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
+
 /* ── 모바일 ── */
 @media (max-width: 640px) {
   body { font-size: 15.5px; line-height: 1.7; }
@@ -281,4 +308,8 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
   .form-card { padding: 20px 16px; }
   .faq summary { font-size: 14.5px; }
   .note { padding: 13px 14px; font-size: 14px; }
+  .float-cta a { padding: 11px 16px; font-size: 13.5px; }
+  .wrap, footer.site .in { padding-bottom: 96px; }
+  footer.site .in { padding-bottom: 0; }
+  .wrap { padding-bottom: 110px; }
 }

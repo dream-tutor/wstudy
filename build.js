@@ -69,7 +69,7 @@ for (const b of Object.values(BRANCHES)) {
 const urls = [];
 
 // ── 공통 레이아웃 ──
-function shell({ title, desc, canonical, body, depth, ld, ogTitle }) {
+function shell({ title, desc, canonical, body, depth, ld, ogTitle, footExtra }) {
   const base = depth ? '../'.repeat(depth) : './';
   return `<!DOCTYPE html>
 <html lang="ko">
@@ -90,18 +90,20 @@ function shell({ title, desc, canonical, body, depth, ld, ogTitle }) {
 ${ld ? `<script type="application/ld+json">${JSON.stringify(ld)}</script>` : ''}
 </head>
 <body>
-<div class="topbar"><span>초·중·고 교과 전문 ${BRAND}</span><a href="tel:${TEL}">상담 ${TEL}</a></div>
+<div class="topbar"><span>초·중·고 교과 전문 ${BRAND}</span><a href="tel:${TEL}">전화 상담</a></div>
 <header class="site"><div class="in">
 <a class="logo" href="${base}">와와학습학원<span class="dot">.</span></a>
-<nav class="gnb"><a href="${base}#regions">지역별 지점</a><a href="${base}guide/">공부법 칼럼</a><a href="tel:${TEL}">전화 상담</a><a class="cta" href="${base}inquiry/">상담 신청</a></nav>
+<nav class="gnb"><a href="${base}guide/">공부법 칼럼</a><a href="${base}review/">수강후기</a><a class="cta" href="${base}inquiry/">상담 신청</a></nav>
 </div></header>
 ${body}
 <footer class="site"><div class="in">
 <div class="brand">${BRAND}</div>
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
-상담 전화 <a href="tel:${TEL}">${TEL}</a> · <a href="${base}inquiry/">상담 신청</a><br>
+<a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/">상담 신청</a> · <a href="${base}review/">수강후기</a><br>
 교습소·학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
+${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
 </div></footer>
+<div class="float-cta"><a class="f-form" href="${base}inquiry/">상담 문의</a><a class="f-tel" href="tel:${TEL}">전화 상담</a></div>
 ${TRACKER}
 </body>
 </html>`;
@@ -123,7 +125,7 @@ function video(v, cap) {
 function ctaBand(b, depth) {
   const base = '../'.repeat(depth);
   const q = b ? '?지점=' + encodeURIComponent(b.name) : '';
-  return `<div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:${TEL}">전화 ${TEL}</a><a class="form" href="${base}inquiry/${q}">상담 신청서 작성</a>${b && b.link ? `<a class="map" href="${b.link}" target="_blank" rel="noopener">지도에서 위치 보기</a>` : ''}</div></div>`;
+  return `<div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:${TEL}">전화 상담</a><a class="form" href="${base}inquiry/${q}">상담 신청서 작성</a>${b && b.link ? `<a class="map" href="${b.link}" target="_blank" rel="noopener">지도에서 위치 보기</a>` : ''}</div></div>`;
 }
 function faqHtml(items, ctx) {
   const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [] };
@@ -149,6 +151,19 @@ const SUBJ_GUIDES = {
   과학: ['science-explain', 'science-calc', 'exam-4weeks'],
   사회: ['social-structure', 'social-essay', 'exam-4weeks'],
 };
+// 전문관 배지 (글로리드=국어, W+=수학·과학)
+function specBadge(name) {
+  if (name.includes('글로리드')) return '<span class="tag spec">국어 전문관</span>';
+  if (name.includes('W+')) return '<span class="tag spec">수학·과학 전문관</span>';
+  return '';
+}
+function nearbyRow(b) {
+  const nb = (b.nearby_text || '').split('/').slice(1).join('').trim();
+  return nb ? `<tr><th>주변</th><td>${esc(nb)}</td></tr>` : '';
+}
+function classPhoto(depth) {
+  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/wawa-class.jpg" alt="와와 교실 내부" width="900" height="664"><div class="cap">와와 교실 환경 — 지점별 시설과 배치는 다를 수 있습니다.</div></div>`;
+}
 const LEVEL_GUIDES = {
   초: ['elem-habit', 'pre-middle', 'study-planner'],
   중: ['exam-4weeks', 'performance-assessment', 'wrong-note'],
@@ -288,18 +303,18 @@ function buildBranch(r, d, b) {
   const gradeBlocks = levels.map((lv) => pick(COPY.gradeBlock[lv], key + lv)()).join('');
   const body = `<div class="wrap">
 ${crumb(3, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { name: b.name }])}
-<div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span><h1>${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
+<div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b.name)}<h1>${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
 ${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : ''}
 <h2>지점 안내</h2>
 <div class="tbl-scroll"><table class="info-table">
 <tr><th>주소</th><td>${esc(b.address)}${b.location_guide ? `<br><span style="color:var(--ink-soft);font-size:13.5px">${esc(b.location_guide).replace(/\n/g, '<br>')}</span>` : ''}</td></tr>
+${nearbyRow(b)}
 <tr><th>수업 과목</th><td>${esc((b.subjects || []).join(', '))}</td></tr>
 ${gradeRows}
 <tr><th>수업 시간</th><td>${esc(b.open_time || '상담 시 안내')}${b.weekend ? ` · ${esc(b.weekend)}` : ''}</td></tr>
-${b.reg ? `<tr><th>등록번호</th><td>${esc(b.reg)}</td></tr>` : ''}
 </table></div>
-${feeSection(b)}
+${classPhoto(3)}
 ${gradeBlocks}
 <h2>과목별 수업 안내</h2>
 <p>과목을 선택하면 ${esc(b.dong)} 기준의 수업 방식과 내신 대비 흐름을 자세히 볼 수 있습니다.</p>
@@ -309,11 +324,13 @@ ${gradeBlocks}
 <div class="chips">${schoolChips}</div>
 ${faq.html}
 </article>
-${ctaBand(b, 3)}</div>`;
+${ctaBand(b, 3)}
+<article class="body">${feeSection(b)}</article></div>`;
   write(`${r.slug}/${d.slug}/${b.branch_slug}/index.html`, shell({
     title: `${BRAND} ${b.name} | ${b.dong} 초중고 학원`,
     desc: `${b.region} ${b.district} ${b.dong}의 ${BRAND} ${b.name}. ${(b.subjects || []).join('·')} 수업, ${COPY.schoolLine(b)} 내신 관리. ${esc(b.open_time || '')}`,
     canonical: `${DOMAIN}/${r.slug}/${d.slug}/${b.branch_slug}/`, body, depth: 3,
+    footExtra: b.reg ? `${esc(b.office || BRAND + ' ' + b.name)} · 등록번호 ${esc(b.reg)}` : '',
     ld: {
       '@context': 'https://schema.org', '@type': 'LocalBusiness', name: `${BRAND} ${b.name}`,
       address: b.address, telephone: TEL, url: `${DOMAIN}/${r.slug}/${d.slug}/${b.branch_slug}/`,
@@ -337,14 +354,13 @@ function buildSubject(r, d, b, subj) {
   const otherSubjects = (b.subjects || []).filter((s) => s !== subj).map((s) => `<a href="../${SUBJ_SLUG[s]}/">${esc(b.dong)} ${esc(s)}학원</a>`).join('');
   const body = `<div class="wrap">
 ${crumb(4, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { name: b.name, slug: b.branch_slug }, { name: `${b.dong} ${subj}학원` }])}
-<div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span><h1>${esc(b.dong)} ${esc(subj)}학원 · ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
+<div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b.name)}<h1>${esc(b.dong)} ${esc(subj)}학원 · ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
 <h2>${esc(subj)} 수업은 이렇게 진행합니다</h2>
 ${methodHtml}
 ${grades ? `<div class="note">${esc(b.name)} ${esc(subj)} 수업 대상: ${esc(grades)}</div>` : ''}
 ${gradeBlocks}
 ${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : ''}
-${feeSection(b)}
 <h2>지점 정보</h2>
 <div class="tbl-scroll"><table class="info-table">
 <tr><th>지점</th><td><a href="../" style="color:var(--brick);font-weight:600">${BRAND} ${esc(b.name)}</a></td></tr>
@@ -355,12 +371,14 @@ ${otherSubjects ? `<h2>${esc(b.dong)}의 다른 과목 수업</h2><div class="ch
 ${guideLinks(SUBJ_GUIDES[subj], 4, subj + ' 공부법 칼럼')}
 ${faq.html}
 </article>
-${ctaBand(b, 4)}</div>`;
+${ctaBand(b, 4)}
+<article class="body">${feeSection(b)}</article></div>`;
   write(`${r.slug}/${d.slug}/${b.branch_slug}/${slug}/index.html`, shell({
     title: `${b.dong} ${subj}학원 | ${BRAND} ${b.name}`,
     desc: `${b.district} ${b.dong} ${subj}학원 안내. ${BRAND} ${b.name}의 ${subj} 수업 방식과 학년별 커리큘럼, ${ctx.schoolShort} 내신 대비.`,
     canonical: `${DOMAIN}/${r.slug}/${d.slug}/${b.branch_slug}/${slug}/`, body, depth: 4,
     ld: faq.ld,
+    footExtra: b.reg ? `${esc(b.office || BRAND + ' ' + b.name)} · 등록번호 ${esc(b.reg)}` : '',
   }));
 }
 
@@ -448,11 +466,30 @@ ${ctaBand(null, 2)}</div>`;
   }));
 }
 
+// ── 수강후기 ──
+function buildReview() {
+  const REVIEWS = fs.existsSync(path.join(__dirname, 'data', 'reviews.json')) ? require('./data/reviews.json') : [];
+  const cards = REVIEWS.map((r) => `<div class="rev"><div class="stars">★★★★★</div><div class="rtags"><span>${esc(r.gradeLabel)}</span><span>${esc(r.subject)}</span></div><p>${esc(r.text)}</p><div class="who">${esc(r.author)} · ${esc(r.meta)}</div></div>`).join('');
+  const body = `<div class="wrap">
+${crumb(1, [{ name: '수강후기' }])}
+<div class="page-head"><h1>수강후기</h1><div class="sub">와와에 다닌 학생과 학부모님이 남긴 후기입니다. 개인정보 보호를 위해 이름은 일부만 표기합니다.</div></div>
+<article class="body">
+<div class="rev-grid">${cards}</div>
+<div class="note">후기는 학생·학부모가 직접 작성한 내용으로, 학습 결과는 학생의 상황에 따라 다를 수 있습니다.</div>
+</article>
+${ctaBand(null, 1)}</div>`;
+  write('review/index.html', shell({
+    title: `수강후기 | ${BRAND}`,
+    desc: `${BRAND}에 다닌 학생과 학부모의 수강후기 ${REVIEWS.length}건. 내신, 자기주도학습, 과목별 성적 변화 경험담.`,
+    canonical: `${DOMAIN}/review/`, body, depth: 1,
+  }));
+}
+
 // ── 상담 신청 ──
 function buildInquiry() {
   const body = `<div class="wrap">
 ${crumb(1, [{ name: '상담 신청' }])}
-<div class="page-head"><h1>상담 신청</h1><div class="sub">아래 내용을 남겨 주시면 해당 지점에서 연락드립니다. 전화가 편하시면 <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">${TEL}</a>으로 주셔도 됩니다.</div></div>
+<div class="page-head"><h1>상담 신청</h1><div class="sub">아래 내용을 남겨 주시면 해당 지점에서 연락드립니다. 전화가 편하시면 <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>을 눌러 주세요.</div></div>
 <div class="form-card">
 <form id="f">
 <label>지점 (모르시면 지역만 적어 주세요)</label><input name="지점" id="fBranch" placeholder="예: 산본점 또는 군포시">
@@ -495,6 +532,7 @@ buildHome();
 buildInquiry();
 buildGuideIndex();
 for (const g of GUIDES) buildGuide(g);
+buildReview();
 for (const r of Object.values(regions)) {
   buildRegion(r);
   for (const d of Object.values(r.districts)) {
