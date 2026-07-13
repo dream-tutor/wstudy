@@ -5,6 +5,8 @@ const path = require('path');
 const BRANCHES = require('./data/branches.json');
 const VIDEOS = require('./data/videos.json');
 const COPY = require('./lib/copy.js');
+const GUIDES = [...require('./lib/guides-habit.js'), ...require('./lib/guides-subject.js'), ...require('./lib/guides-grade.js')];
+const SCHOOL_INFO = fs.existsSync(path.join(__dirname, 'data', 'school-info.json')) ? require('./data/school-info.json') : {};
 
 const ROOT = __dirname;
 const DOMAIN = 'https://wstudycenter.com';
@@ -91,7 +93,7 @@ ${ld ? `<script type="application/ld+json">${JSON.stringify(ld)}</script>` : ''}
 <div class="topbar"><span>초·중·고 교과 전문 ${BRAND}</span><a href="tel:${TEL}">상담 ${TEL}</a></div>
 <header class="site"><div class="in">
 <a class="logo" href="${base}">와와학습학원<span class="dot">.</span></a>
-<nav class="gnb"><a href="${base}#regions">지역별 지점</a><a href="tel:${TEL}">전화 상담</a><a class="cta" href="${base}inquiry/">상담 신청</a></nav>
+<nav class="gnb"><a href="${base}#regions">지역별 지점</a><a href="${base}guide/">공부법 칼럼</a><a href="tel:${TEL}">전화 상담</a><a class="cta" href="${base}inquiry/">상담 신청</a></nav>
 </div></header>
 ${body}
 <footer class="site"><div class="in">
@@ -133,6 +135,26 @@ function faqHtml(items, ctx) {
   }
   return { html: html + '</div>', ld };
 }
+// 관련 칼럼 링크 블록
+function guideLinks(slugs, depth, title) {
+  const base = '../'.repeat(depth);
+  const items = slugs.map((s) => GUIDES.find((g) => g.slug === s)).filter(Boolean);
+  if (!items.length) return '';
+  return `<h2>${title || '함께 읽을 공부법 칼럼'}</h2><div class="chips">${items.map((g) => `<a href="${base}guide/${g.slug}/">${esc(g.title)}</a>`).join('')}</div>`;
+}
+const SUBJ_GUIDES = {
+  영어: ['english-voca', 'english-grammar', 'exam-4weeks'],
+  수학: ['math-wrong', 'math-advance', 'exam-4weeks'],
+  국어: ['korean-textbook', 'korean-nonfiction', 'exam-4weeks'],
+  과학: ['science-explain', 'science-calc', 'exam-4weeks'],
+  사회: ['social-structure', 'social-essay', 'exam-4weeks'],
+};
+const LEVEL_GUIDES = {
+  초: ['elem-habit', 'pre-middle', 'study-planner'],
+  중: ['exam-4weeks', 'performance-assessment', 'wrong-note'],
+  고: ['high1-first-exam', 'saenggibu-setek', 'high23-balance'],
+};
+
 function branchVideo(b) {
   if (VIDEOS.branch[b.name]) return VIDEOS.branch[b.name];
   const stem = b.name.replace(/\(.*\)$/, '');
@@ -180,6 +202,10 @@ function buildHome() {
 <p>수업은 개별 진도입니다. 같은 시간에 앉아 있어도 학생마다 교재와 단원이 다릅니다. 진단으로 시작점을 정하고, 숙제와 테스트로 학습량을 유지하고, 시험 결과를 보고 다음 계획을 조정합니다.</p>
 <div class="note">2025년 소비자가 뽑은 올해의 대상(교육 부문)을 수상했습니다.</div>
 </article>
+
+<h2>공부법 칼럼</h2>
+<div class="sec-sub">학원에서 학생들을 가르치며 정리한 공부 방법입니다. <a href="./guide/" style="color:var(--brick);font-weight:600">전체 ${GUIDES.length}편 보기</a></div>
+<div class="list-grid">${['exam-4weeks', 'study-planner', 'math-wrong', 'english-voca', 'saenggibu-setek', 'pre-high'].map((s) => { const g = GUIDES.find((x) => x.slug === s); return `<a href="./guide/${g.slug}/">${esc(g.title)}<span class="cnt">${esc(g.cat)}</span></a>`; }).join('')}</div>
 
 <h2>유튜브 영상</h2>
 <div class="sec-sub">공식 유튜브 채널의 지점, 학습법 영상입니다.</div>
@@ -326,6 +352,7 @@ ${feeSection(b)}
 <tr><th>수업 시간</th><td>${esc(b.open_time || '상담 시 안내')}${b.weekend ? ` · ${esc(b.weekend)}` : ''}</td></tr>
 </table></div>
 ${otherSubjects ? `<h2>${esc(b.dong)}의 다른 과목 수업</h2><div class="chips">${otherSubjects}</div>` : ''}
+${guideLinks(SUBJ_GUIDES[subj], 4, subj + ' 공부법 칼럼')}
 ${faq.html}
 </article>
 ${ctaBand(b, 4)}</div>`;
@@ -345,16 +372,32 @@ function buildSchool(s) {
   const bodyBlock = pick(COPY.schoolBody[s.level], key + 'b')(s.name);
   const bv = branchVideo(b0); // 해당 지점의 매칭 영상이 있을 때만 노출
   const faq = faqHtml([COPY.faqPool.school[0], COPY.faqPool.school[1], COPY.faqPool.common[0]], { tel: TEL, school: s.name });
+  // 나이스 학교기본정보 (수집된 학교만)
+  const info = SCHOOL_INFO[`${s.region}|${s.district}|${s.name}`];
+  const infoHtml = info ? `<h2>${esc(s.name)} 학교 정보</h2>
+<p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">나이스 교육정보 개방 포털의 학교 기본 정보입니다.</p>
+<div class="tbl-scroll"><table class="info-table">
+<tr><th>정식 명칭</th><td>${esc(info.full)}${info.kind ? ` (${esc(info.kind)})` : ''}</td></tr>
+${info.found ? `<tr><th>설립 구분</th><td>${esc(info.found)}</td></tr>` : ''}
+${info.coedu ? `<tr><th>남녀공학</th><td>${esc(info.coedu)}</td></tr>` : ''}
+${info.hstype ? `<tr><th>고교 유형</th><td>${esc(info.hstype)}</td></tr>` : ''}
+${info.addr ? `<tr><th>주소</th><td>${esc(info.addr)}</td></tr>` : ''}
+${info.tel ? `<tr><th>전화</th><td>${esc(info.tel)}</td></tr>` : ''}
+${info.home ? `<tr><th>홈페이지</th><td><a href="${esc(info.home.startsWith('http') ? info.home : 'http://' + info.home)}" target="_blank" rel="noopener nofollow" style="color:var(--brick)">${esc(info.home)}</a></td></tr>` : ''}
+</table></div>` : '';
   const bRows = s.branches.map((b) => `<tr><th><a href="../../${b.branch_slug}/" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td>${esc(b.address)}<br><span style="color:var(--ink-soft);font-size:13.5px">${esc((b.subjects || []).join(' · '))} · ${esc(b.open_time || '')}</span></td></tr>`).join('');
   const lvName = s.level === '초' ? '초등학교' : s.level === '중' ? '중학교' : '고등학교';
   const body = `<div class="wrap">
 ${crumb(4, [{ name: s.region, slug: s.region_slug }, { name: s.district, slug: s.district_slug }, { name: s.name + ' 내신 학원' }])}
 <div class="page-head"><span class="tag">${esc(s.district)} · ${lvName}</span><h1>${esc(s.name)} 내신 학원, ${BRAND}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
+${infoHtml}
 ${bodyBlock}
 <h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2>
 <div class="tbl-scroll"><table class="info-table">${bRows}</table></div>
+${(b0.subjects || []).length ? `<h2>${esc(s.name)} 재학생 수업 과목</h2><p>${esc(b0.name)}에서 ${esc(s.name)} 학생이 들을 수 있는 과목은 ${esc((b0.subjects || []).join(', '))}입니다. ${s.level === '초' ? '초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.' : s.level === '중' ? '평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 ' + esc(s.name) + ' 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.' : '수업은 학교 진도와 동기화되며, 내신 4주 전부터 ' + esc(s.name) + ' 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.'}</p><div class="chips">${(b0.subjects || []).filter((su) => SUBJ_SLUG[su]).map((su) => `<a href="../../${b0.branch_slug}/${SUBJ_SLUG[su]}/">${esc(b0.dong)} ${esc(su)}학원</a>`).join('')}</div>` : ''}
 ${bv ? '<h2>영상으로 보는 ' + esc(b0.name) + '</h2>' + video(bv) : ''}
+${guideLinks(LEVEL_GUIDES[s.level], 4)}
 ${faq.html}
 </article>
 ${ctaBand(b0, 4)}</div>`;
@@ -363,6 +406,45 @@ ${ctaBand(b0, 4)}</div>`;
     desc: `${s.name} 재학생을 위한 내신 대비 안내. ${s.district} ${BRAND} ${s.branches.map((b) => b.name).join(', ')}에서 ${s.name} 진도와 기출 기준으로 시험을 준비합니다.`,
     canonical: `${DOMAIN}/${s.region_slug}/${s.district_slug}/school/${encodeURIComponent(s.name)}/`, body, depth: 4,
     ld: faq.ld,
+  }));
+}
+
+// ── 공부법 칼럼 ──
+const GUIDE_CATS = ['공부 습관', '내신 대비', '과목별 공부법', '학년별 가이드', '입시와 생기부'];
+function buildGuideIndex() {
+  const sections = GUIDE_CATS.map((cat) => {
+    const items = GUIDES.filter((g) => g.cat === cat);
+    return `<h2>${cat}</h2><div class="list-grid">${items.map((g) => `<a href="./${g.slug}/">${esc(g.title)}<span class="cnt">${esc(g.desc)}</span></a>`).join('')}</div>`;
+  }).join('');
+  const body = `<div class="wrap">
+${crumb(1, [{ name: '공부법 칼럼' }])}
+<div class="page-head"><h1>공부법 칼럼</h1><div class="sub">학원에서 학생들을 가르치며 정리한 공부 방법입니다. 학년과 과목에 맞는 글부터 읽어 보세요. 총 ${GUIDES.length}편.</div></div>
+<article class="body">${sections}</article>
+${ctaBand(null, 1)}</div>`;
+  write('guide/index.html', shell({
+    title: `공부법 칼럼 | ${BRAND}`,
+    desc: `공부 습관, 내신 대비, 과목별 공부법, 학년별 가이드, 입시와 생기부 — ${BRAND}이 정리한 공부법 칼럼 ${GUIDES.length}편.`,
+    canonical: `${DOMAIN}/guide/`, body, depth: 1,
+  }));
+}
+function buildGuide(g) {
+  const related = GUIDES.filter((x) => x.cat === g.cat && x.slug !== g.slug).slice(0, 4);
+  const others = GUIDES.filter((x) => x.cat !== g.cat)[hash(g.slug) % Math.max(1, GUIDES.length - 8)];
+  const body = `<div class="wrap">
+${crumb(2, [{ name: '공부법 칼럼', slug: 'guide' }, { name: g.title }])}
+<div class="page-head"><span class="tag">${esc(g.cat)}</span><h1>${esc(g.title)}</h1><div class="sub">${esc(g.desc)}</div></div>
+<article class="body">
+${g.body}
+${g.video ? `<h2>관련 영상</h2>${video(g.video)}` : ''}
+<h2>이 카테고리의 다른 글</h2>
+<div class="chips">${related.map((r) => `<a href="../${r.slug}/">${esc(r.title)}</a>`).join('')}${others ? `<a href="../${others.slug}/">${esc(others.title)}</a>` : ''}</div>
+</article>
+${ctaBand(null, 2)}</div>`;
+  write(`guide/${g.slug}/index.html`, shell({
+    title: `${g.title} | ${BRAND} 공부법 칼럼`,
+    desc: g.desc,
+    canonical: `${DOMAIN}/guide/${g.slug}/`, body, depth: 2,
+    ld: { '@context': 'https://schema.org', '@type': 'Article', headline: g.title, description: g.desc, author: { '@type': 'Organization', name: BRAND }, publisher: { '@type': 'Organization', name: BRAND } },
   }));
 }
 
@@ -411,6 +493,8 @@ ${crumb(1, [{ name: '상담 신청' }])}
 // ── 실행 ──
 buildHome();
 buildInquiry();
+buildGuideIndex();
+for (const g of GUIDES) buildGuide(g);
 for (const r of Object.values(regions)) {
   buildRegion(r);
   for (const d of Object.values(r.districts)) {
