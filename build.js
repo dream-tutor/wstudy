@@ -298,8 +298,7 @@ function buildSubject(r, d, b, subj) {
   const levels = levelsOf(b);
   const gradeBlocks = levels.map((lv) => pick(COPY.gradeBlock[lv], key + lv)()).join('');
   const grades = (b.grades_by_subject || {})[subj];
-  const sv = pick(subj === '국어' || subj === '영어' || subj === '수학' ? VIDEOS.pools.study : VIDEOS.pools.study.slice().reverse(), key + 'v');
-  const ipsiV = levels.includes('고') ? pick(VIDEOS.pools.ipsi, key + 'i') : null;
+  const bv = branchVideo(b); // 지점 매칭 영상이 있을 때만 노출
   const faq = faqHtml([COPY.faqPool.subject[0], COPY.faqPool.subject[1], COPY.faqPool.common[1]], { tel: TEL, branchName: b.name, schoolShort: ctx.schoolShort });
   const otherSubjects = (b.subjects || []).filter((s) => s !== subj).map((s) => `<a href="../${SUBJ_SLUG[s]}/">${esc(b.dong)} ${esc(s)}학원</a>`).join('');
   const body = `<div class="wrap">
@@ -310,9 +309,7 @@ ${crumb(4, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { na
 ${methodHtml}
 ${grades ? `<div class="note">${esc(b.name)} ${esc(subj)} 수업 대상: ${esc(grades)}</div>` : ''}
 ${gradeBlocks}
-<h2>참고 영상</h2>
-${video(sv)}
-${ipsiV ? video(ipsiV, '고등부 참고: ' + ipsiV.title) : ''}
+${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : ''}
 <h2>지점 정보</h2>
 <div class="tbl-scroll"><table class="info-table">
 <tr><th>지점</th><td><a href="../" style="color:var(--brick);font-weight:600">${BRAND} ${esc(b.name)}</a></td></tr>
@@ -337,7 +334,7 @@ function buildSchool(s) {
   const b0 = s.branches[0];
   const lede = pick(COPY.schoolLede[s.level], key)(s.name, b0.name, b0.dong);
   const bodyBlock = pick(COPY.schoolBody[s.level], key + 'b')(s.name);
-  const sv = s.level === '고' ? pick(VIDEOS.pools.ipsi, key + 'v') : pick(VIDEOS.pools.school, key + 'v');
+  const bv = branchVideo(b0); // 해당 지점의 매칭 영상이 있을 때만 노출
   const faq = faqHtml([COPY.faqPool.school[0], COPY.faqPool.school[1], COPY.faqPool.common[0]], { tel: TEL, school: s.name });
   const bRows = s.branches.map((b) => `<tr><th><a href="../../${b.branch_slug}/" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td>${esc(b.address)}<br><span style="color:var(--ink-soft);font-size:13.5px">${esc((b.subjects || []).join(' · '))} · ${esc(b.open_time || '')}</span></td></tr>`).join('');
   const lvName = s.level === '초' ? '초등학교' : s.level === '중' ? '중학교' : '고등학교';
@@ -348,8 +345,7 @@ ${crumb(4, [{ name: s.region, slug: s.region_slug }, { name: s.district, slug: s
 ${bodyBlock}
 <h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2>
 <div class="tbl-scroll"><table class="info-table">${bRows}</table></div>
-<h2>참고 영상</h2>
-${video(sv)}
+${bv ? '<h2>영상으로 보는 ' + esc(b0.name) + '</h2>' + video(bv) : ''}
 ${faq.html}
 </article>
 ${ctaBand(b0, 4)}</div>`;
