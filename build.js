@@ -225,7 +225,6 @@ function buildHome() {
 <h2>유튜브 영상</h2>
 <div class="sec-sub">공식 유튜브 채널의 지점, 학습법 영상입니다.</div>
 ${video(VIDEOS.pools.interview[0], '합격 인터뷰: 평택 와와에서 서울대 합격생이 나온 이유')}
-${video(VIDEOS.pools.brand[5], '2025 소비자가 뽑은 올해의 대상 수상')}
 <p style="font-size:14px;color:var(--ink-soft)">더 많은 영상은 <a href="https://www.youtube.com/@wawacoachingcenter" target="_blank" rel="noopener" style="color:var(--brick);font-weight:600">유튜브 채널</a>에서 볼 수 있습니다.</p>
 ${ctaBand(null, 0)}
 </section></div>`;
