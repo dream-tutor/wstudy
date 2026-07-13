@@ -20,6 +20,8 @@ body {
   font-size: 16.5px;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+  overflow-x: hidden;
 }
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; }
@@ -243,3 +245,37 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .form-ok { display: none; text-align: center; padding: 30px 10px; }
 .form-ok.on { display: block; }
 .form-ok .big { font-size: 19px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+
+/* ── 모바일 ── */
+@media (max-width: 640px) {
+  body { font-size: 15.5px; line-height: 1.7; }
+  .topbar { font-size: 12.5px; padding: 7px 14px; }
+  header.site { padding: 12px 14px; }
+  .logo { font-size: 18px; }
+  .gnb { gap: 12px; font-size: 13.5px; }
+  .gnb .cta { padding: 6px 11px; }
+  .wrap { padding: 0 16px 56px; }
+  .crumb { font-size: 12px; padding-top: 14px; }
+  .page-head { padding-top: 16px; }
+  .page-head h1 { font-size: 22px; }
+  .page-head .sub { font-size: 14px; }
+  article.body h2 { font-size: 18.5px; margin-top: 34px; }
+  article.body h3 { font-size: 16px; }
+  .hero { padding: 40px 18px 36px; }
+  .hero h1 { font-size: 25px; }
+  .hero p { font-size: 14.5px; }
+  .hero .btns a { padding: 12px 18px; font-size: 14.5px; }
+  .stats { gap: 20px; margin-top: 26px; }
+  .stats .s .n { font-size: 21px; }
+  section.home h2 { font-size: 19px; }
+  .info-table th, .info-table td { font-size: 13.5px; padding: 9px 10px; }
+  .info-table th { width: 88px; white-space: normal; }
+  .info-table td { word-break: break-word; }
+  .cta-band { padding: 24px 16px; }
+  .cta-band .t { font-size: 18px; }
+  .cta-band .btns { flex-direction: column; }
+  .cta-band .btns a { width: 100%; box-sizing: border-box; }
+  .form-card { padding: 20px 16px; }
+  .faq summary { font-size: 14.5px; }
+  .note { padding: 13px 14px; font-size: 14px; }
+}

@@ -106,12 +106,12 @@ function crumb(depth, items) {
 }
 function video(v, cap) {
   if (!v) return '';
-  return `<div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/${v.id}" title="${esc(v.title)}" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ ${esc(cap || v.title)} — ${BRAND} 공식 유튜브</div></div>`;
+  return `<div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/${v.id}" title="${esc(v.title)}" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ ${esc(cap || v.title)} (와와 공식 유튜브)</div></div>`;
 }
 function ctaBand(b, depth) {
   const base = '../'.repeat(depth);
   const q = b ? '?지점=' + encodeURIComponent(b.name) : '';
-  return `<div class="cta-band"><div class="t">상담으로 시작하세요</div><div class="d">학생의 학교·학년·현재 상태를 알려 주시면 필요한 수업 형태를 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:${TEL}">전화 ${TEL}</a><a class="form" href="${base}inquiry/${q}">상담 신청서 작성</a>${b && b.link ? `<a class="map" href="${b.link}" target="_blank" rel="noopener">지도에서 위치 보기</a>` : ''}</div></div>`;
+  return `<div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:${TEL}">전화 ${TEL}</a><a class="form" href="${base}inquiry/${q}">상담 신청서 작성</a>${b && b.link ? `<a class="map" href="${b.link}" target="_blank" rel="noopener">지도에서 위치 보기</a>` : ''}</div></div>`;
 }
 function faqHtml(items, ctx) {
   const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [] };
@@ -154,8 +154,8 @@ function buildHome() {
     }).join('');
   const body = `
 <div class="hero"><div class="in">
-<h1>학교 시험은<br><em>학교를 아는 학원</em>에서 준비해야 합니다</h1>
-<p>${BRAND}은 전국 ${total}개 지점에서 초·중·고 교과 수업을 합니다. 학생이 다니는 학교의 진도와 출제 경향에 맞추는 것 — 저희가 잘하는 일은 그것입니다.</p>
+<h1>학교 시험은<br><em>학교를 아는 학원</em>에서</h1>
+<p>${BRAND}은 전국 ${total}개 지점이 있는 초·중·고 교과 학원입니다. 학생이 다니는 학교의 진도에 맞춰 수업하고, 시험 기간에는 학교별 자료로 내신을 준비합니다.</p>
 <div class="btns"><a class="b1" href="./inquiry/">상담 신청</a><a class="b2" href="#regions">가까운 지점 찾기</a></div>
 <div class="stats"><div class="s"><div class="n">${total}</div><div class="k">전국 지점</div></div><div class="s"><div class="n">${Object.keys(schools).length.toLocaleString()}</div><div class="k">관리 학교</div></div><div class="s"><div class="n">5과목</div><div class="k">국·영·수·사·과</div></div></div>
 </div></div>
@@ -164,16 +164,16 @@ function buildHome() {
 <div class="sec-sub">지역을 선택하면 시·군·구별 지점과 관리 학교를 볼 수 있습니다.</div>
 <div class="list-grid">${regionCards}</div>
 
-<h2>왜 와와학습학원인가</h2>
+<h2>수업 방식</h2>
 <article class="body">
-<p>학원의 성과는 결국 학생이 다니는 학교의 시험에서 확인됩니다. 그래서 저희는 커리큘럼을 학원 편의가 아니라 학교 기준으로 짭니다. 지점마다 인근 학교 재학생들이 다니기 때문에 학교별 진도·필기·기출 정보가 매 학기 쌓이고, 시험 3~4주 전이면 그 자료로 대비 체제에 들어갑니다.</p>
-<p>수업은 개별 진도가 원칙입니다. 같은 시간에 앉아 있어도 학생마다 교재와 단원이 다릅니다. 진단으로 시작점을 찾고, 숙제와 테스트로 사이클을 유지하고, 시험으로 결과를 확인하는 구조입니다. 화려한 것은 없지만 꾸준히 돌아갑니다.</p>
-<div class="note">2025년 소비자가 뽑은 올해의 대상(교육 부문)을 받았습니다. 상보다 중요한 것은 그 근거가 된 지점들의 관리 방식이라고 생각합니다.</div>
+<p>지점마다 인근 학교 재학생들이 다니기 때문에 학교별 진도와 시험 정보가 매 학기 쌓입니다. 평소에는 학교 진도에 맞춰 수업하고, 시험 3~4주 전부터는 그 자료로 학교별 내신 대비에 들어갑니다.</p>
+<p>수업은 개별 진도입니다. 같은 시간에 앉아 있어도 학생마다 교재와 단원이 다릅니다. 진단으로 시작점을 정하고, 숙제와 테스트로 학습량을 유지하고, 시험 결과를 보고 다음 계획을 조정합니다.</p>
+<div class="note">2025년 소비자가 뽑은 올해의 대상(교육 부문)을 수상했습니다.</div>
 </article>
 
-<h2>영상으로 보는 와와</h2>
-<div class="sec-sub">공식 유튜브 채널의 지점·학습법 영상입니다.</div>
-${video(VIDEOS.pools.interview[0], '합격 인터뷰 — 평택 와와에서 서울대 합격생이 나온 이유')}
+<h2>유튜브 영상</h2>
+<div class="sec-sub">공식 유튜브 채널의 지점, 학습법 영상입니다.</div>
+${video(VIDEOS.pools.interview[0], '합격 인터뷰: 평택 와와에서 서울대 합격생이 나온 이유')}
 ${video(VIDEOS.pools.brand[5], '2025 소비자가 뽑은 올해의 대상 수상')}
 <p style="font-size:14px;color:var(--ink-soft)">더 많은 영상은 <a href="https://www.youtube.com/@wawacoachingcenter" target="_blank" rel="noopener" style="color:var(--brick);font-weight:600">유튜브 채널</a>에서 볼 수 있습니다.</p>
 ${ctaBand(null, 0)}
@@ -219,7 +219,7 @@ function buildDistrict(r, d) {
   }
   const body = `<div class="wrap">
 ${crumb(2, [{ name: r.name, slug: r.slug }, { name: d.name }])}
-<div class="page-head"><span class="tag">${esc(r.name)}</span><h1>${esc(d.name)} 초중고 학원 — ${BRAND}</h1><div class="sub">${esc(d.name)}의 ${d.branches.length}개 지점이 인근 ${schoolsHere.length}개 학교의 진도와 내신을 관리합니다.</div></div>
+<div class="page-head"><span class="tag">${esc(r.name)}</span><h1>${esc(d.name)} 초중고 학원, ${BRAND}</h1><div class="sub">${esc(d.name)}의 ${d.branches.length}개 지점이 인근 ${schoolsHere.length}개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
 <h2>${esc(d.name)} 지점</h2><div class="list-grid">${bCards}</div>
 <h2>관리 학교별 안내</h2>
@@ -304,7 +304,7 @@ function buildSubject(r, d, b, subj) {
   const otherSubjects = (b.subjects || []).filter((s) => s !== subj).map((s) => `<a href="../${SUBJ_SLUG[s]}/">${esc(b.dong)} ${esc(s)}학원</a>`).join('');
   const body = `<div class="wrap">
 ${crumb(4, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { name: b.name, slug: b.branch_slug }, { name: `${b.dong} ${subj}학원` }])}
-<div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span><h1>${esc(b.dong)} ${esc(subj)}학원 — ${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
+<div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span><h1>${esc(b.dong)} ${esc(subj)}학원 · ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
 <h2>${esc(subj)} 수업은 이렇게 진행합니다</h2>
 ${methodHtml}
@@ -312,7 +312,7 @@ ${grades ? `<div class="note">${esc(b.name)} ${esc(subj)} 수업 대상: ${esc(g
 ${gradeBlocks}
 <h2>참고 영상</h2>
 ${video(sv)}
-${ipsiV ? video(ipsiV, '고등부 참고 — ' + ipsiV.title) : ''}
+${ipsiV ? video(ipsiV, '고등부 참고: ' + ipsiV.title) : ''}
 <h2>지점 정보</h2>
 <div class="tbl-scroll"><table class="info-table">
 <tr><th>지점</th><td><a href="../" style="color:var(--brick);font-weight:600">${BRAND} ${esc(b.name)}</a></td></tr>
@@ -325,7 +325,7 @@ ${faq.html}
 ${ctaBand(b, 4)}</div>`;
   write(`${r.slug}/${d.slug}/${b.branch_slug}/${slug}/index.html`, shell({
     title: `${b.dong} ${subj}학원 | ${BRAND} ${b.name}`,
-    desc: `${b.district} ${b.dong} ${subj}학원을 찾는다면 — ${BRAND} ${b.name}의 ${subj} 수업 방식, 학년별 커리큘럼, ${ctx.schoolShort} 내신 대비 안내.`,
+    desc: `${b.district} ${b.dong} ${subj}학원 안내. ${BRAND} ${b.name}의 ${subj} 수업 방식과 학년별 커리큘럼, ${ctx.schoolShort} 내신 대비.`,
     canonical: `${DOMAIN}/${r.slug}/${d.slug}/${b.branch_slug}/${slug}/`, body, depth: 4,
     ld: faq.ld,
   }));
@@ -343,7 +343,7 @@ function buildSchool(s) {
   const lvName = s.level === '초' ? '초등학교' : s.level === '중' ? '중학교' : '고등학교';
   const body = `<div class="wrap">
 ${crumb(4, [{ name: s.region, slug: s.region_slug }, { name: s.district, slug: s.district_slug }, { name: s.name + ' 내신 학원' }])}
-<div class="page-head"><span class="tag">${esc(s.district)} · ${lvName}</span><h1>${esc(s.name)} 내신 학원 — ${BRAND}</h1><div class="sub">${esc(lede)}</div></div>
+<div class="page-head"><span class="tag">${esc(s.district)} · ${lvName}</span><h1>${esc(s.name)} 내신 학원, ${BRAND}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
 ${bodyBlock}
 <h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2>
@@ -355,7 +355,7 @@ ${faq.html}
 ${ctaBand(b0, 4)}</div>`;
   write(`${s.region_slug}/${s.district_slug}/school/${s.name}/index.html`, shell({
     title: `${s.name} 내신 학원 | ${s.district} ${BRAND}`,
-    desc: `${s.name} 재학생을 위한 내신 대비 — ${s.district} ${BRAND} ${s.branches.map((b) => b.name).join(', ')}에서 ${s.name} 진도·기출 기준으로 시험을 준비합니다.`,
+    desc: `${s.name} 재학생을 위한 내신 대비 안내. ${s.district} ${BRAND} ${s.branches.map((b) => b.name).join(', ')}에서 ${s.name} 진도와 기출 기준으로 시험을 준비합니다.`,
     canonical: `${DOMAIN}/${s.region_slug}/${s.district_slug}/school/${encodeURIComponent(s.name)}/`, body, depth: 4,
     ld: faq.ld,
   }));
