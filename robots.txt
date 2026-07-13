@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://wstudycenter.com/sitemap.xml
