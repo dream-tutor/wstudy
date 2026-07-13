@@ -27,9 +27,18 @@ function write(rel, html) {
 function man(price) { return price > 0 ? (price / 10000).toFixed(price % 10000 ? 1 : 0) + '만' : null; }
 
 // ── 데이터 구조화 ──
+// 학교명 정규화: "쌍용초.미라초." / "나곡중/보라중/상갈중" 처럼 붙은 항목을 분리 (경로 문자 제거)
+function normSchools(arr) {
+  const out = [];
+  for (const s of arr || []) for (const p of String(s).split(/[./\\]/)) { const t = p.trim(); if (t.length >= 2 && !out.includes(t)) out.push(t); }
+  return out;
+}
 const regions = {}; // region_slug -> {name, districts: {district_slug: {name, branches:[]}}}
 for (const [name, b] of Object.entries(BRANCHES)) {
   b.name = name;
+  b.schools_elem = normSchools(b.schools_elem);
+  b.schools_mid = normSchools(b.schools_mid);
+  b.schools_high = normSchools(b.schools_high);
   const r = (regions[b.region_slug] = regions[b.region_slug] || { name: b.region, slug: b.region_slug, districts: {} });
   const d = (r.districts[b.district_slug] = r.districts[b.district_slug] || { name: b.district, slug: b.district_slug, branches: [] });
   d.branches.push(b);
