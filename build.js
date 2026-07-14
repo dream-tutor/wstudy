@@ -143,7 +143,7 @@ function crumb(depth, items) {
 }
 function video(v, cap) {
   if (!v) return '';
-  return `<div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/${v.id}" title="${esc(v.title)}" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ ${esc(cap || v.title)} (와와 공식 유튜브)</div></div>`;
+  return `<div class="video-box"><div class="frame${v.shorts ? ' vertical' : ''}"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/${v.id}" title="${esc(v.title)}" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ ${esc(cap || v.title)} (와와 공식 유튜브)</div></div>`;
 }
 function ctaBand(b, depth) {
   const base = '../'.repeat(depth);
@@ -302,7 +302,7 @@ ${classPhoto(0)}
 
 <h2>영상으로 보는 와와</h2>
 <div class="sec-sub">공식 유튜브 채널의 소개·인터뷰 영상입니다.</div>
-${video(VIDEOS.pools.brand[0], '원장님 인터뷰와 학원 후기')}
+${video(VIDEOS.pools.brand[0])}
 ${video(VIDEOS.pools.interview[0], '합격 인터뷰: 평택 와와에서 서울대 합격생이 나온 이유')}
 <p style="font-size:14px;color:var(--ink-soft)">더 많은 영상은 <a href="https://www.youtube.com/@wawacoachingcenter" target="_blank" rel="noopener" style="color:var(--brick);font-weight:600">유튜브 채널</a>에서 볼 수 있습니다.</p>
 
