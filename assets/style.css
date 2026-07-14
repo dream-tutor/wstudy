@@ -305,6 +305,12 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .float-cta .f-form { background: var(--brick); color: #fff; }
 .float-cta .f-tel { background: var(--navy); color: #fff; }
 
+/* ── 지도 ── */
+.mapbox { margin: 14px 0 24px; }
+.mapbox iframe { width: 100%; height: 320px; border: 1px solid var(--line); border-radius: 10px; display: block; background: #eef0ee; }
+.mapbox .cap { font-size: 13px; color: var(--ink-soft); margin-top: 7px; }
+@media (max-width: 640px) { .mapbox iframe { height: 250px; } }
+
 /* ── 사진 ── */
 .photo { margin: 26px 0; }
 .photo img { width: 100%; height: auto; border-radius: 10px; display: block; border: 1px solid var(--line); }

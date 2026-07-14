@@ -8,6 +8,7 @@ const COPY = require('./lib/copy.js');
 const GUIDES = [...require('./lib/guides-habit.js'), ...require('./lib/guides-subject.js'), ...require('./lib/guides-grade.js')];
 const SCHOOL_INFO = fs.existsSync(path.join(__dirname, 'data', 'school-info.json')) ? require('./data/school-info.json') : {};
 const REVIEWS = fs.existsSync(path.join(__dirname, 'data', 'reviews.json')) ? require('./data/reviews.json') : [];
+const SCHOOL_GEO = fs.existsSync(path.join(__dirname, 'data', 'school-geo.json')) ? require('./data/school-geo.json') : {};
 
 const ROOT = __dirname;
 const DOMAIN = 'https://wstudycenter.com';
@@ -148,7 +149,8 @@ function video(v, cap) {
 function ctaBand(b, depth) {
   const base = '../'.repeat(depth);
   const q = b ? '?지점=' + encodeURIComponent(b.name) : '';
-  return `<div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:${TEL}">전화 상담</a><a class="form" href="${base}inquiry/${q}">상담 신청서 작성</a>${b && b.link ? `<a class="map" href="${b.link}" target="_blank" rel="noopener">지도에서 위치 보기</a>` : ''}</div></div>`;
+  const kko = b && (b.kakao_link || b.link);
+  return `<div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:${TEL}">전화 상담</a><a class="form" href="${base}inquiry/${q}">상담 신청서 작성</a>${kko ? `<a class="map" href="${kko}" target="_blank" rel="noopener">카카오맵으로 길찾기</a>` : ''}</div></div>`;
 }
 function faqHtml(items, ctx) {
   const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [] };
@@ -183,6 +185,20 @@ function specBadge(name) {
 function nearbyRow(b) {
   const nb = (b.nearby_text || '').split('/').slice(1).join('').trim();
   return nb ? `<tr><th>주변</th><td>${esc(nb)}</td></tr>` : '';
+}
+// 지점 위치 지도 (OSM 임베드 — 키 불필요)
+function osmMap(b) {
+  if (!b.lat || !b.lng) return '';
+  const d = 0.005, dx = 0.008;
+  const bbox = encodeURIComponent(`${b.lng - dx},${b.lat - d},${b.lng + dx},${b.lat + d}`);
+  return `<h2>오시는 길</h2><div class="mapbox"><iframe loading="lazy" title="${esc(b.name)} 위치 지도" src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${b.lat}%2C${b.lng}"></iframe><div class="cap">${esc(b.address)}${b.nearby_text ? ' · ' + esc((b.nearby_text.split('/')[1] || '').trim()) : ''}</div></div>`;
+}
+// 거리 계산 (하버사인, m)
+function distM(a1, o1, a2, o2) {
+  const R = 6371000, r = Math.PI / 180;
+  const dA = (a2 - a1) * r, dO = (o2 - o1) * r;
+  const h = Math.sin(dA / 2) ** 2 + Math.cos(a1 * r) * Math.cos(a2 * r) * Math.sin(dO / 2) ** 2;
+  return Math.round(2 * R * Math.asin(Math.sqrt(h)));
 }
 function classPhoto(depth) {
   return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/wawa-class.jpg" alt="와와 교실 내부" width="900" height="664"><div class="cap">와와 교실 환경 — 지점별 시설과 배치는 다를 수 있습니다.</div></div>`;
@@ -437,6 +453,8 @@ ${nearbyRow(b)}
 ${gradeRows}
 <tr><th>수업 시간</th><td>${esc(b.open_time || '상담 시 안내')}${b.weekend ? ` · ${esc(b.weekend)}` : ''}</td></tr>
 </table></div>
+${osmMap(b)}
+${pick(COPY.wawaWay, b.branch_slug + 'way')()}
 ${classPhoto(3)}
 ${gradeBlocks}
 <h2>과목별 수업 안내</h2>
@@ -522,7 +540,20 @@ function buildSchool(s) {
     const parts = [info.found, coedu, kind].filter(Boolean).join(' ');
     if (parts) infoHtml = `<p>${esc(info.full)}는 ${esc(s.region)} ${esc(s.district)}에 있는 ${esc(parts)}입니다.</p>`;
   }
-  const bRows = s.branches.map((b) => `<tr><th><a href="../../${b.branch_slug}/" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td>${esc(b.address)}<br><span style="color:var(--ink-soft);font-size:13.5px">${esc((b.subjects || []).join(' · '))} · ${esc(b.open_time || '')}</span></td></tr>`).join('');
+  // 학교→지점 거리 (지오코딩 성공 + 8km 이내일 때만 — 좌표 오매칭 방지)
+  const geo = SCHOOL_GEO[`${s.region}|${s.district}|${s.name}`];
+  const bRows = s.branches.map((b) => {
+    let dist = '';
+    if (geo && b.lat && b.lng) {
+      const m = distM(geo.lat, geo.lng, b.lat, b.lng);
+      if (m <= 8000) {
+        const dTxt = m < 1000 ? `${Math.max(50, Math.round(m / 50) * 50)}m` : `${(m / 1000).toFixed(1)}km`;
+        const walk = Math.max(1, Math.round(m / 67));
+        dist = `<span style="color:var(--brick);font-weight:600;font-size:13.5px">${esc(s.name)}에서 약 ${dTxt}${m <= 2500 ? ` · 도보 ${walk}분` : ''}</span><br>`;
+      }
+    }
+    return `<tr><th><a href="../../${b.branch_slug}/" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td>${dist}${esc(b.address)}<br><span style="color:var(--ink-soft);font-size:13.5px">${esc((b.subjects || []).join(' · '))} · ${esc(b.open_time || '')}</span></td></tr>`;
+  }).join('');
   const lvName = s.level === '초' ? '초등학교' : s.level === '중' ? '중학교' : '고등학교';
   const body = `<div class="wrap">
 ${crumb(4, [{ name: s.region, slug: s.region_slug }, { name: s.district, slug: s.district_slug }, { name: s.name + ' 내신 학원' }])}
@@ -530,6 +561,7 @@ ${crumb(4, [{ name: s.region, slug: s.region_slug }, { name: s.district, slug: s
 <article class="body">
 ${infoHtml}
 ${bodyBlock}
+${pick(COPY.wawaWay, key + 'way')()}
 <h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2>
 <div class="tbl-scroll"><table class="info-table">${bRows}</table></div>
 ${(b0.subjects || []).length ? `<h2>${esc(s.name)} 재학생 수업 과목</h2><p>${esc(b0.name)}에서 ${esc(s.name)} 학생이 들을 수 있는 과목은 ${esc((b0.subjects || []).join(', '))}입니다. ${s.level === '초' ? '초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.' : s.level === '중' ? '평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 ' + esc(s.name) + ' 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.' : '수업은 학교 진도와 동기화되며, 내신 4주 전부터 ' + esc(s.name) + ' 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.'}</p><div class="chips">${(b0.subjects || []).filter((su) => SUBJ_SLUG[su]).map((su) => `<a href="../../${b0.branch_slug}/${SUBJ_SLUG[su]}/">${esc(b0.dong)} ${esc(su)}학원</a>`).join('')}</div>` : ''}
