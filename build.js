@@ -710,8 +710,12 @@ ${crumb(1, [{ name: '상담 신청' }])}
 <div class="page-head"><h1>상담 신청</h1><div class="sub">상담은 예약제로 진행됩니다. 아래 내용을 남겨 주시면 해당 지점에서 시간을 잡아 연락드립니다. 전화가 편하시면 <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>을 눌러 주세요.</div></div>
 <div class="form-card">
 <form id="f">
-<label>지점 선택</label>
-<select name="지점" id="fBranch"><option value="">잘 모르겠어요 (지역만 보고 연결해 주세요)</option>${Object.values(regions).map((r) => `<optgroup label="${esc(r.name)}">${Object.values(r.districts).map((d) => d.branches.map((b) => `<option value="${esc(b.name)}">${esc(b.name)} (${esc(d.name)})</option>`).join('')).join('')}</optgroup>`).join('')}</select>
+<label>지점 선택 <span style="font-weight:400;color:var(--ink-soft)">(모르시면 비워 두셔도 됩니다)</span></label>
+<div class="sel-row">
+<select id="fSido"><option value="">시/도</option>${Object.values(regions).map((r) => `<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('')}</select>
+<select id="fGu" disabled><option value="">시/군/구</option></select>
+</div>
+<select name="지점" id="fBranch" disabled style="margin-top:6px"><option value="">지점 (시/군/구를 먼저 선택하세요)</option></select>
 <label>학생 이름</label><input name="이름" required placeholder="이름">
 <label>연락처</label><input name="연락처" required placeholder="010-0000-0000" inputmode="tel">
 <label>주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label><input name="거주주소" placeholder="예: 경기 군포시 산본로 394">
@@ -724,9 +728,29 @@ ${crumb(1, [{ name: '상담 신청' }])}
 </div></div>
 <script>
 (function(){
+  var DATA=${JSON.stringify(Object.fromEntries(Object.values(regions).map((r) => [r.name, Object.fromEntries(Object.values(r.districts).map((d) => [d.name, d.branches.map((b) => ({ n: b.name, d: b.dong }))]))])))};
+  var sido=document.getElementById('fSido'),gu=document.getElementById('fGu'),sel=document.getElementById('fBranch');
+  function fill(s,items,ph){s.innerHTML='<option value=\"\">'+ph+'</option>'+items.join('');s.disabled=false;}
+  sido.addEventListener('change',function(){
+    gu.innerHTML='<option value=\"\">시/군/구</option>';gu.disabled=true;
+    sel.innerHTML='<option value=\"\">지점 선택</option>';sel.disabled=true;
+    if(!sido.value)return;
+    fill(gu,Object.keys(DATA[sido.value]).map(function(g){return '<option value=\"'+g+'\">'+g+'</option>'}),'시/군/구');
+  });
+  gu.addEventListener('change',function(){
+    sel.innerHTML='<option value=\"\">지점 선택</option>';sel.disabled=true;
+    if(!gu.value)return;
+    fill(sel,DATA[sido.value][gu.value].map(function(b){return '<option value=\"'+b.n+'\">'+b.n+(b.d?' · '+b.d:'')+'</option>'}),'지점 선택');
+  });
   var p=new URLSearchParams(location.search).get('지점');
-  var sel=document.getElementById('fBranch');
-  if(p){for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===p){sel.selectedIndex=i;break;}}}
+  if(p){
+    outer:for(var rn in DATA){for(var gn in DATA[rn]){for(var i=0;i<DATA[rn][gn].length;i++){
+      if(DATA[rn][gn][i].n===p){
+        sido.value=rn;sido.dispatchEvent(new Event('change'));
+        gu.value=gn;gu.dispatchEvent(new Event('change'));
+        sel.value=p;break outer;
+      }}}}
+  }
   document.querySelectorAll('.subj-pills .sp').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('on')})});
   document.getElementById('f').addEventListener('submit',function(e){
     e.preventDefault();

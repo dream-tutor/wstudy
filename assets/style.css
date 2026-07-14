@@ -238,6 +238,9 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .subj-pills .sp.on { background: var(--brick); border-color: var(--brick); color: #fff; }
 .form-card select { width: 100%; padding: 12px 13px; border: 1px solid var(--line); border-radius: 7px; font-size: 15px; font-family: inherit; background: var(--paper); }
 .form-card select:focus { outline: none; border-color: var(--navy); }
+.form-card select:disabled { color: #b0a99b; background: #f4f1ea; }
+.sel-row { display: flex; gap: 6px; }
+.sel-row select { flex: 1; min-width: 0; }
 .form-card .submit-btn {
   width: 100%;
   margin-top: 22px;
