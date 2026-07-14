@@ -233,7 +233,12 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .form-card .subj-row { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14.5px; }
 .form-card .subj-row label { display: flex; align-items: center; gap: 5px; margin: 4px 0; font-weight: 400; color: var(--ink); }
 .form-card .subj-row input { width: auto; }
-.form-card button {
+.subj-pills { display: flex; gap: 6px; }
+.subj-pills .sp { flex: 1; padding: 11px 0; border: 1.5px solid var(--line); border-radius: 8px; background: var(--paper); font-size: 14.5px; font-family: inherit; cursor: pointer; color: var(--ink-soft); font-weight: 600; transition: background .12s, color .12s, border-color .12s; }
+.subj-pills .sp.on { background: var(--brick); border-color: var(--brick); color: #fff; }
+.form-card select { width: 100%; padding: 12px 13px; border: 1px solid var(--line); border-radius: 7px; font-size: 15px; font-family: inherit; background: var(--paper); }
+.form-card select:focus { outline: none; border-color: var(--navy); }
+.form-card .submit-btn {
   width: 100%;
   margin-top: 22px;
   padding: 14px;
@@ -245,7 +250,7 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
   font-weight: 700;
   cursor: pointer;
 }
-.form-card button:disabled { opacity: .6; }
+.form-card .submit-btn:disabled { opacity: .6; }
 .form-ok { display: none; text-align: center; padding: 30px 10px; }
 .form-ok.on { display: block; }
 .form-ok .big { font-size: 19px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }

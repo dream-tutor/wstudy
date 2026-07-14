@@ -29,6 +29,25 @@ function write(rel, html) {
   fs.writeFileSync(p, html, 'utf8');
   urls.push(rel.replace(/index\.html$/, '').replace(/\\/g, '/'));
 }
+// "초3,초4,초5,중1,중2" → "초3~초5, 중1~중2" (연속 구간 축약)
+const GRADE_SEQ = ['초1', '초2', '초3', '초4', '초5', '초6', '중1', '중2', '중3', '고1', '고2', '고3'];
+function gradeRange(g) {
+  if (!g) return g;
+  const idx = String(g).split(',').map((s) => GRADE_SEQ.indexOf(s.trim())).filter((i) => i >= 0).sort((a, b) => a - b);
+  if (!idx.length) return g;
+  const runs = [];
+  let s = idx[0], p = idx[0];
+  for (let k = 1; k < idx.length; k++) {
+    if (idx[k] === p) continue;
+    if (idx[k] === p + 1) { p = idx[k]; continue; }
+    runs.push([s, p]); s = p = idx[k];
+  }
+  runs.push([s, p]);
+  return runs.map(([a, b]) => (a === b ? GRADE_SEQ[a] : `${GRADE_SEQ[a]}~${GRADE_SEQ[b]}`)).join(', ');
+}
+// 데이터 공백 정리 — "( 대림프라자" 같은 원본 표기 정돈
+function cleanTxt(s) { return String(s || '').replace(/\(\s+/g, '(').replace(/\s+\)/g, ')').replace(/[ \t]+/g, ' ').trim(); }
+
 // 수강료: wcoachingcenter.com과 동일한 회비 표 (와와회비A/B, 학년 × 주2·3·5회 월액)
 const FEE_TABLES = {
   A: { 초등: ['160,000', '230,000', '370,000'], 중등: ['172,000', '247,000', '397,000'], 고등: ['195,000', '280,000', '450,000'] },
@@ -37,7 +56,7 @@ const FEE_TABLES = {
 function feeSection(b) {
   const t = FEE_TABLES[/A/.test(b.fee_type || '') ? 'A' : 'B'];
   const rows = Object.entries(t).map(([lv, p]) => `<tr><th>${lv}</th><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr>`).join('');
-  return `<h2>수강료 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">교육청 등록 기준 공시 금액(월, 원)입니다. 자세한 시간, 횟수는 상담 시 조율합니다.</p>
+  return `<h2 id="fee">수강료 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">교육청 등록 기준 공시 금액(월, 원)입니다. 자세한 시간, 횟수는 상담 시 조율합니다.</p>
 <div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th><th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
@@ -54,6 +73,8 @@ for (const [name, b] of Object.entries(BRANCHES)) {
   b.schools_elem = normSchools(b.schools_elem);
   b.schools_mid = normSchools(b.schools_mid);
   b.schools_high = normSchools(b.schools_high);
+  b.address = cleanTxt(b.address);
+  if (b.location_guide) b.location_guide = String(b.location_guide).split(/\n+/).map(cleanTxt).filter(Boolean).join('\n');
   const r = (regions[b.region_slug] = regions[b.region_slug] || { name: b.region, slug: b.region_slug, districts: {} });
   const d = (r.districts[b.district_slug] = r.districts[b.district_slug] || { name: b.district, slug: b.district_slug, branches: [] });
   d.branches.push(b);
@@ -441,7 +462,7 @@ ${crumb(2, [{ name: r.name, slug: r.slug }, { name: d.name }])}
 ${branchesMap(d.branches.map((b) => ({ n: b.name, la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` })))}
 <h2>${esc(d.name)} 지점</h2><div class="list-grid">${bCards}</div>
 <h2>관리 학교별 안내</h2>
-<p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다.</p>
+<p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다. 목록에 없는 인근 학교 학생도 수업이 가능합니다.</p>
 ${schoolHtml}
 </article>
 ${ctaBand(null, 2)}</div>`;
@@ -464,7 +485,7 @@ function buildBranch(r, d, b) {
     ...(b.schools_high || []).map((s) => [s, '고등']),
   ];
   const schoolChips = allSchools.map(([s]) => `<a href="../school/${encodeURIComponent(s)}/">${esc(s)}</a>`).join('');
-  const gradeRows = Object.entries(b.grades_by_subject || {}).filter(([, g]) => g).map(([s, g]) => `<tr><th>${esc(s)}</th><td>${esc(g)}</td></tr>`).join('');
+  const gradeRows = Object.entries(b.grades_by_subject || {}).filter(([, g]) => g).map(([s, g]) => `<tr><th>${esc(s)}</th><td>${esc(gradeRange(g))}</td></tr>`).join('');
   const faq = faqHtml([COPY.faqPool.common[0], COPY.faqPool.common[1], COPY.faqPool.common[2]], { tel: TEL, branchName: b.name });
   const levels = levelsOf(b);
   const gradeBlocks = levels.map((lv) => pick(COPY.gradeBlock[lv], key + lv)()).join('');
@@ -480,6 +501,7 @@ ${nearbyRow(b)}
 <tr><th>수업 과목</th><td>${esc((b.subjects || []).join(', '))}</td></tr>
 ${gradeRows}
 <tr><th>수업 시간</th><td>${esc(b.open_time || '상담 시 안내')}${b.weekend ? ` · ${esc(b.weekend)}` : ''}</td></tr>
+<tr><th>운영 안내</th><td>상담은 예약제로 진행됩니다 · 셔틀버스는 운영하지 않습니다 · 수업비는 아래 <a href="#fee" style="color:var(--brick);font-weight:600">수강료 안내</a> 참고</td></tr>
 </table></div>
 ${osmMap(b)}
 ${pick(COPY.wawaWay, b.branch_slug + 'way')()}
@@ -489,7 +511,7 @@ ${gradeBlocks}
 <p>과목을 선택하면 ${esc(b.dong)} 기준의 수업 방식과 내신 대비 흐름을 자세히 볼 수 있습니다.</p>
 <div class="chips">${subjectLinks}</div>
 <h2>관리 학교</h2>
-<p>${esc(b.name)}에 다니는 학생들의 소속 학교입니다. 학교별 시험 대비 안내는 학교 이름을 눌러 확인하세요.</p>
+<p>${esc(b.name)}에 다니는 학생들의 소속 학교입니다. 학교별 시험 대비 안내는 학교 이름을 눌러 확인하세요. <strong>목록에 없는 인근 학교 학생도 수업이 가능하니</strong> 상담에서 확인해 주세요.</p>
 <div class="chips">${schoolChips}</div>
 ${faq.html}
 </article>
@@ -527,7 +549,7 @@ ${crumb(4, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { na
 <article class="body">
 <h2>${esc(subj)} 수업은 이렇게 진행합니다</h2>
 ${methodHtml}
-${grades ? `<div class="note">${esc(b.name)} ${esc(subj)} 수업 대상: ${esc(grades)}</div>` : ''}
+${grades ? `<div class="note">${esc(b.name)} ${esc(subj)} 수업 대상: ${esc(gradeRange(grades))}</div>` : ''}
 ${gradeBlocks}
 ${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : ''}
 <h2>지점 정보</h2>
@@ -685,31 +707,34 @@ ${ctaBand(null, 1)}</div>`;
 function buildInquiry() {
   const body = `<div class="wrap">
 ${crumb(1, [{ name: '상담 신청' }])}
-<div class="page-head"><h1>상담 신청</h1><div class="sub">아래 내용을 남겨 주시면 해당 지점에서 연락드립니다. 전화가 편하시면 <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>을 눌러 주세요.</div></div>
+<div class="page-head"><h1>상담 신청</h1><div class="sub">상담은 예약제로 진행됩니다. 아래 내용을 남겨 주시면 해당 지점에서 시간을 잡아 연락드립니다. 전화가 편하시면 <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>을 눌러 주세요.</div></div>
 <div class="form-card">
 <form id="f">
-<label>지점 (모르시면 지역만 적어 주세요)</label><input name="지점" id="fBranch" placeholder="예: 산본점 또는 군포시">
+<label>지점 선택</label>
+<select name="지점" id="fBranch"><option value="">잘 모르겠어요 (지역만 보고 연결해 주세요)</option>${Object.values(regions).map((r) => `<optgroup label="${esc(r.name)}">${Object.values(r.districts).map((d) => d.branches.map((b) => `<option value="${esc(b.name)}">${esc(b.name)} (${esc(d.name)})</option>`).join('')).join('')}</optgroup>`).join('')}</select>
 <label>학생 이름</label><input name="이름" required placeholder="이름">
 <label>연락처</label><input name="연락처" required placeholder="010-0000-0000" inputmode="tel">
+<label>주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label><input name="거주주소" placeholder="예: 경기 군포시 산본로 394">
 <label>학교 / 학년</label><input name="학년" placeholder="예: 덕풍중 2학년">
-<label>희망 과목</label>
-<div class="subj-row"><label><input type="checkbox" name="과목" value="국어">국어</label><label><input type="checkbox" name="과목" value="영어">영어</label><label><input type="checkbox" name="과목" value="수학">수학</label><label><input type="checkbox" name="과목" value="사회">사회</label><label><input type="checkbox" name="과목" value="과학">과학</label></div>
-<label>연락받기 편한 시간</label><input name="연락희망시간" placeholder="예: 평일 오후">
-<button type="submit">상담 신청하기</button>
+<label>희망 과목 <span style="font-weight:400;color:var(--ink-soft)">(누르면 선택됩니다)</span></label>
+<div class="subj-pills">${['국어', '영어', '수학', '사회', '과학'].map((s) => `<button type="button" class="sp" data-v="${s}">${s}</button>`).join('')}</div>
+<button type="submit" class="submit-btn">상담 신청하기</button>
 </form>
-<div class="form-ok" id="ok"><div class="big">신청이 접수되었습니다</div><p>확인 후 순서대로 연락드리겠습니다.</p></div>
+<div class="form-ok" id="ok"><div class="big">신청이 접수되었습니다</div><p>지점에서 상담 시간을 잡아 연락드리겠습니다.</p></div>
 </div></div>
 <script>
 (function(){
   var p=new URLSearchParams(location.search).get('지점');
-  if(p)document.getElementById('fBranch').value=p;
+  var sel=document.getElementById('fBranch');
+  if(p){for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===p){sel.selectedIndex=i;break;}}}
+  document.querySelectorAll('.subj-pills .sp').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('on')})});
   document.getElementById('f').addEventListener('submit',function(e){
     e.preventDefault();
-    var f=e.target,btn=f.querySelector('button');
-    var subj=Array.from(f.querySelectorAll('[name="과목"]:checked')).map(function(x){return x.value}).join(', ');
+    var f=e.target,btn=f.querySelector('.submit-btn');
+    var subj=Array.from(document.querySelectorAll('.subj-pills .sp.on')).map(function(x){return x.getAttribute('data-v')}).join(', ');
     if(!subj){alert('희망 과목을 1개 이상 선택해 주세요.');return;}
     btn.disabled=true;btn.textContent='전송 중...';
-    var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,연락처:f.연락처.value,학년:f.학년.value,과목:subj,연락희망시간:f.연락희망시간.value,신청일:new Date().toLocaleString('ko-KR'),유입페이지:location.href,유입페이지제목:document.title,유입경로:document.referrer||'직접입력'};
+    var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,연락처:f.연락처.value,거주주소:f.거주주소.value,학년:f.학년.value,과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:location.href,유입페이지제목:document.title,유입경로:document.referrer||'직접입력'};
     var q=Object.keys(data).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(data[k])}).join('&');
     (new Image()).src='${GAS}?'+q;
     setTimeout(function(){f.style.display='none';document.getElementById('ok').classList.add('on');},700);
