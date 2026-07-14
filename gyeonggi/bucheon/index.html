@@ -32,6 +32,25 @@
 <div class="crumb"><a href="../../">홈</a><span>›</span><a href="../../gyeonggi/">경기</a><span>›</span>부천시</div>
 <div class="page-head"><span class="tag">경기</span><h1>부천시 초중고 학원, 와와학습학원</h1><div class="sub">부천시의 8개 지점이 인근 37개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
+<h2>지점 위치</h2>
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"중동점","la":37.5047676,"lo":126.7668009,"u":"/gyeonggi/bucheon/jungdong/"},{"n":"중동점(W+)","la":37.5047676,"lo":126.7668009,"u":"/gyeonggi/bucheon/jungdong-wplus/"},{"n":"신중동점","la":37.4967966,"lo":126.7761178,"u":"/gyeonggi/bucheon/sinjungdong/"},{"n":"옥길스타점","la":37.4624422,"lo":126.8130355,"u":"/gyeonggi/bucheon/oggilseuta/"},{"n":"옥길점","la":37.4668253,"lo":126.8225437,"u":"/gyeonggi/bucheon/oggil/"},{"n":"반달점","la":37.4922011,"lo":126.7499923,"u":"/gyeonggi/bucheon/bandal/"},{"n":"상동점","la":37.5076028,"lo":126.7517282,"u":"/gyeonggi/bucheon/sangdong/"},{"n":"범박점","la":37.4730507,"lo":126.804211,"u":"/gyeonggi/bucheon/beombag/"}];
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var bounds=[];
+  pts.forEach(function(p){
+    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
+    bounds.push([p.la,p.lo]);
+  });
+  if(bounds.length===1){map.setView(bounds[0],15);}
+  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>
 <h2>부천시 지점</h2><div class="list-grid"><a href="./jungdong/">중동점<span class="cnt">중동 · 국어·영어</span></a><a href="./jungdong-wplus/">중동점(W+)<span class="cnt">중동 · 수학·과학</span></a><a href="./sinjungdong/">신중동점<span class="cnt">중동 · 국어·영어·수학·과학</span></a><a href="./oggilseuta/">옥길스타점<span class="cnt">옥길동 · 국어·영어·수학</span></a><a href="./oggil/">옥길점<span class="cnt">옥길동 · 국어·영어·수학·사회</span></a><a href="./bandal/">반달점<span class="cnt">상동 · 영어·수학·과학</span></a><a href="./sangdong/">상동점<span class="cnt">상동 · 국어·영어·수학</span></a><a href="./beombag/">범박점<span class="cnt">소사본동 · 국어·영어·수학·과학·사회</span></a></div>
 <h2>관리 학교별 안내</h2>
 <p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다.</p>

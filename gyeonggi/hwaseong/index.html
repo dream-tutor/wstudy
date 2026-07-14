@@ -32,6 +32,25 @@
 <div class="crumb"><a href="../../">홈</a><span>›</span><a href="../../gyeonggi/">경기</a><span>›</span>화성시</div>
 <div class="page-head"><span class="tag">경기</span><h1>화성시 초중고 학원, 와와학습학원</h1><div class="sub">화성시의 8개 지점이 인근 48개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
+<h2>지점 위치</h2>
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"화성태안점","la":37.2062922,"lo":127.0418922,"u":"/gyeonggi/hwaseong/hwaseongtaean/"},{"n":"봉담점","la":37.2262366,"lo":126.9461843,"u":"/gyeonggi/hwaseong/bongdam/"},{"n":"동탄목동점","la":37.1821303,"lo":127.123479,"u":"/gyeonggi/hwaseong/dongtanmogdong/"},{"n":"동탄호수점","la":37.1673796,"lo":127.1072642,"u":"/gyeonggi/hwaseong/dongtanhosu/"},{"n":"병점점","la":37.2135799,"lo":127.0418873,"u":"/gyeonggi/hwaseong/byeong/"},{"n":"향남점","la":37.1317745,"lo":126.9219067,"u":"/gyeonggi/hwaseong/hyangnam/"},{"n":"영천점","la":37.2075814,"lo":127.1107818,"u":"/gyeonggi/hwaseong/yeongcheon/"},{"n":"반송점","la":37.2073616,"lo":127.0736741,"u":"/gyeonggi/hwaseong/bansong/"}];
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var bounds=[];
+  pts.forEach(function(p){
+    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
+    bounds.push([p.la,p.lo]);
+  });
+  if(bounds.length===1){map.setView(bounds[0],15);}
+  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>
 <h2>화성시 지점</h2><div class="list-grid"><a href="./hwaseongtaean/">화성태안점<span class="cnt">병점동 · 국어·영어·수학</span></a><a href="./bongdam/">봉담점<span class="cnt">봉담읍 · 국어·영어·수학·과학·사회</span></a><a href="./dongtanmogdong/">동탄목동점<span class="cnt">목동 · 국어·영어·수학·과학·사회</span></a><a href="./dongtanhosu/">동탄호수점<span class="cnt">산척동 · 국어·영어·수학·과학·사회</span></a><a href="./byeong/">병점점<span class="cnt">진안동 · 국어·영어·수학·과학·사회</span></a><a href="./hyangnam/">향남점<span class="cnt">향남읍 · 국어·영어·수학</span></a><a href="./yeongcheon/">영천점<span class="cnt">영천동 · 국어·영어·수학</span></a><a href="./bansong/">반송점<span class="cnt">반송동 · 국어·영어·수학·과학·사회</span></a></div>
 <h2>관리 학교별 안내</h2>
 <p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다.</p>

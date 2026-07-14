@@ -9,6 +9,7 @@ const GUIDES = [...require('./lib/guides-habit.js'), ...require('./lib/guides-su
 const SCHOOL_INFO = fs.existsSync(path.join(__dirname, 'data', 'school-info.json')) ? require('./data/school-info.json') : {};
 const REVIEWS = fs.existsSync(path.join(__dirname, 'data', 'reviews.json')) ? require('./data/reviews.json') : [];
 const SCHOOL_GEO = fs.existsSync(path.join(__dirname, 'data', 'school-geo.json')) ? require('./data/school-geo.json') : {};
+const SCHOOL_CODES = fs.existsSync(path.join(__dirname, 'data', 'school-codes.json')) ? require('./data/school-codes.json') : {};
 
 const ROOT = __dirname;
 const DOMAIN = 'https://wstudycenter.com';
@@ -192,6 +193,30 @@ function osmMap(b) {
   const d = 0.005, dx = 0.008;
   const bbox = encodeURIComponent(`${b.lng - dx},${b.lat - d},${b.lng + dx},${b.lat + d}`);
   return `<h2>오시는 길</h2><div class="mapbox"><iframe loading="lazy" title="${esc(b.name)} 위치 지도" src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${b.lat}%2C${b.lng}"></iframe><div class="cap">${esc(b.address)}${b.nearby_text ? ' · ' + esc((b.nearby_text.split('/')[1] || '').trim()) : ''}</div></div>`;
+}
+// 지역·시군구 허브용 지점 마커 지도 (Leaflet + OSM 타일, 키 불필요)
+function branchesMap(pts) {
+  const valid = pts.filter((p) => p.la && p.lo);
+  if (!valid.length) return '';
+  return `<h2>지점 위치</h2>
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=${JSON.stringify(valid)};
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var bounds=[];
+  pts.forEach(function(p){
+    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
+    bounds.push([p.la,p.lo]);
+  });
+  if(bounds.length===1){map.setView(bounds[0],15);}
+  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>`;
 }
 // 거리 계산 (하버사인, m)
 function distM(a1, o1, a2, o2) {
@@ -381,10 +406,12 @@ function buildRegion(r) {
   const dists = Object.values(r.districts).sort((a, b) => b.branches.length - a.branches.length);
   const cards = dists.map((d) => `<a href="./${d.slug}/">${esc(d.name)}<span class="cnt">지점 ${d.branches.length}곳 · ${d.branches.map((b) => b.name).slice(0, 3).join(', ')}${d.branches.length > 3 ? ' 외' : ''}</span></a>`).join('');
   const n = dists.reduce((s, d) => s + d.branches.length, 0);
+  const pts = [];
+  for (const d of Object.values(r.districts)) for (const b of d.branches) pts.push({ n: b.name, la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` });
   const body = `<div class="wrap">
 ${crumb(1, [{ name: r.name }])}
-<div class="page-head"><span class="tag">지역 안내</span><h1>${esc(r.name)} ${BRAND} 지점</h1><div class="sub">${esc(r.name)}에는 ${n}개 지점이 있습니다. 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
-<article class="body"><div class="list-grid">${cards}</div></article>
+<div class="page-head"><span class="tag">지역 안내</span><h1>${esc(r.name)} ${BRAND} 지점</h1><div class="sub">${esc(r.name)}에는 ${n}개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
+<article class="body">${branchesMap(pts)}<h2>시·군·구별 지점</h2><div class="list-grid">${cards}</div></article>
 ${ctaBand(null, 1)}</div>`;
   write(`${r.slug}/index.html`, shell({
     title: `${r.name} 초중고 학원 | ${BRAND} ${n}개 지점`,
@@ -411,6 +438,7 @@ function buildDistrict(r, d) {
 ${crumb(2, [{ name: r.name, slug: r.slug }, { name: d.name }])}
 <div class="page-head"><span class="tag">${esc(r.name)}</span><h1>${esc(d.name)} 초중고 학원, ${BRAND}</h1><div class="sub">${esc(d.name)}의 ${d.branches.length}개 지점이 인근 ${schoolsHere.length}개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
+${branchesMap(d.branches.map((b) => ({ n: b.name, la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` })))}
 <h2>${esc(d.name)} 지점</h2><div class="list-grid">${bCards}</div>
 <h2>관리 학교별 안내</h2>
 <p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다.</p>
@@ -540,6 +568,8 @@ function buildSchool(s) {
     const parts = [info.found, coedu, kind].filter(Boolean).join(' ');
     if (parts) infoHtml = `<p>${esc(info.full)}는 ${esc(s.region)} ${esc(s.district)}에 있는 ${esc(parts)}입니다.</p>`;
   }
+  // 학사일정 위젯 (나이스 코드 확보된 학교만 — myschool 워커 API 경유, 24h 캐시)
+  const schedCode = SCHOOL_CODES[`${s.region}|${s.district}|${s.name}`] || null;
   // 학교→지점 거리 (지오코딩 성공 + 8km 이내일 때만 — 좌표 오매칭 방지)
   const geo = SCHOOL_GEO[`${s.region}|${s.district}|${s.name}`];
   const bRows = s.branches.map((b) => {
@@ -560,6 +590,22 @@ ${crumb(4, [{ name: s.region, slug: s.region_slug }, { name: s.district, slug: s
 <div class="page-head"><span class="tag">${esc(s.district)} · ${lvName}</span><h1>${esc(s.name)} 내신 학원, ${BRAND}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
 ${infoHtml}
+${schedCode ? `<div id="sched" data-code="${esc(schedCode)}" data-school="${esc(s.name)}"></div>
+<script>
+(function(){
+  var el=document.getElementById('sched');if(!el)return;
+  function h(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  fetch('https://xn--vb0b6fp35b6njbws.com/api/schedule?code='+encodeURIComponent(el.getAttribute('data-code')))
+    .then(function(r){return r.json()})
+    .then(function(ev){
+      if(!ev||!ev.length)return;
+      function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
+      var rows=ev.map(function(e){var exam=/고사|시험|지필|평가|수능/.test(e.n);
+        return '<div class="ev'+(exam?' exam':'')+'"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
+      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 학사일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 시험 일정이 보이면 3~4주 전부터 내신 대비를 시작할 때입니다.</p>';
+    }).catch(function(){});
+})();
+</script>` : ''}
 ${bodyBlock}
 ${pick(COPY.wawaWay, key + 'way')()}
 <h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2>

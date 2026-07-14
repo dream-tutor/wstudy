@@ -33,6 +33,22 @@
 <div class="page-head"><span class="tag">군포시 · 중학교</span><h1>궁내중 내신 학원, 와와학습학원</h1><div class="sub">궁내중 첫 시험에서 예상보다 낮은 점수를 받고 학원을 찾는 경우가 많습니다. 산본동의 산본점은 오답 분석부터 시작해서, 다음 시험까지의 계획을 학교 일정에 맞춰 세웁니다.</div></div>
 <article class="body">
 <p>궁내중학교는 경기 군포시에 있는 공립 남녀공학 중학교입니다.</p>
+<div id="sched" data-code="J10|7642039" data-school="궁내중"></div>
+<script>
+(function(){
+  var el=document.getElementById('sched');if(!el)return;
+  function h(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  fetch('https://xn--vb0b6fp35b6njbws.com/api/schedule?code='+encodeURIComponent(el.getAttribute('data-code')))
+    .then(function(r){return r.json()})
+    .then(function(ev){
+      if(!ev||!ev.length)return;
+      function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
+      var rows=ev.map(function(e){var exam=/고사|시험|지필|평가|수능/.test(e.n);
+        return '<div class="ev'+(exam?' exam':'')+'"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
+      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 학사일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 시험 일정이 보이면 3~4주 전부터 내신 대비를 시작할 때입니다.</p>';
+    }).catch(function(){});
+})();
+</script>
 <h2>궁내중 시험 대비 흐름</h2><p>궁내중의 지필고사는 학교 수업 자료에서 대부분 나옵니다. 그래서 재학생들의 필기와 프린트를 기준 자료로 삼고, 부족한 개념은 교재로 보강하는 순서를 지킵니다. 서술형은 채점 기준에 맞춰 답안을 쓰는 연습까지 합니다.</p><p>시험이 없는 기간에는 다음 학기와 고등 과정을 내다본 진도를 나갑니다. 특히 수학과 영어는 중등에서 벌어진 격차가 고등까지 이어지기 때문에, 이 기간의 밀도가 중요합니다.</p>
 <h2>수업은 이렇게 다릅니다</h2>
 <p>와와학습학원의 수업은 과목 수업입니다. 국어, 영어, 수학, 사회, 과학을 각 과목 선생님이 가르치고, 여기에 공부 방법과 공부 습관을 잡아 주는 코칭이 더해집니다. 자기주도학습을 한다고 해서 학생을 혼자 두는 방식이 아닙니다.</p>
@@ -44,7 +60,7 @@
 <li>개설 과목과 운영 방식은 지점마다 조금씩 달라 상담에서 확인하는 것이 정확합니다.</li>
 </ul>
 <h2>궁내중 학생이 다닐 수 있는 지점</h2>
-<div class="tbl-scroll"><table class="info-table"><tr><th><a href="../../sanbon/" style="color:var(--brick);font-weight:600">산본점</a></th><td>경기 군포시 산본로 394 대림프라자 제 6층 제602호 와와학습코칭학원<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 평일 오후 2시 30분 이후</span></td></tr></table></div>
+<div class="tbl-scroll"><table class="info-table"><tr><th><a href="../../sanbon/" style="color:var(--brick);font-weight:600">산본점</a></th><td><span style="color:var(--brick);font-weight:600;font-size:13.5px">궁내중에서 약 950m · 도보 14분</span><br>경기 군포시 산본로 394 대림프라자 제 6층 제602호 와와학습코칭학원<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 평일 오후 2시 30분 이후</span></td></tr></table></div>
 <h2>궁내중 재학생 수업 과목</h2><p>산본점에서 궁내중 학생이 들을 수 있는 과목은 국어, 영어, 수학, 과학입니다. 평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 궁내중 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.</p><div class="chips"><a href="../../sanbon/korean/">산본동 국어학원</a><a href="../../sanbon/english/">산본동 영어학원</a><a href="../../sanbon/math/">산본동 수학학원</a><a href="../../sanbon/science/">산본동 과학학원</a></div>
 <h2>영상으로 보는 산본점</h2><div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/LlUKrlNNk-g" title="군포/산본 학원가 중심의 와와 산본점 소개" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 군포/산본 학원가 중심의 와와 산본점 소개 (와와 공식 유튜브)</div></div>
 <h2>함께 읽을 공부법 칼럼</h2><div class="chips"><a href="../../../../guide/exam-4weeks/">내신 4주 대비 플랜 짜는 법</a><a href="../../../../guide/performance-assessment/">수행평가 관리, 점수 새는 곳 막기</a><a href="../../../../guide/wrong-note/">오답노트, 만들다 지치지 않는 방식</a></div>

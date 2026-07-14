@@ -32,6 +32,25 @@
 <div class="crumb"><a href="../../">홈</a><span>›</span><a href="../../seoul/">서울</a><span>›</span>서대문구</div>
 <div class="page-head"><span class="tag">서울</span><h1>서대문구 초중고 학원, 와와학습학원</h1><div class="sub">서대문구의 1개 지점이 인근 3개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
+<h2>지점 위치</h2>
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"가좌점","la":37.5755488,"lo":126.92155,"u":"/seoul/seodaemun/gajwa/"}];
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var bounds=[];
+  pts.forEach(function(p){
+    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
+    bounds.push([p.la,p.lo]);
+  });
+  if(bounds.length===1){map.setView(bounds[0],15);}
+  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>
 <h2>서대문구 지점</h2><div class="list-grid"><a href="./gajwa/">가좌점<span class="cnt">남가좌동 · 국어·영어·수학·과학·사회</span></a></div>
 <h2>관리 학교별 안내</h2>
 <p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다.</p>

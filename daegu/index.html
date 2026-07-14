@@ -30,8 +30,26 @@
 </div></header>
 <div class="wrap">
 <div class="crumb"><a href="../">홈</a><span>›</span>대구</div>
-<div class="page-head"><span class="tag">지역 안내</span><h1>대구 와와학습학원 지점</h1><div class="sub">대구에는 16개 지점이 있습니다. 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
-<article class="body"><div class="list-grid"><a href="./dalseo/">달서구<span class="cnt">지점 4곳 · 이곡점, 신월성점, 진천점(모두) 외</span></a><a href="./bukgu/">북구<span class="cnt">지점 4곳 · 대구도남점, 침산점, 칠곡점 외</span></a><a href="./suseong/">수성구<span class="cnt">지점 3곳 · 수성2가점, 알파시티점, 수성만촌점</span></a><a href="./junggu/">중구<span class="cnt">지점 3곳 · 반월당점, 대구역점, 대구역점2호관</span></a><a href="./donggu/">동구<span class="cnt">지점 2곳 · 율하점, 이시아폴리스점</span></a></div></article>
+<div class="page-head"><span class="tag">지역 안내</span><h1>대구 와와학습학원 지점</h1><div class="sub">대구에는 16개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
+<article class="body"><h2>지점 위치</h2>
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"이곡점","la":35.8544887,"lo":128.5094193,"u":"/daegu/dalseo/igog/"},{"n":"신월성점","la":35.824783,"lo":128.527381,"u":"/daegu/dalseo/sinwolseong/"},{"n":"진천점(모두)","la":35.8165622,"lo":128.5174116,"u":"/daegu/dalseo/jincheon-all/"},{"n":"대구장기점","la":35.8439108,"lo":128.5329332,"u":"/daegu/dalseo/daegujanggi/"},{"n":"수성2가점","la":35.8541702,"lo":128.6141903,"u":"/daegu/suseong/suseong2ga/"},{"n":"알파시티점","la":35.8398886,"lo":128.6914147,"u":"/daegu/suseong/alpasiti/"},{"n":"수성만촌점","la":35.8704369,"lo":128.6337381,"u":"/daegu/suseong/suseongmanchon/"},{"n":"대구도남점","la":35.9523804,"lo":128.5821591,"u":"/daegu/bukgu/daegudonam/"},{"n":"침산점","la":35.8880586,"lo":128.5909473,"u":"/daegu/bukgu/chimsan/"},{"n":"칠곡점","la":35.9319924,"lo":128.5571618,"u":"/daegu/bukgu/chilgog/"},{"n":"복현점","la":35.8952832,"lo":128.6196602,"u":"/daegu/bukgu/boghyeon/"},{"n":"반월당점","la":35.8612577,"lo":128.6001948,"u":"/daegu/junggu/banwoldang/"},{"n":"대구역점","la":35.8759937,"lo":128.5864791,"u":"/daegu/junggu/daeguyeog/"},{"n":"대구역점2호관","la":35.8759937,"lo":128.5864791,"u":"/daegu/junggu/daeguyeog2hogwan/"},{"n":"율하점","la":35.8623994,"lo":128.7015455,"u":"/daegu/donggu/yulha/"},{"n":"이시아폴리스점","la":35.9229047,"lo":128.6371487,"u":"/daegu/donggu/isiapolliseu/"}];
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var bounds=[];
+  pts.forEach(function(p){
+    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
+    bounds.push([p.la,p.lo]);
+  });
+  if(bounds.length===1){map.setView(bounds[0],15);}
+  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script><h2>시·군·구별 지점</h2><div class="list-grid"><a href="./dalseo/">달서구<span class="cnt">지점 4곳 · 이곡점, 신월성점, 진천점(모두) 외</span></a><a href="./bukgu/">북구<span class="cnt">지점 4곳 · 대구도남점, 침산점, 칠곡점 외</span></a><a href="./suseong/">수성구<span class="cnt">지점 3곳 · 수성2가점, 알파시티점, 수성만촌점</span></a><a href="./junggu/">중구<span class="cnt">지점 3곳 · 반월당점, 대구역점, 대구역점2호관</span></a><a href="./donggu/">동구<span class="cnt">지점 2곳 · 율하점, 이시아폴리스점</span></a></div></article>
 <div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:010-4864-5345">전화 상담</a><a class="form" href="../inquiry/">상담 신청서 작성</a></div></div></div>
 <footer class="site"><div class="in">
 <div class="brand">와와학습학원</div>

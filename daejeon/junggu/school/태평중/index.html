@@ -33,6 +33,22 @@
 <div class="page-head"><span class="tag">중구 · 중학교</span><h1>태평중 내신 학원, 와와학습학원</h1><div class="sub">태평중 첫 시험에서 예상보다 낮은 점수를 받고 학원을 찾는 경우가 많습니다. 태평동의 태평점은 오답 분석부터 시작해서, 다음 시험까지의 계획을 학교 일정에 맞춰 세웁니다.</div></div>
 <article class="body">
 <p>대전태평중학교는 대전 중구에 있는 공립 남녀공학 중학교입니다.</p>
+<div id="sched" data-code="G10|7441030" data-school="태평중"></div>
+<script>
+(function(){
+  var el=document.getElementById('sched');if(!el)return;
+  function h(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  fetch('https://xn--vb0b6fp35b6njbws.com/api/schedule?code='+encodeURIComponent(el.getAttribute('data-code')))
+    .then(function(r){return r.json()})
+    .then(function(ev){
+      if(!ev||!ev.length)return;
+      function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
+      var rows=ev.map(function(e){var exam=/고사|시험|지필|평가|수능/.test(e.n);
+        return '<div class="ev'+(exam?' exam':'')+'"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
+      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 학사일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 시험 일정이 보이면 3~4주 전부터 내신 대비를 시작할 때입니다.</p>';
+    }).catch(function(){});
+})();
+</script>
 <h2>태평중 내신 준비 방식</h2><p>시험 4주 전부터 태평중 시험 범위 기준으로 대비 일정을 만듭니다. 교과서와 학교 프린트 정리, 기출 유형 연습, 실전 점검 순서입니다. 수행평가는 공지가 나오는 대로 학원 일정에 반영해 제출 전까지 관리합니다.</p><p>시험이 끝나면 오답을 같이 분석합니다. 틀린 문항이 개념 부족인지, 실수인지, 시간 배분 문제인지에 따라 다음 시험의 보완 방향이 달라지기 때문입니다.</p>
 <h2>수업은 이렇게 다릅니다</h2>
 <p>와와학습학원의 수업은 과목 수업입니다. 국어, 영어, 수학, 사회, 과학을 각 과목 선생님이 가르치고, 여기에 공부 방법과 공부 습관을 잡아 주는 코칭이 더해집니다. 자기주도학습을 한다고 해서 학생을 혼자 두는 방식이 아닙니다.</p>

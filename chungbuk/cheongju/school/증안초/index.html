@@ -33,6 +33,22 @@
 <div class="page-head"><span class="tag">청주시 · 초등학교</span><h1>증안초 내신 학원, 와와학습학원</h1><div class="sub">증안초 근처에서 오래 다닐 학원을 찾는 학부모님이 많습니다. 복대동의 복대점은 증안초 학생들의 학교 진도를 따라가면서, 학년이 올라가도 이어서 관리할 수 있는 곳입니다.</div></div>
 <article class="body">
 <p>증안초등학교는 충북 청주시에 있는 공립 남녀공학 초등학교입니다.</p>
+<div id="sched" data-code="M10|8011202" data-school="증안초"></div>
+<script>
+(function(){
+  var el=document.getElementById('sched');if(!el)return;
+  function h(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  fetch('https://xn--vb0b6fp35b6njbws.com/api/schedule?code='+encodeURIComponent(el.getAttribute('data-code')))
+    .then(function(r){return r.json()})
+    .then(function(ev){
+      if(!ev||!ev.length)return;
+      function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
+      var rows=ev.map(function(e){var exam=/고사|시험|지필|평가|수능/.test(e.n);
+        return '<div class="ev'+(exam?' exam':'')+'"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
+      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 학사일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 시험 일정이 보이면 3~4주 전부터 내신 대비를 시작할 때입니다.</p>';
+    }).catch(function(){});
+})();
+</script>
 <h2>증안초 학생은 이렇게 수업합니다</h2><p>증안초 진도에 맞춰 주 단위 학습 계획을 만듭니다. 수업에서 배운 내용은 그날 문제로 확인하고, 숙제는 다음 수업 시작 때 검사합니다. 습관이 잡히기 전까지는 양을 줄이더라도 매일 하는 쪽으로 조절합니다.</p><p>학부모님께는 월 단위로 진도와 취약 단원을 알려 드립니다. 중학교 배정 전 학년이 되면 중등 과정 연계 단원(분수·비율, 영문법 기초 등)을 미리 짚습니다.</p>
 <h2>와와의 수업 방식</h2>
 <p>진도식 강의가 아니라 개별 진도 수업입니다. 정해진 개강일이 없어 이번 달 중간에라도 시작할 수 있고, 주당 횟수와 교재, 커리큘럼도 학생마다 다르게 짭니다. 같은 교실에 앉아 있어도 각자 다른 단원을 공부하는 이유입니다.</p>
@@ -43,7 +59,7 @@
 <li>지점에 따라 개설 과목과 대상 학년이 달라서, 정확한 내용은 상담에서 확인해 주세요.</li>
 </ul>
 <h2>증안초 학생이 다닐 수 있는 지점</h2>
-<div class="tbl-scroll"><table class="info-table"><tr><th><a href="../../bogdae/" style="color:var(--brick);font-weight:600">복대점</a></th><td>충북 청주시 흥덕구 진재로 37 3<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 평일 오후 3시 이후</span></td></tr></table></div>
+<div class="tbl-scroll"><table class="info-table"><tr><th><a href="../../bogdae/" style="color:var(--brick);font-weight:600">복대점</a></th><td><span style="color:var(--brick);font-weight:600;font-size:13.5px">증안초에서 약 150m · 도보 2분</span><br>충북 청주시 흥덕구 진재로 37 3<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 평일 오후 3시 이후</span></td></tr></table></div>
 <h2>증안초 재학생 수업 과목</h2><p>복대점에서 증안초 학생이 들을 수 있는 과목은 국어, 영어, 수학, 과학입니다. 초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.</p><div class="chips"><a href="../../bogdae/korean/">복대동 국어학원</a><a href="../../bogdae/english/">복대동 영어학원</a><a href="../../bogdae/math/">복대동 수학학원</a><a href="../../bogdae/science/">복대동 과학학원</a></div>
 <h2>영상으로 보는 와와</h2><div class="video-box"><div class="frame vertical"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/Vt8syzeacbc" title="시험기간 고등학생 특 (쇼츠)" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 와와 소개 영상 (와와 공식 유튜브)</div></div>
 <h2>함께 읽을 공부법 칼럼</h2><div class="chips"><a href="../../../../guide/elem-habit/">초등 고학년, 성적보다 습관</a><a href="../../../../guide/pre-middle/">예비 중1, 겨울방학에 챙길 것</a><a href="../../../../guide/study-planner/">공부 플래너, 계획이 아니라 기록부터</a></div>

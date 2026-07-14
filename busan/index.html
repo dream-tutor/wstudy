@@ -30,8 +30,26 @@
 </div></header>
 <div class="wrap">
 <div class="crumb"><a href="../">홈</a><span>›</span>부산</div>
-<div class="page-head"><span class="tag">지역 안내</span><h1>부산 와와학습학원 지점</h1><div class="sub">부산에는 5개 지점이 있습니다. 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
-<article class="body"><div class="list-grid"><a href="./haeundae/">해운대구<span class="cnt">지점 2곳 · 좌동점, 반여점</span></a><a href="./dongnae/">동래구<span class="cnt">지점 2곳 · 동래점, 사직점</span></a><a href="./bukgu/">북구<span class="cnt">지점 1곳 · 화명점</span></a></div></article>
+<div class="page-head"><span class="tag">지역 안내</span><h1>부산 와와학습학원 지점</h1><div class="sub">부산에는 5개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
+<article class="body"><h2>지점 위치</h2>
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"좌동점","la":35.1719523,"lo":129.174951,"u":"/busan/haeundae/jwadong/"},{"n":"반여점","la":35.2005767,"lo":129.1234961,"u":"/busan/haeundae/banyeo/"},{"n":"동래점","la":35.2060009,"lo":129.0749102,"u":"/busan/dongnae/donglae/"},{"n":"사직점","la":35.1969782,"lo":129.0557802,"u":"/busan/dongnae/sajig/"},{"n":"화명점","la":35.2337802,"lo":129.0123231,"u":"/busan/bukgu/hwamyeong/"}];
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var bounds=[];
+  pts.forEach(function(p){
+    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
+    bounds.push([p.la,p.lo]);
+  });
+  if(bounds.length===1){map.setView(bounds[0],15);}
+  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script><h2>시·군·구별 지점</h2><div class="list-grid"><a href="./haeundae/">해운대구<span class="cnt">지점 2곳 · 좌동점, 반여점</span></a><a href="./dongnae/">동래구<span class="cnt">지점 2곳 · 동래점, 사직점</span></a><a href="./bukgu/">북구<span class="cnt">지점 1곳 · 화명점</span></a></div></article>
 <div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:010-4864-5345">전화 상담</a><a class="form" href="../inquiry/">상담 신청서 작성</a></div></div></div>
 <footer class="site"><div class="in">
 <div class="brand">와와학습학원</div>

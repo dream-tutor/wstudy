@@ -32,6 +32,25 @@
 <div class="crumb"><a href="../../">홈</a><span>›</span><a href="../../daegu/">대구</a><span>›</span>수성구</div>
 <div class="page-head"><span class="tag">대구</span><h1>수성구 초중고 학원, 와와학습학원</h1><div class="sub">수성구의 3개 지점이 인근 16개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
+<h2>지점 위치</h2>
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"수성2가점","la":35.8541702,"lo":128.6141903,"u":"/daegu/suseong/suseong2ga/"},{"n":"알파시티점","la":35.8398886,"lo":128.6914147,"u":"/daegu/suseong/alpasiti/"},{"n":"수성만촌점","la":35.8704369,"lo":128.6337381,"u":"/daegu/suseong/suseongmanchon/"}];
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var bounds=[];
+  pts.forEach(function(p){
+    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
+    bounds.push([p.la,p.lo]);
+  });
+  if(bounds.length===1){map.setView(bounds[0],15);}
+  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>
 <h2>수성구 지점</h2><div class="list-grid"><a href="./suseong2ga/">수성2가점<span class="cnt">수성동 · 국어·영어·수학·과학·사회</span></a><a href="./alpasiti/">알파시티점<span class="cnt">시지동 · 국어·영어·수학·과학·사회</span></a><a href="./suseongmanchon/">수성만촌점<span class="cnt">만촌동 · 국어·영어·수학·과학·사회</span></a></div>
 <h2>관리 학교별 안내</h2>
 <p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다.</p>

@@ -33,6 +33,22 @@
 <div class="page-head"><span class="tag">성남시 · 초등학교</span><h1>위례초 내신 학원, 와와학습학원</h1><div class="sub">위례초 학부모님들이 상담에서 가장 많이 묻는 것은 기초가 잡혀 있는지입니다. 창곡동의 위례창곡점은 등록 전 진단으로 연산과 어휘 상태부터 확인하고 시작합니다.</div></div>
 <article class="body">
 <p>위례초등학교는 경기 성남시에 있는 공립 남녀공학 초등학교입니다.</p>
+<div id="sched" data-code="J10|7692128" data-school="위례초"></div>
+<script>
+(function(){
+  var el=document.getElementById('sched');if(!el)return;
+  function h(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  fetch('https://xn--vb0b6fp35b6njbws.com/api/schedule?code='+encodeURIComponent(el.getAttribute('data-code')))
+    .then(function(r){return r.json()})
+    .then(function(ev){
+      if(!ev||!ev.length)return;
+      function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
+      var rows=ev.map(function(e){var exam=/고사|시험|지필|평가|수능/.test(e.n);
+        return '<div class="ev'+(exam?' exam':'')+'"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
+      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 학사일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 시험 일정이 보이면 3~4주 전부터 내신 대비를 시작할 때입니다.</p>';
+    }).catch(function(){});
+})();
+</script>
 <h2>위례초 학생 관리 방식</h2><p>초등 학생은 교과 진도 관리와 공부 습관을 같이 잡습니다. 학교 단원평가 일정에 맞춰 준비하고, 학기마다 연산, 어휘, 독해 같은 기본기를 진단해 부족한 부분을 메웁니다. 중학교 진학 전 학년에는 중등 연계 단원을 미리 다룹니다.</p><p>이 시기에는 잘하는 과목을 늘리는 것보다 구멍을 만들지 않는 것이 중요합니다. 단원평가 결과를 기록해 두고, 같은 유형에서 반복해서 틀리면 해당 단원을 다시 다룹니다.</p>
 <h2>수업 운영 원칙</h2>
 <p>이 학원의 수업은 세 가지가 기본입니다. 각 과목 선생님이 하는 과목 수업, 학생마다 다른 개별 진도, 그리고 공부 방법과 습관까지 잡아 주는 코칭입니다. 소수 인원으로 운영되어 선생님이 학생 한 명 한 명의 진도를 직접 확인합니다.</p>

@@ -32,6 +32,25 @@
 <div class="crumb"><a href="../../">홈</a><span>›</span><a href="../../gyeonggi/">경기</a><span>›</span>남양주시</div>
 <div class="page-head"><span class="tag">경기</span><h1>남양주시 초중고 학원, 와와학습학원</h1><div class="sub">남양주시의 11개 지점이 인근 45개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
+<h2>지점 위치</h2>
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"별내점","la":37.6578998,"lo":127.1252764,"u":"/gyeonggi/namyangju/byeolnae/"},{"n":"다산점(W+)","la":37.6256262,"lo":127.1553701,"u":"/gyeonggi/namyangju/dasan-wplus/"},{"n":"다산도농점","la":37.6084434,"lo":127.1568302,"u":"/gyeonggi/namyangju/dasandonong/"},{"n":"별가람점","la":37.6672628,"lo":127.1175295,"u":"/gyeonggi/namyangju/byeolgalam/"},{"n":"호평점","la":37.6597152,"lo":127.2476198,"u":"/gyeonggi/namyangju/hopyeong/"},{"n":"평내점","la":37.6461136,"lo":127.2354104,"u":"/gyeonggi/namyangju/pyeongnae/"},{"n":"퇴계원점","la":37.649694,"lo":127.1407462,"u":"/gyeonggi/namyangju/toegyewon/"},{"n":"별내중앙점(모두)","la":37.6467053,"lo":127.1212147,"u":"/gyeonggi/namyangju/byeolnaejungang-all/"},{"n":"다산점","la":37.6251905,"lo":127.1546684,"u":"/gyeonggi/namyangju/dasan/"},{"n":"다산지금점","la":37.6005612,"lo":127.1743293,"u":"/gyeonggi/namyangju/dasanjigeum/"},{"n":"진접점","la":37.7198346,"lo":127.1971393,"u":"/gyeonggi/namyangju/jinjeob/"}];
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var bounds=[];
+  pts.forEach(function(p){
+    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
+    bounds.push([p.la,p.lo]);
+  });
+  if(bounds.length===1){map.setView(bounds[0],15);}
+  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>
 <h2>남양주시 지점</h2><div class="list-grid"><a href="./byeolnae/">별내점<span class="cnt">별내동 · 국어·영어·수학·과학</span></a><a href="./dasan-wplus/">다산점(W+)<span class="cnt">다산동 · 수학·과학</span></a><a href="./dasandonong/">다산도농점<span class="cnt">다산동 · 국어·영어·수학·과학·사회</span></a><a href="./byeolgalam/">별가람점<span class="cnt">별내동 · 국어·영어·수학·과학·사회</span></a><a href="./hopyeong/">호평점<span class="cnt">호평동 · 국어·영어·수학·과학·사회</span></a><a href="./pyeongnae/">평내점<span class="cnt">평내동 · 국어·영어·수학·과학</span></a><a href="./toegyewon/">퇴계원점<span class="cnt">퇴계원읍 · 국어·영어·수학</span></a><a href="./byeolnaejungang-all/">별내중앙점(모두)<span class="cnt">별내동 · 영어·수학·과학</span></a><a href="./dasan/">다산점<span class="cnt">다산동 · 국어·영어·사회</span></a><a href="./dasanjigeum/">다산지금점<span class="cnt">다산동 · 국어·영어·수학·과학·사회</span></a><a href="./jinjeob/">진접점<span class="cnt">진접읍 · 국어·영어·수학</span></a></div>
 <h2>관리 학교별 안내</h2>
 <p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다.</p>

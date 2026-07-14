@@ -33,6 +33,22 @@
 <div class="page-head"><span class="tag">춘천시 · 중학교</span><h1>강원중 내신 학원, 와와학습학원</h1><div class="sub">같은 중학교라도 선생님에 따라 시험 스타일이 다릅니다. 석사점은 강원중 재학생들이 가져오는 프린트와 필기로 그 차이를 확인하고 대비에 반영하는 석사동의 학원입니다.</div></div>
 <article class="body">
 <p>강원중학교는 강원 춘천시에 있는 사립 남녀공학 중학교입니다.</p>
+<div id="sched" data-code="K10|7812108" data-school="강원중"></div>
+<script>
+(function(){
+  var el=document.getElementById('sched');if(!el)return;
+  function h(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  fetch('https://xn--vb0b6fp35b6njbws.com/api/schedule?code='+encodeURIComponent(el.getAttribute('data-code')))
+    .then(function(r){return r.json()})
+    .then(function(ev){
+      if(!ev||!ev.length)return;
+      function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
+      var rows=ev.map(function(e){var exam=/고사|시험|지필|평가|수능/.test(e.n);
+        return '<div class="ev'+(exam?' exam':'')+'"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
+      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 학사일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 시험 일정이 보이면 3~4주 전부터 내신 대비를 시작할 때입니다.</p>';
+    }).catch(function(){});
+})();
+</script>
 <h2>강원중 재학생은 이렇게 준비합니다</h2><p>학생마다 목표가 다르기 때문에 같은 강원중 학생이라도 계획이 다릅니다. 상위권은 서술형과 고난도 문항 위주로, 중위권은 교과서와 프린트의 기본 문항을 놓치지 않는 쪽으로 우선순위를 잡습니다.</p><p>시험 2주 전부터는 과목별 마무리 점검표를 씁니다. 범위의 어느 단원을 몇 번 돌렸는지 눈으로 확인할 수 있어야, 남은 기간에 무엇을 할지 흔들리지 않습니다.</p>
 <h2>와와의 수업 방식</h2>
 <p>진도식 강의가 아니라 개별 진도 수업입니다. 정해진 개강일이 없어 이번 달 중간에라도 시작할 수 있고, 주당 횟수와 교재, 커리큘럼도 학생마다 다르게 짭니다. 같은 교실에 앉아 있어도 각자 다른 단원을 공부하는 이유입니다.</p>

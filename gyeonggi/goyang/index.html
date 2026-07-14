@@ -32,6 +32,25 @@
 <div class="crumb"><a href="../../">홈</a><span>›</span><a href="../../gyeonggi/">경기</a><span>›</span>고양시</div>
 <div class="page-head"><span class="tag">경기</span><h1>고양시 초중고 학원, 와와학습학원</h1><div class="sub">고양시의 15개 지점이 인근 64개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
+<h2>지점 위치</h2>
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"탄현점","la":37.6905022,"lo":126.7633883,"u":"/gyeonggi/goyang/tanhyeon/"},{"n":"행신점","la":37.6182356,"lo":126.846051,"u":"/gyeonggi/goyang/haengsin/"},{"n":"마두점","la":37.6529471,"lo":126.7767206,"u":"/gyeonggi/goyang/madu/"},{"n":"화정점","la":37.6302859,"lo":126.8320049,"u":"/gyeonggi/goyang/hwajeong/"},{"n":"풍동점","la":37.6674198,"lo":126.7982847,"u":"/gyeonggi/goyang/pungdong/"},{"n":"화정점(W+)","la":37.630138,"lo":126.8319146,"u":"/gyeonggi/goyang/hwajeong-wplus/"},{"n":"후곡점","la":37.6761414,"lo":126.7706753,"u":"/gyeonggi/goyang/hugog/"},{"n":"후곡점(W+)","la":37.6772293,"lo":126.7697785,"u":"/gyeonggi/goyang/hugog-wplus/"},{"n":"중산점","la":37.6812465,"lo":126.7809341,"u":"/gyeonggi/goyang/jungsan/"},{"n":"주엽점","la":37.6705508,"lo":126.7585378,"u":"/gyeonggi/goyang/juyeob/"},{"n":"주엽2호점","la":37.6690373,"lo":126.7627988,"u":"/gyeonggi/goyang/juyeob2ho/"},{"n":"원당점","la":37.6538042,"lo":126.8379094,"u":"/gyeonggi/goyang/wondang/"},{"n":"원흥점","la":37.64999,"lo":126.874185,"u":"/gyeonggi/goyang/wonheung/"},{"n":"덕이점","la":37.6990688,"lo":126.7535604,"u":"/gyeonggi/goyang/deogi/"},{"n":"삼송점","la":37.66392,"lo":126.888721,"u":"/gyeonggi/goyang/samsong/"}];
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var bounds=[];
+  pts.forEach(function(p){
+    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
+    bounds.push([p.la,p.lo]);
+  });
+  if(bounds.length===1){map.setView(bounds[0],15);}
+  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>
 <h2>고양시 지점</h2><div class="list-grid"><a href="./tanhyeon/">탄현점<span class="cnt">탄현동 · 국어·영어·수학·과학</span></a><a href="./haengsin/">행신점<span class="cnt">행신동 · 국어·영어·수학·과학·사회</span></a><a href="./madu/">마두점<span class="cnt">장항동 · 국어·영어·수학·과학·사회</span></a><a href="./hwajeong/">화정점<span class="cnt">화정동 · 국어·영어·수학·과학</span></a><a href="./pungdong/">풍동점<span class="cnt">풍동 · 국어·영어·수학·과학·사회</span></a><a href="./hwajeong-wplus/">화정점(W+)<span class="cnt">화정동 · 수학·과학</span></a><a href="./hugog/">후곡점<span class="cnt">일산동 · 국어·영어·수학·과학</span></a><a href="./hugog-wplus/">후곡점(W+)<span class="cnt">일산동 · 국어·영어·수학·과학</span></a><a href="./jungsan/">중산점<span class="cnt">중산동 · 국어·영어·수학</span></a><a href="./juyeob/">주엽점<span class="cnt">주엽동 · 국어·영어·수학·사회</span></a><a href="./juyeob2ho/">주엽2호점<span class="cnt">주엽동 · 영어·수학·과학</span></a><a href="./wondang/">원당점<span class="cnt">성사동 · 국어·영어·수학·과학·사회</span></a><a href="./wonheung/">원흥점<span class="cnt">원흥동 · 국어·영어·수학</span></a><a href="./deogi/">덕이점<span class="cnt">덕이동 · 국어·영어·수학·과학</span></a><a href="./samsong/">삼송점<span class="cnt">신원동 · 국어·영어·수학·과학·사회</span></a></div>
 <h2>관리 학교별 안내</h2>
 <p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다.</p>

@@ -32,6 +32,25 @@
 <div class="crumb"><a href="../../">홈</a><span>›</span><a href="../../incheon/">인천</a><span>›</span>연수구</div>
 <div class="page-head"><span class="tag">인천</span><h1>연수구 초중고 학원, 와와학습학원</h1><div class="sub">연수구의 4개 지점이 인근 12개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
+<h2>지점 위치</h2>
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"동춘점","la":37.4066574,"lo":126.6712505,"u":"/incheon/yeonsu/dongchun/"},{"n":"웰카운티점","la":37.3794166,"lo":126.6460146,"u":"/incheon/yeonsu/welkaunti/"},{"n":"송도점","la":37.3948699,"lo":126.6463966,"u":"/incheon/yeonsu/songdo/"},{"n":"송도점(W+)","la":37.3948699,"lo":126.6463966,"u":"/incheon/yeonsu/songdo-wplus/"}];
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  var bounds=[];
+  pts.forEach(function(p){
+    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
+    bounds.push([p.la,p.lo]);
+  });
+  if(bounds.length===1){map.setView(bounds[0],15);}
+  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>
 <h2>연수구 지점</h2><div class="list-grid"><a href="./dongchun/">동춘점<span class="cnt">동춘동 · 국어·영어·수학·과학</span></a><a href="./welkaunti/">웰카운티점<span class="cnt">송도동 · 국어·영어·수학</span></a><a href="./songdo/">송도점<span class="cnt">송도동 · 국어·영어·수학·과학·사회</span></a><a href="./songdo-wplus/">송도점(W+)<span class="cnt">송도동 · 수학·과학</span></a></div>
 <h2>관리 학교별 안내</h2>
 <p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다.</p>

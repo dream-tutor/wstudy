@@ -33,6 +33,22 @@
 <div class="page-head"><span class="tag">중구 · 고등학교</span><h1>경북여고 내신 학원, 와와학습학원</h1><div class="sub">경북여고 내신 등급을 올리려면 학교 기출 유형과 수행평가 기준을 아는 곳에서 준비해야 합니다. 봉산동의 와와학습학원 반월당점에는 경북여고 재학생들이 다니고 있어, 실제 시험 자료 기준으로 대비합니다.</div></div>
 <article class="body">
 <p>경북여자고등학교는 대구 중구에 있는 공립 여학교 자율고입니다.</p>
+<div id="sched" data-code="D10|7240055" data-school="경북여고"></div>
+<script>
+(function(){
+  var el=document.getElementById('sched');if(!el)return;
+  function h(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  fetch('https://xn--vb0b6fp35b6njbws.com/api/schedule?code='+encodeURIComponent(el.getAttribute('data-code')))
+    .then(function(r){return r.json()})
+    .then(function(ev){
+      if(!ev||!ev.length)return;
+      function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
+      var rows=ev.map(function(e){var exam=/고사|시험|지필|평가|수능/.test(e.n);
+        return '<div class="ev'+(exam?' exam':'')+'"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
+      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 학사일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 시험 일정이 보이면 3~4주 전부터 내신 대비를 시작할 때입니다.</p>';
+    }).catch(function(){});
+})();
+</script>
 <h2>경북여고 내신과 생기부를 같이</h2><p>수시를 생각한다면 내신 점수만으로는 부족합니다. 경북여고 수업에서 다룬 개념 중 학생이 흥미를 보인 주제를 교과 세특 탐구로 연결해 주고, 발표나 보고서 형태로 완성되도록 돕습니다.</p><p>지필 대비는 학교 진도 동기화가 원칙입니다. 경북여고의 진도 속도와 평가 일정에 맞춰 학원 진도를 조절하고, 시험 직전에는 실전 형식 점검으로 마무리합니다.</p>
 <h2>수업은 이렇게 다릅니다</h2>
 <p>와와학습학원의 수업은 과목 수업입니다. 국어, 영어, 수학, 사회, 과학을 각 과목 선생님이 가르치고, 여기에 공부 방법과 공부 습관을 잡아 주는 코칭이 더해집니다. 자기주도학습을 한다고 해서 학생을 혼자 두는 방식이 아닙니다.</p>
@@ -44,7 +60,7 @@
 <li>개설 과목과 운영 방식은 지점마다 조금씩 달라 상담에서 확인하는 것이 정확합니다.</li>
 </ul>
 <h2>경북여고 학생이 다닐 수 있는 지점</h2>
-<div class="tbl-scroll"><table class="info-table"><tr><th><a href="../../banwoldang/" style="color:var(--brick);font-weight:600">반월당점</a></th><td>대구 중구 대봉로 253 3층 와와학습코칭학원<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 사회 · 평일 오전 11시 이후</span></td></tr><tr><th><a href="../../daeguyeog/" style="color:var(--brick);font-weight:600">대구역점</a></th><td>대구 중구 서성로 99 대구역센트럴자이 상가 302호 와와학습코칭학원<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 사회 · 평일 오후 1시 이후</span></td></tr><tr><th><a href="../../daeguyeog2hogwan/" style="color:var(--brick);font-weight:600">대구역점2호관</a></th><td>대구 중구 서성로 99 대구역센트럴자이 상가 203호 와와학습코칭학원<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 사회 · 평일 오후 1시 이후</span></td></tr></table></div>
+<div class="tbl-scroll"><table class="info-table"><tr><th><a href="../../banwoldang/" style="color:var(--brick);font-weight:600">반월당점</a></th><td><span style="color:var(--brick);font-weight:600;font-size:13.5px">경북여고에서 약 750m · 도보 11분</span><br>대구 중구 대봉로 253 3층 와와학습코칭학원<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 사회 · 평일 오전 11시 이후</span></td></tr><tr><th><a href="../../daeguyeog/" style="color:var(--brick);font-weight:600">대구역점</a></th><td><span style="color:var(--brick);font-weight:600;font-size:13.5px">경북여고에서 약 2.0km · 도보 30분</span><br>대구 중구 서성로 99 대구역센트럴자이 상가 302호 와와학습코칭학원<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 사회 · 평일 오후 1시 이후</span></td></tr><tr><th><a href="../../daeguyeog2hogwan/" style="color:var(--brick);font-weight:600">대구역점2호관</a></th><td><span style="color:var(--brick);font-weight:600;font-size:13.5px">경북여고에서 약 2.0km · 도보 30분</span><br>대구 중구 서성로 99 대구역센트럴자이 상가 203호 와와학습코칭학원<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 사회 · 평일 오후 1시 이후</span></td></tr></table></div>
 <h2>경북여고 재학생 수업 과목</h2><p>반월당점에서 경북여고 학생이 들을 수 있는 과목은 국어, 영어, 수학, 과학, 사회입니다. 수업은 학교 진도와 동기화되며, 내신 4주 전부터 경북여고 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.</p><div class="chips"><a href="../../banwoldang/korean/">봉산동 국어학원</a><a href="../../banwoldang/english/">봉산동 영어학원</a><a href="../../banwoldang/math/">봉산동 수학학원</a><a href="../../banwoldang/science/">봉산동 과학학원</a><a href="../../banwoldang/social/">봉산동 사회학원</a></div>
 <h2>영상으로 보는 와와</h2><div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/59Tna9pZWrk" title="와와학습코칭센터를 소개합니다" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 와와 소개 영상 (와와 공식 유튜브)</div></div>
 <h2>함께 읽을 공부법 칼럼</h2><div class="chips"><a href="../../../../guide/high1-first-exam/">고1 첫 내신이 중요한 진짜 이유</a><a href="../../../../guide/saenggibu-setek/">교과 세특, 수업에서 만드는 생기부</a><a href="../../../../guide/high23-balance/">고2·3, 내신과 모의고사 사이 시간 배분</a></div>
