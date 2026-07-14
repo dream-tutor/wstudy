@@ -72,6 +72,11 @@ const urls = [];
 // ── 공통 레이아웃 ──
 function shell({ title, desc, canonical, body, depth, ld, ogTitle, footExtra }) {
   const base = depth ? '../'.repeat(depth) : './';
+  // 페이지 LD + 브레드크럼 LD 병합 (@graph)
+  const graph = [];
+  if (ld) { if (ld['@graph']) graph.push(...ld['@graph']); else { const o = { ...ld }; delete o['@context']; graph.push(o); } }
+  if (CRUMB_LD) { graph.push(CRUMB_LD); CRUMB_LD = null; }
+  const ldJson = graph.length ? JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }) : '';
   return `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -85,16 +90,22 @@ function shell({ title, desc, canonical, body, depth, ld, ogTitle, footExtra }) 
 <meta property="og:title" content="${esc(ogTitle || title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:site_name" content="${BRAND}">
+<meta property="og:image" content="${DOMAIN}/assets/wawa-class.jpg">
+<meta property="og:image:width" content="900">
+<meta property="og:image:height" content="664">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="${base}favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${base}assets/style.css">
-${ld ? `<script type="application/ld+json">${JSON.stringify(ld)}</script>` : ''}
+${ldJson ? `<script type="application/ld+json">${ldJson}</script>` : ''}
 </head>
 <body>
 <div class="topbar"><span>초·중·고 교과 전문 ${BRAND}</span><a href="tel:${TEL}">전화 상담</a></div>
 <header class="site"><div class="in">
 <a class="logo" href="${base}">와와학습학원<span class="dot">.</span></a>
-<nav class="gnb"><a href="${base}guide/">공부법 칼럼</a><a href="${base}review/">수강후기</a><a class="cta" href="${base}inquiry/">상담 신청</a></nav>
+<nav class="gnb"><a class="cta" href="${base}inquiry/">상담 신청</a></nav>
 </div></header>
 ${body}
 <footer class="site"><div class="in">
@@ -109,14 +120,25 @@ ${TRACKER}
 </body>
 </html>`;
 }
+let CRUMB_LD = null; // crumb() 직후 shell()이 소비 (페이지 생성이 동기라 안전)
 function crumb(depth, items) {
   const base = '../'.repeat(depth);
   let html = `<div class="crumb"><a href="${base}">홈</a>`;
   let acc = base;
+  let accUrl = DOMAIN + '/';
+  const ldItems = [{ '@type': 'ListItem', position: 1, name: '홈', item: DOMAIN + '/' }];
   for (let i = 0; i < items.length; i++) {
-    if (i < items.length - 1) { acc += items[i].slug + '/'; html += `<span>›</span><a href="${acc}">${esc(items[i].name)}</a>`; }
-    else html += `<span>›</span>${esc(items[i].name)}`;
+    if (i < items.length - 1) {
+      acc += items[i].slug + '/';
+      accUrl += encodeURIComponent(items[i].slug) + '/';
+      html += `<span>›</span><a href="${acc}">${esc(items[i].name)}</a>`;
+      ldItems.push({ '@type': 'ListItem', position: i + 2, name: items[i].name, item: accUrl });
+    } else {
+      html += `<span>›</span>${esc(items[i].name)}`;
+      ldItems.push({ '@type': 'ListItem', position: i + 2, name: items[i].name });
+    }
   }
+  CRUMB_LD = { '@type': 'BreadcrumbList', itemListElement: ldItems };
   return html + '</div>';
 }
 function video(v, cap) {
@@ -605,9 +627,10 @@ for (const r of Object.values(regions)) {
 for (const s of Object.values(schools)) buildSchool(s);
 
 // sitemap / robots / CNAME / favicon
+const LASTMOD = new Date().toISOString().slice(0, 10);
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  urls.map((u) => `<url><loc>${DOMAIN}/${encodeURI(u)}</loc></url>`).join('\n') + '\n</urlset>', 'utf8');
+  urls.map((u) => `<url><loc>${DOMAIN}/${encodeURI(u)}</loc><lastmod>${LASTMOD}</lastmod></url>`).join('\n') + '\n</urlset>', 'utf8');
 fs.writeFileSync(path.join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${DOMAIN}/sitemap.xml\n`, 'utf8');
 fs.writeFileSync(path.join(ROOT, 'CNAME'), 'wstudycenter.com\n', 'utf8');
 fs.writeFileSync(path.join(ROOT, 'favicon.svg'),
