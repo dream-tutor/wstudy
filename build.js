@@ -513,19 +513,15 @@ function buildSchool(s) {
   const bodyBlock = pick(COPY.schoolBody[s.level], key + 'b')(s.name);
   const bv = branchVideo(b0); // 해당 지점의 매칭 영상이 있을 때만 노출
   const faq = faqHtml([COPY.faqPool.school[0], COPY.faqPool.school[1], COPY.faqPool.common[0]], { tel: TEL, school: s.name });
-  // 나이스 학교기본정보 (수집된 학교만)
+  // 나이스 학교기본정보 — 표 대신 본문 첫 문장으로 (설립·공학·유형만, 2026-07-14 지시)
   const info = SCHOOL_INFO[`${s.region}|${s.district}|${s.name}`];
-  const infoHtml = info ? `<h2>${esc(s.name)} 학교 정보</h2>
-<p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">나이스 교육정보 개방 포털의 학교 기본 정보입니다.</p>
-<div class="tbl-scroll"><table class="info-table">
-<tr><th>정식 명칭</th><td>${esc(info.full)}${info.kind ? ` (${esc(info.kind)})` : ''}</td></tr>
-${info.found ? `<tr><th>설립 구분</th><td>${esc(info.found)}</td></tr>` : ''}
-${info.coedu ? `<tr><th>남녀공학</th><td>${esc(info.coedu)}</td></tr>` : ''}
-${info.hstype ? `<tr><th>고교 유형</th><td>${esc(info.hstype)}</td></tr>` : ''}
-${info.addr ? `<tr><th>주소</th><td>${esc(info.addr)}</td></tr>` : ''}
-${info.tel ? `<tr><th>전화</th><td>${esc(info.tel)}</td></tr>` : ''}
-${info.home ? `<tr><th>홈페이지</th><td><a href="${esc(info.home.startsWith('http') ? info.home : 'http://' + info.home)}" target="_blank" rel="noopener nofollow" style="color:var(--brick)">${esc(info.home)}</a></td></tr>` : ''}
-</table></div>` : '';
+  let infoHtml = '';
+  if (info && info.full) {
+    const coedu = info.coedu === '남' ? '남학교' : info.coedu === '여' ? '여학교' : info.coedu ? '남녀공학' : '';
+    const kind = info.hstype || info.kind || '';
+    const parts = [info.found, coedu, kind].filter(Boolean).join(' ');
+    if (parts) infoHtml = `<p>${esc(info.full)}는 ${esc(s.region)} ${esc(s.district)}에 있는 ${esc(parts)}입니다.</p>`;
+  }
   const bRows = s.branches.map((b) => `<tr><th><a href="../../${b.branch_slug}/" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td>${esc(b.address)}<br><span style="color:var(--ink-soft);font-size:13.5px">${esc((b.subjects || []).join(' · '))} · ${esc(b.open_time || '')}</span></td></tr>`).join('');
   const lvName = s.level === '초' ? '초등학교' : s.level === '중' ? '중학교' : '고등학교';
   const body = `<div class="wrap">
