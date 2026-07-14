@@ -274,6 +274,30 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .more-link { text-align: right; font-size: 14px; margin-top: 4px; }
 .more-link a { color: var(--brick); font-weight: 600; }
 
+/* ── 지점 검색 + 타일 지도 ── */
+.sbox { position: relative; margin: 14px 0 20px; }
+.sbox input { width: 100%; padding: 14px 18px; border: 2px solid var(--navy); border-radius: 10px; font-size: 16px; background: var(--white); font-family: inherit; }
+.sbox input:focus { outline: none; border-color: var(--brick); }
+.sres { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--white); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.13); z-index: 60; display: none; max-height: 340px; overflow-y: auto; }
+.sres.on { display: block; }
+.sres a { display: flex; gap: 10px; align-items: center; padding: 11px 14px; border-bottom: 1px solid #f0ece3; font-size: 14.5px; }
+.sres a:last-child { border-bottom: 0; }
+.sres a:hover { background: var(--paper); }
+.sres .tp { flex: none; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: var(--brick-soft); color: var(--brick); }
+.sres .tp.school { background: #e3ecf3; color: #2c5a82; }
+.sres .nm { font-weight: 600; color: var(--ink); white-space: nowrap; }
+.sres .sb { color: var(--ink-soft); font-size: 12.5px; margin-left: auto; text-align: right; }
+.sr-empty { padding: 14px; color: var(--ink-soft); font-size: 14px; text-align: center; }
+.kmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 480px; margin: 6px auto 0; }
+.kmap a, .kmap .off { border-radius: 10px; aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 14.5px; font-weight: 700; }
+.kmap a { background: #5a6c8f; color: #fff; transition: transform .12s, background .12s; }
+.kmap a.lv2 { background: #3c5077; }
+.kmap a.lv3 { background: var(--navy-deep); }
+.kmap a:hover { transform: scale(1.06); background: var(--brick); }
+.kmap a .cnt2 { font-size: 11.5px; font-weight: 500; color: #cdd5e5; }
+.kmap a:hover .cnt2 { color: #f6dccd; }
+.kmap .off { background: #eee9de; color: #a9a291; font-weight: 500; font-size: 12.5px; }
+
 /* ── 플로팅 상담 버튼 ── */
 .float-cta { position: fixed; right: 14px; bottom: 14px; display: flex; flex-direction: column; gap: 8px; z-index: 900; }
 .float-cta a { display: block; padding: 12px 20px; border-radius: 30px; font-weight: 700; font-size: 14.5px; box-shadow: 0 6px 20px rgba(0,0,0,.25); text-align: center; }

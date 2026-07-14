@@ -216,12 +216,23 @@ function schoolShort(b) {
 // ── 홈 ──
 function buildHome() {
   const total = Object.keys(BRANCHES).length;
-  const regionCards = Object.values(regions)
-    .sort((a, b) => Object.values(b.districts).reduce((n, d) => n + d.branches.length, 0) - Object.values(a.districts).reduce((n, d) => n + d.branches.length, 0))
-    .map((r) => {
-      const n = Object.values(r.districts).reduce((s, d) => s + d.branches.length, 0);
-      return `<a href="./${r.slug}/">${esc(r.name)}<span class="cnt">지점 ${n}곳</span></a>`;
-    }).join('');
+  // 시도 타일 지도 (열, 행) — 대략적 한반도 배치
+  const regionInfo = {};
+  for (const r of Object.values(regions)) regionInfo[r.name] = { slug: r.slug, n: Object.values(r.districts).reduce((s, d) => s + d.branches.length, 0) };
+  const KMAP = [
+    ['서울', 2, 1], ['경기', 3, 1], ['강원', 4, 1],
+    ['인천', 1, 2], ['세종', 2, 2], ['충북', 3, 2], ['경북', 4, 2],
+    ['충남', 1, 3], ['대전', 2, 3], ['대구', 3, 3], ['울산', 4, 3],
+    ['전북', 1, 4], ['광주', 2, 4], ['경남', 3, 4], ['부산', 4, 4],
+    ['전남', 2, 5], ['제주', 1, 5],
+  ];
+  const kmapHtml = KMAP.map(([name, c, r]) => {
+    const info = regionInfo[name];
+    const pos = `style="grid-column:${c};grid-row:${r}"`;
+    if (!info) return `<span class="off" ${pos}>${name}<span>준비 중</span></span>`;
+    const lv = info.n > 20 ? ' class="lv3"' : info.n > 5 ? ' class="lv2"' : '';
+    return `<a href="./${info.slug}/"${lv} ${pos}>${name}<span class="cnt2">${info.n}곳</span></a>`;
+  }).join('');
   const totalSchools = Object.keys(schools).length.toLocaleString();
   const WORRIES = [
     { q: '학원을 다니는데 성적이 그대로예요', a: '원인은 대부분 학생 수준과 맞지 않는 일괄 진도입니다. 와와는 진단으로 시작점을 찾고, 학생마다 교재와 단원을 다르게 잡습니다.' },
@@ -288,8 +299,9 @@ ${classPhoto(0)}
 <div class="more-link"><a href="./review/">수강후기 전체 보기 →</a></div>
 
 <h2 id="regions">지역별 지점 찾기</h2>
-<div class="sec-sub">지역을 선택하면 시·군·구별 지점과 관리 학교를 볼 수 있습니다.</div>
-<div class="list-grid">${regionCards}</div>
+<div class="sec-sub">지점명, 동네, 학교 이름으로 검색하거나 지도에서 지역을 선택하세요.</div>
+<div class="sbox"><input id="q" type="search" placeholder="지점·동네·학교 검색 — 예: 산본점, 덕풍동, 산본중" autocomplete="off" aria-label="지점 검색"><div id="sres" class="sres"></div></div>
+<div class="kmap">${kmapHtml}</div>
 
 <h2>영상으로 보는 와와</h2>
 <div class="sec-sub">공식 유튜브 채널의 소개·인터뷰 영상입니다.</div>
@@ -304,7 +316,39 @@ ${video(VIDEOS.pools.interview[0], '합격 인터뷰: 평택 와와에서 서울
 <h2>자주 묻는 질문</h2>
 <div class="faq">${HOME_FAQ.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>
 ${ctaBand(null, 0)}
-</section></div>`;
+</section></div>
+<script>
+(function(){
+  var q=document.getElementById('q'),res=document.getElementById('sres'),idx=null,loading=false;
+  if(!q)return;
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function load(cb){
+    if(idx){cb();return;}
+    if(loading)return;
+    loading=true;
+    fetch('./assets/search-index.json').then(function(r){return r.json()}).then(function(d){idx=d;loading=false;cb();}).catch(function(){loading=false;});
+  }
+  function run(){
+    var v=q.value.trim();
+    if(!v){res.innerHTML='';res.classList.remove('on');return;}
+    if(!idx){load(run);return;}
+    var starts=[],inc=[];
+    for(var i=0;i<idx.length&&starts.length<10;i++){
+      var e=idx[i];
+      if(e.n.indexOf(v)===0)starts.push(e);
+      else if(inc.length<10&&(e.n.indexOf(v)>-1||e.s.indexOf(v)>-1))inc.push(e);
+    }
+    var list=starts.concat(inc).slice(0,10);
+    res.classList.add('on');
+    res.innerHTML=list.length?list.map(function(e){
+      return '<a href="'+e.u+'"><span class="tp'+(e.t==='학교'?' school':'')+'">'+e.t+'</span><span class="nm">'+esc(e.n)+'</span><span class="sb">'+esc(e.s)+'</span></a>';
+    }).join(''):'<div class="sr-empty">검색 결과가 없습니다. 다른 이름으로 찾아보세요.</div>';
+  }
+  q.addEventListener('input',run);
+  q.addEventListener('focus',function(){load(function(){})});
+  document.addEventListener('click',function(e){if(!res.contains(e.target)&&e.target!==q){res.classList.remove('on');}});
+})();
+</script>`;
   write('index.html', shell({
     title: `${BRAND} | 전국 ${total}개 지점, 학교별 내신 전문 초중고 학원`,
     desc: `초·중·고 내신은 학교를 아는 학원에서. 전국 ${total}개 지점, ${totalSchools}개 학교의 진도·기출 기준 수업. 진단 후 개별 진도, 수행평가 관리, 수강료 공시. 2025 올해의 대상(교육 부문) 수상.`,
@@ -625,6 +669,17 @@ for (const r of Object.values(regions)) {
   }
 }
 for (const s of Object.values(schools)) buildSchool(s);
+
+// 검색 인덱스 (홈 지점/학교 검색용 — 첫 입력 시 lazy 로드)
+const searchIndex = [];
+for (const r of Object.values(regions)) for (const d of Object.values(r.districts)) for (const b of d.branches) {
+  searchIndex.push({ t: '지점', n: b.name, s: `${b.region} ${b.district} ${b.dong}`, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` });
+}
+for (const s of Object.values(schools)) {
+  searchIndex.push({ t: '학교', n: s.name, s: `${s.region} ${s.district} · ${s.branches[0].name}`, u: `/${s.region_slug}/${s.district_slug}/school/${encodeURIComponent(s.name)}/` });
+}
+fs.writeFileSync(path.join(ROOT, 'assets', 'search-index.json'), JSON.stringify(searchIndex), 'utf8');
+console.log('검색 인덱스:', searchIndex.length, '건');
 
 // sitemap / robots / CNAME / favicon
 const LASTMOD = new Date().toISOString().slice(0, 10);
