@@ -11,18 +11,8 @@
     "평내점": { "id": "uDHYAAmV_uM", "title": "평내동에서 와와를 만나요" },
     "동탄호수점": { "id": "OM1Nk3JpTWw", "title": "동탄호수점을 추천합니다" },
     "주엽점": { "id": "G02-oAafvIw", "title": "일산 주엽 와와 소개" },
-    "은평점": { "id": "UIXUaBZdNXU", "title": "은평점에서 시험기간 공부하는 방법" },
-    "중동점": { "id": "f97MrCUcrKg", "title": "부천에서 공부하는 비법" },
-    "신중동점": { "id": "f97MrCUcrKg", "title": "부천에서 공부하는 비법" },
-    "상동점": { "id": "f97MrCUcrKg", "title": "부천에서 공부하는 비법" },
-    "옥길점": { "id": "f97MrCUcrKg", "title": "부천에서 공부하는 비법" },
-    "옥길스타점": { "id": "f97MrCUcrKg", "title": "부천에서 공부하는 비법" },
-    "반달점": { "id": "f97MrCUcrKg", "title": "부천에서 공부하는 비법" },
-    "범박점": { "id": "f97MrCUcrKg", "title": "부천에서 공부하는 비법" },
-    "비전점": { "id": "hYVFoplgOcU", "title": "평택 와와에서 서울대 합격생이 나온 이유 (합격 인터뷰)" },
-    "이충점": { "id": "hYVFoplgOcU", "title": "평택 와와에서 서울대 합격생이 나온 이유 (합격 인터뷰)" }
+    "은평점": { "id": "UIXUaBZdNXU", "title": "은평점에서 시험기간 공부하는 방법" }
   },
-  "wplus": { "id": "EPg8ZkV9_ZY", "title": "더블유플러스학원 — 수학이 재밌다, 과학이 신난다" },
   "pools": {
     "brand": [
       { "id": "f_skFu40U04", "title": "원장님 인터뷰와 학원 후기" },

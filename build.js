@@ -193,12 +193,9 @@ const LEVEL_GUIDES = {
   고: ['high1-first-exam', 'saenggibu-setek', 'high23-balance'],
 };
 
+// 지점명이 정확히 일치할 때만 지점 영상 (다른 지점 영상이 섞이면 혼란 — 2026-07-14 지시)
 function branchVideo(b) {
-  if (VIDEOS.branch[b.name]) return VIDEOS.branch[b.name];
-  const stem = b.name.replace(/\(.*\)$/, '');
-  if (VIDEOS.branch[stem]) return VIDEOS.branch[stem];
-  if (/\(W\+\)/.test(b.name)) return VIDEOS.wplus;
-  return null;
+  return VIDEOS.branch[b.name] || null;
 }
 function levelsOf(b) {
   const l = [];
