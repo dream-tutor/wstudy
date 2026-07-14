@@ -7,6 +7,7 @@ const VIDEOS = require('./data/videos.json');
 const COPY = require('./lib/copy.js');
 const GUIDES = [...require('./lib/guides-habit.js'), ...require('./lib/guides-subject.js'), ...require('./lib/guides-grade.js')];
 const SCHOOL_INFO = fs.existsSync(path.join(__dirname, 'data', 'school-info.json')) ? require('./data/school-info.json') : {};
+const REVIEWS = fs.existsSync(path.join(__dirname, 'data', 'reviews.json')) ? require('./data/reviews.json') : [];
 
 const ROOT = __dirname;
 const DOMAIN = 'https://wstudycenter.com';
@@ -199,40 +200,100 @@ function buildHome() {
       const n = Object.values(r.districts).reduce((s, d) => s + d.branches.length, 0);
       return `<a href="./${r.slug}/">${esc(r.name)}<span class="cnt">지점 ${n}곳</span></a>`;
     }).join('');
+  const totalSchools = Object.keys(schools).length.toLocaleString();
+  const WORRIES = [
+    { q: '학원을 다니는데 성적이 그대로예요', a: '원인은 대부분 학생 수준과 맞지 않는 일괄 진도입니다. 와와는 진단으로 시작점을 찾고, 학생마다 교재와 단원을 다르게 잡습니다.' },
+    { q: '혼자서는 책상에 앉지를 않아요', a: '의지의 문제가 아니라 틀의 문제입니다. 매 수업 숙제 검사와 테스트로 공부가 돌아가는 틀을 학원이 만들어 줍니다.' },
+    { q: '우리 학교 시험 스타일을 아는 곳이 없어요', a: '지점마다 인근 학교 재학생이 다녀서 학교별 진도, 필기, 기출 정보가 매 학기 쌓입니다. 시험 3~4주 전부터 그 자료로 대비합니다.' },
+    { q: '수행평가까지 챙겨 주는 곳이 필요해요', a: '학기 초 평가 계획을 확인해 두고, 제출물은 마감 전까지 학원 일정에서 관리합니다. 지필과 수행을 합쳐야 등급이 나오기 때문입니다.' },
+  ];
+  const STEPS = [
+    ['진단 상담', '학교, 학년, 현재 성적을 보고 어느 단원부터 시작할지 정합니다.'],
+    ['개별 진도 수업', '같은 교실에서도 학생마다 교재와 단원이 다릅니다.'],
+    ['숙제·테스트 사이클', '배운 것을 집에서 풀고, 다음 수업에서 확인합니다. 매주 반복됩니다.'],
+    ['학교별 내신 대비', '시험 3~4주 전부터 다니는 학교의 자료 기준으로 수업이 바뀝니다.'],
+  ];
+  const SUBJ_HOME = [
+    ['국어', '교과서 지문과 학교 필기 기준으로 내신을 준비합니다.', 'korean-textbook'],
+    ['영어', '단어, 문법, 서술형을 학교 시험 스타일에 맞춥니다.', 'english-grammar'],
+    ['수학', '진단으로 구멍부터 메우고, 학교 기출로 마무리합니다.', 'math-wrong'],
+    ['사회', '단원의 흐름을 먼저 잡아 암기량을 줄입니다.', 'social-structure'],
+    ['과학', '개념을 설명할 수 있을 때까지 확인하고 넘어갑니다.', 'science-explain'],
+  ];
+  const HOME_FAQ = [
+    { q: '상담은 어떻게 신청하나요?', a: '화면의 전화 상담 버튼을 누르시거나, 상담 신청 페이지에 학생의 학교와 학년, 희망 과목을 남겨 주시면 해당 지점에서 연락드립니다.' },
+    { q: '수업료는 어떻게 되나요?', a: '학년과 주당 횟수에 따라 다르며, 교육청 등록 기준 공시 금액을 각 지점 페이지의 수강료 안내 표에 그대로 올려 두었습니다. 자세한 시간과 횟수는 상담에서 조율합니다.' },
+    { q: '우리 동네에도 지점이 있나요?', a: `전국에 ${total}개 지점이 있습니다. 지역별 지점 찾기에서 시·군·구를 선택하면 지점 위치와 관리 학교를 확인할 수 있습니다.` },
+    { q: '다른 학원과 무엇이 다른가요?', a: '일괄 진도 수업 대신 진단 후 학생마다 교재와 단원을 다르게 잡는 개별 진도로 수업하고, 시험 기간에는 학생이 다니는 학교의 기출과 수업 자료 기준으로 내신을 준비합니다.' },
+    { q: '몇 학년부터 다닐 수 있나요?', a: '지점에 따라 초등 저학년부터 고3까지 받습니다. 각 지점 페이지의 과목별 대상 학년 표에서 확인할 수 있습니다.' },
+  ];
+  const faqLd = { '@type': 'FAQPage', mainEntity: HOME_FAQ.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
   const body = `
 <div class="hero"><div class="in">
+<div class="award">2025 소비자가 뽑은 올해의 대상 · 교육 부문 수상</div>
 <h1>학교 시험은<br><em>학교를 아는 학원</em>에서</h1>
-<p>${BRAND}은 전국 ${total}개 지점이 있는 초·중·고 교과 학원입니다. 학생이 다니는 학교의 진도에 맞춰 수업하고, 시험 기간에는 학교별 자료로 내신을 준비합니다.</p>
+<p>${BRAND}은 전국 ${total}개 지점이 있는 초·중·고 교과 학원입니다. 학생이 다니는 학교의 진도에 맞춰 수업하고, 시험 기간에는 학교별 자료로 내신을 준비합니다. 국어·영어·수학·사회·과학, ${totalSchools}개 학교를 관리하고 있습니다.</p>
 <div class="btns"><a class="b1" href="./inquiry/">상담 신청</a><a class="b2" href="#regions">가까운 지점 찾기</a></div>
-<div class="stats"><div class="s"><div class="n">${total}</div><div class="k">전국 지점</div></div><div class="s"><div class="n">${Object.keys(schools).length.toLocaleString()}</div><div class="k">관리 학교</div></div><div class="s"><div class="n">5과목</div><div class="k">국·영·수·사·과</div></div></div>
+<div class="stats"><div class="s"><div class="n">${total}</div><div class="k">전국 지점</div></div><div class="s"><div class="n">${totalSchools}</div><div class="k">관리 학교</div></div><div class="s"><div class="n">5과목</div><div class="k">국·영·수·사·과</div></div><div class="s"><div class="n">${GUIDES.length}편</div><div class="k">공부법 칼럼</div></div></div>
 </div></div>
 <div class="wrap"><section class="home">
+
+<h2>이런 고민으로 오시는 분들이 많습니다</h2>
+<div class="sec-sub">상담에서 실제로 가장 자주 듣는 이야기들입니다.</div>
+<div class="worry-grid">${WORRIES.map((w) => `<div class="worry"><div class="q">${esc(w.q)}</div><div class="a">${esc(w.a)}</div></div>`).join('')}</div>
+
+<h2>수업은 이렇게 진행됩니다</h2>
+<div class="sec-sub">${total}개 지점이 같은 방식으로 운영됩니다.</div>
+<div class="steps">${STEPS.map((s, i) => `<div class="step"><span class="no">${i + 1}</span><div class="t">${esc(s[0])}</div><div class="d">${esc(s[1])}</div></div>`).join('')}</div>
+<article class="body">
+<p>학원의 성과는 학생이 다니는 학교의 시험에서 확인됩니다. 그래서 와와학습학원의 커리큘럼은 학원 편의가 아니라 학교 기준입니다. 지점마다 인근 학교 재학생들이 다니기 때문에 학교별 진도와 시험 정보가 매 학기 쌓이고, 시험 기간이 되면 그 자료가 수업의 중심이 됩니다. 화려한 설명회 대신, 진단과 개별 진도와 매주 반복되는 확인으로 성적을 만드는 곳입니다.</p>
+</article>
+${classPhoto(0)}
+
+<h2>과목별 수업</h2>
+<div class="sec-sub">다섯 과목 모두 학교 진도 동기화가 원칙입니다. 과목명 옆 글에서 수업 방식을 자세히 볼 수 있습니다.</div>
+<div class="list-grid">${SUBJ_HOME.map(([n, d, g]) => `<a href="./guide/${g}/">${n}학원 수업<span class="cnt">${esc(d)}</span></a>`).join('')}</div>
+
+<h2>학년별 안내</h2>
+<div class="lv-grid">
+<div class="lv"><div class="t">초등부</div><p>진도 경쟁보다 습관과 기본기입니다. 매 수업 정해진 분량을 스스로 끝내는 연습과 연산·어휘 점검으로 중학교를 준비합니다.</p><a href="./guide/elem-habit/">초등 고학년, 성적보다 습관 →</a></div>
+<div class="lv"><div class="t">중등부</div><p>지필고사와 수행평가가 성적을 만드는 시기입니다. 시험 4주 전 대비 일정과 수행 제출 관리까지 학원이 챙깁니다.</p><a href="./guide/exam-4weeks/">내신 4주 대비 플랜 →</a></div>
+<div class="lv"><div class="t">고등부</div><p>내신, 수행, 생기부를 한 흐름으로 관리합니다. 수업에서 다룬 내용을 교과 세특 주제로 이어 줍니다.</p><a href="./guide/saenggibu-setek/">교과 세특 만들기 →</a></div>
+</div>
+
+<h2>다녀 본 학생과 학부모의 이야기</h2>
+<div class="rev-grid three">${REVIEWS.slice(0, 3).map((r) => `<div class="rev"><div class="stars">★★★★★</div><div class="rtags"><span>${esc(r.gradeLabel)}</span><span>${esc(r.subject)}</span></div><p>${esc(r.text.length > 100 ? r.text.slice(0, 100) + '…' : r.text)}</p><div class="who">${esc(r.author)} · ${esc(r.meta)}</div></div>`).join('')}</div>
+<div class="more-link"><a href="./review/">수강후기 전체 보기 →</a></div>
+
 <h2 id="regions">지역별 지점 찾기</h2>
 <div class="sec-sub">지역을 선택하면 시·군·구별 지점과 관리 학교를 볼 수 있습니다.</div>
 <div class="list-grid">${regionCards}</div>
 
-<h2>수업 방식</h2>
-<article class="body">
-<p>지점마다 인근 학교 재학생들이 다니기 때문에 학교별 진도와 시험 정보가 매 학기 쌓입니다. 평소에는 학교 진도에 맞춰 수업하고, 시험 3~4주 전부터는 그 자료로 학교별 내신 대비에 들어갑니다.</p>
-<p>수업은 개별 진도입니다. 같은 시간에 앉아 있어도 학생마다 교재와 단원이 다릅니다. 진단으로 시작점을 정하고, 숙제와 테스트로 학습량을 유지하고, 시험 결과를 보고 다음 계획을 조정합니다.</p>
-<div class="note">2025년 소비자가 뽑은 올해의 대상(교육 부문)을 수상했습니다.</div>
-</article>
+<h2>영상으로 보는 와와</h2>
+<div class="sec-sub">공식 유튜브 채널의 소개·인터뷰 영상입니다.</div>
+${video(VIDEOS.pools.brand[0], '원장님 인터뷰와 학원 후기')}
+${video(VIDEOS.pools.interview[0], '합격 인터뷰: 평택 와와에서 서울대 합격생이 나온 이유')}
+<p style="font-size:14px;color:var(--ink-soft)">더 많은 영상은 <a href="https://www.youtube.com/@wawacoachingcenter" target="_blank" rel="noopener" style="color:var(--brick);font-weight:600">유튜브 채널</a>에서 볼 수 있습니다.</p>
 
 <h2>공부법 칼럼</h2>
 <div class="sec-sub">학원에서 학생들을 가르치며 정리한 공부 방법입니다. <a href="./guide/" style="color:var(--brick);font-weight:600">전체 ${GUIDES.length}편 보기</a></div>
 <div class="list-grid">${['exam-4weeks', 'study-planner', 'math-wrong', 'english-voca', 'saenggibu-setek', 'pre-high'].map((s) => { const g = GUIDES.find((x) => x.slug === s); return `<a href="./guide/${g.slug}/">${esc(g.title)}<span class="cnt">${esc(g.cat)}</span></a>`; }).join('')}</div>
 
-<h2>유튜브 영상</h2>
-<div class="sec-sub">공식 유튜브 채널의 지점, 학습법 영상입니다.</div>
-${video(VIDEOS.pools.interview[0], '합격 인터뷰: 평택 와와에서 서울대 합격생이 나온 이유')}
-<p style="font-size:14px;color:var(--ink-soft)">더 많은 영상은 <a href="https://www.youtube.com/@wawacoachingcenter" target="_blank" rel="noopener" style="color:var(--brick);font-weight:600">유튜브 채널</a>에서 볼 수 있습니다.</p>
+<h2>자주 묻는 질문</h2>
+<div class="faq">${HOME_FAQ.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>
 ${ctaBand(null, 0)}
 </section></div>`;
   write('index.html', shell({
-    title: `${BRAND} | 초중고 교과·내신 전문, 전국 ${total}개 지점`,
-    desc: `학교 진도와 출제 경향에 맞추는 초·중·고 학원. 전국 ${total}개 지점, ${Object.keys(schools).length.toLocaleString()}개 학교 관리. 국어·영어·수학·사회·과학.`,
+    title: `${BRAND} | 전국 ${total}개 지점, 학교별 내신 전문 초중고 학원`,
+    desc: `초·중·고 내신은 학교를 아는 학원에서. 전국 ${total}개 지점, ${totalSchools}개 학교의 진도·기출 기준 수업. 진단 후 개별 진도, 수행평가 관리, 수강료 공시. 2025 올해의 대상(교육 부문) 수상.`,
     canonical: DOMAIN + '/', body, depth: 0,
-    ld: { '@context': 'https://schema.org', '@type': 'EducationalOrganization', name: BRAND, url: DOMAIN, telephone: TEL, description: '초중고 교과 수업과 학교별 내신 관리 전문 학원' },
+    ld: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        { '@type': 'EducationalOrganization', name: BRAND, url: DOMAIN, telephone: TEL, description: '초중고 교과 수업과 학교별 내신 관리 전문 학원. 전국 지점 운영.', sameAs: ['https://www.youtube.com/@wawacoachingcenter'], award: '2025 소비자가 뽑은 올해의 대상 (교육 부문)' },
+        faqLd,
+      ],
+    },
   }));
 }
 
@@ -304,7 +365,7 @@ function buildBranch(r, d, b) {
 ${crumb(3, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { name: b.name }])}
 <div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b.name)}<h1>${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
-${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : ''}
+${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, b.branch_slug + 'promo'), '와와 소개 영상')}
 <h2>지점 안내</h2>
 <div class="tbl-scroll"><table class="info-table">
 <tr><th>주소</th><td>${esc(b.address)}${b.location_guide ? `<br><span style="color:var(--ink-soft);font-size:13.5px">${esc(b.location_guide).replace(/\n/g, '<br>')}</span>` : ''}</td></tr>
@@ -413,7 +474,7 @@ ${bodyBlock}
 <h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2>
 <div class="tbl-scroll"><table class="info-table">${bRows}</table></div>
 ${(b0.subjects || []).length ? `<h2>${esc(s.name)} 재학생 수업 과목</h2><p>${esc(b0.name)}에서 ${esc(s.name)} 학생이 들을 수 있는 과목은 ${esc((b0.subjects || []).join(', '))}입니다. ${s.level === '초' ? '초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.' : s.level === '중' ? '평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 ' + esc(s.name) + ' 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.' : '수업은 학교 진도와 동기화되며, 내신 4주 전부터 ' + esc(s.name) + ' 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.'}</p><div class="chips">${(b0.subjects || []).filter((su) => SUBJ_SLUG[su]).map((su) => `<a href="../../${b0.branch_slug}/${SUBJ_SLUG[su]}/">${esc(b0.dong)} ${esc(su)}학원</a>`).join('')}</div>` : ''}
-${bv ? '<h2>영상으로 보는 ' + esc(b0.name) + '</h2>' + video(bv) : ''}
+${bv ? '<h2>영상으로 보는 ' + esc(b0.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, key + 'promo'), '와와 소개 영상')}
 ${guideLinks(LEVEL_GUIDES[s.level], 4)}
 ${faq.html}
 </article>
@@ -467,7 +528,6 @@ ${ctaBand(null, 2)}</div>`;
 
 // ── 수강후기 ──
 function buildReview() {
-  const REVIEWS = fs.existsSync(path.join(__dirname, 'data', 'reviews.json')) ? require('./data/reviews.json') : [];
   const cards = REVIEWS.map((r) => `<div class="rev"><div class="stars">★★★★★</div><div class="rtags"><span>${esc(r.gradeLabel)}</span><span>${esc(r.subject)}</span></div><p>${esc(r.text)}</p><div class="who">${esc(r.author)} · ${esc(r.meta)}</div></div>`).join('');
   const body = `<div class="wrap">
 ${crumb(1, [{ name: '수강후기' }])}

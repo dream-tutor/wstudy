@@ -249,6 +249,31 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .form-ok.on { display: block; }
 .form-ok .big { font-size: 19px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
 
+/* ── 홈 홍보 섹션 ── */
+.hero .award { display: inline-block; background: rgba(240,181,143,.15); border: 1px solid rgba(240,181,143,.4); color: #f0c9a8; font-size: 13px; font-weight: 600; padding: 5px 13px; border-radius: 20px; margin-bottom: 18px; }
+.worry-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 16px 0; }
+@media (max-width: 700px) { .worry-grid { grid-template-columns: 1fr; } }
+.worry { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+.worry .q { font-weight: 700; color: var(--navy); font-size: 15.5px; margin-bottom: 8px; }
+.worry .q::before { content: '“'; color: var(--brick); font-size: 20px; margin-right: 2px; }
+.worry .a { font-size: 14.5px; color: var(--ink-soft); }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0; }
+@media (max-width: 860px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+.step { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 18px 16px; position: relative; }
+.step .no { display: inline-block; width: 26px; height: 26px; line-height: 26px; text-align: center; background: var(--navy); color: #f0c9a8; border-radius: 50%; font-size: 13px; font-weight: 800; margin-bottom: 10px; }
+.step .t { font-weight: 700; color: var(--navy); font-size: 15px; margin-bottom: 6px; }
+.step .d { font-size: 13.5px; color: var(--ink-soft); }
+.lv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 16px 0; }
+@media (max-width: 780px) { .lv-grid { grid-template-columns: 1fr; } }
+.lv { background: var(--white); border: 1px solid var(--line); border-top: 3px solid var(--brick); border-radius: 12px; padding: 20px; }
+.lv .t { font-weight: 800; color: var(--navy); font-size: 16px; margin-bottom: 8px; }
+.lv p { font-size: 14px; color: var(--ink-soft); margin-bottom: 10px; }
+.lv a { color: var(--brick); font-size: 13.5px; font-weight: 600; }
+.rev-grid.three { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 860px) { .rev-grid.three { grid-template-columns: 1fr; } }
+.more-link { text-align: right; font-size: 14px; margin-top: 4px; }
+.more-link a { color: var(--brick); font-weight: 600; }
+
 /* ── 플로팅 상담 버튼 ── */
 .float-cta { position: fixed; right: 14px; bottom: 14px; display: flex; flex-direction: column; gap: 8px; z-index: 900; }
 .float-cta a { display: block; padding: 12px 20px; border-radius: 30px; font-weight: 700; font-size: 14.5px; box-shadow: 0 6px 20px rgba(0,0,0,.25); text-align: center; }
