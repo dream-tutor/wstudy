@@ -33,34 +33,60 @@
 <div class="page-head"><span class="tag">경기</span><h1>남양주시 초중고 학원, 와와학습학원</h1><div class="sub">남양주시의 11개 지점이 인근 45개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
 <h2>지점 위치</h2>
-
+<div class="sec-sub" style="margin:10px 0 6px">지역을 차례로 선택하면 지도가 그 지역으로 좁혀집니다.</div>
+<div class="map-sels"><select id="ms_dong"><option value="">읍/면/동 전체</option></select></div>
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"별내점","g":"","la":37.6578998,"lo":127.1252764,"u":"/gyeonggi/namyangju/byeolnae/"},{"n":"다산점(W+)","g":"","la":37.6256262,"lo":127.1553701,"u":"/gyeonggi/namyangju/dasan-wplus/"},{"n":"다산도농점","g":"","la":37.6084434,"lo":127.1568302,"u":"/gyeonggi/namyangju/dasandonong/"},{"n":"별가람점","g":"","la":37.6672628,"lo":127.1175295,"u":"/gyeonggi/namyangju/byeolgalam/"},{"n":"호평점","g":"","la":37.6597152,"lo":127.2476198,"u":"/gyeonggi/namyangju/hopyeong/"},{"n":"평내점","g":"","la":37.6461136,"lo":127.2354104,"u":"/gyeonggi/namyangju/pyeongnae/"},{"n":"퇴계원점","g":"","la":37.649694,"lo":127.1407462,"u":"/gyeonggi/namyangju/toegyewon/"},{"n":"별내중앙점(모두)","g":"","la":37.6467053,"lo":127.1212147,"u":"/gyeonggi/namyangju/byeolnaejungang-all/"},{"n":"다산점","g":"","la":37.6251905,"lo":127.1546684,"u":"/gyeonggi/namyangju/dasan/"},{"n":"다산지금점","g":"","la":37.6005612,"lo":127.1743293,"u":"/gyeonggi/namyangju/dasanjigeum/"},{"n":"진접점","g":"","la":37.7198346,"lo":127.1971393,"u":"/gyeonggi/namyangju/jinjeob/"}];
+  var pts=[{"n":"별내점","gu":"","dong":"별내동","la":37.6578998,"lo":127.1252764,"u":"/gyeonggi/namyangju/byeolnae/"},{"n":"다산점(W+)","gu":"","dong":"다산동","la":37.6256262,"lo":127.1553701,"u":"/gyeonggi/namyangju/dasan-wplus/"},{"n":"다산도농점","gu":"","dong":"다산동","la":37.6084434,"lo":127.1568302,"u":"/gyeonggi/namyangju/dasandonong/"},{"n":"별가람점","gu":"","dong":"별내동","la":37.6672628,"lo":127.1175295,"u":"/gyeonggi/namyangju/byeolgalam/"},{"n":"호평점","gu":"","dong":"호평동","la":37.6597152,"lo":127.2476198,"u":"/gyeonggi/namyangju/hopyeong/"},{"n":"평내점","gu":"","dong":"평내동","la":37.6461136,"lo":127.2354104,"u":"/gyeonggi/namyangju/pyeongnae/"},{"n":"퇴계원점","gu":"","dong":"퇴계원읍","la":37.649694,"lo":127.1407462,"u":"/gyeonggi/namyangju/toegyewon/"},{"n":"별내중앙점(모두)","gu":"","dong":"별내동","la":37.6467053,"lo":127.1212147,"u":"/gyeonggi/namyangju/byeolnaejungang-all/"},{"n":"다산점","gu":"","dong":"다산동","la":37.6251905,"lo":127.1546684,"u":"/gyeonggi/namyangju/dasan/"},{"n":"다산지금점","gu":"","dong":"다산동","la":37.6005612,"lo":127.1743293,"u":"/gyeonggi/namyangju/dasanjigeum/"},{"n":"진접점","gu":"","dong":"진접읍","la":37.7198346,"lo":127.1971393,"u":"/gyeonggi/namyangju/jinjeob/"}];
+  var LV=["dong"];
+  var LB={"city":"시/군/구","gu":"구","dong":"읍/면/동"};
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
-  var ms=pts.map(function(p){
-    return {g:p.g,ll:[p.la,p.lo],m:L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>')};
-  });
+  pts.forEach(function(p){p._m=L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');});
   function fit(list){
-    if(list.length===1){map.setView(list[0].ll,15);}
-    else{map.fitBounds(L.latLngBounds(list.map(function(x){return x.ll})).pad(0.15));}
+    if(list.length===1){map.setView([list[0].la,list[0].lo],15);}
+    else{map.fitBounds(L.latLngBounds(list.map(function(p){return [p.la,p.lo]})).pad(0.15));}
   }
-  fit(ms);
-  var chips=document.getElementById('mapChips');
-  if(chips){chips.addEventListener('click',function(e){
-    var btn=e.target.closest('.mc');if(!btn)return;
-    var v=btn.getAttribute('data-g'),vis=[];
-    chips.querySelectorAll('.mc').forEach(function(c){c.classList.toggle('on',c===btn)});
-    ms.forEach(function(x){
-      if(!v||x.g===v){x.m.addTo(map);vis.push(x);}
-      else{map.removeLayer(x.m);}
+  fit(pts);
+  var sels={};LV.forEach(function(l){sels[l]=document.getElementById('ms_'+l);});
+  function matchBefore(p,idx){
+    for(var i=0;i<idx;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v)return false;}
+    return true;
+  }
+  function rebuild(){
+    var chainOk=true;
+    LV.forEach(function(l,i){
+      var el=sels[l];
+      if(!chainOk){el.innerHTML='<option value="">'+LB[l]+' 전체</option>';el.value='';el.disabled=true;return;}
+      var vals=[];
+      pts.forEach(function(p){if(matchBefore(p,i)&&p[l]&&vals.indexOf(p[l])<0)vals.push(p[l]);});
+      var cur=el.value;
+      el.innerHTML='<option value="">'+LB[l]+' 전체</option>'+vals.map(function(v){return '<option'+(v===cur?' selected':'')+'>'+v+'</option>'}).join('');
+      if(vals.indexOf(cur)<0)el.value='';
+      if(vals.length===0){el.disabled=true;return;}
+      el.disabled=false;
+      if(el.value==='')chainOk=false;
     });
-    fit(vis.length?vis:ms);
-  });}
+  }
+  function apply(){
+    var vis=[];
+    pts.forEach(function(p){
+      var ok=true;
+      for(var i=0;i<LV.length;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v){ok=false;break;}}
+      if(ok){p._m.addTo(map);vis.push(p);}else{map.removeLayer(p._m);}
+    });
+    fit(vis.length?vis:pts);
+  }
+  LV.forEach(function(l,idx){
+    sels[l].addEventListener('change',function(){
+      for(var j=idx+1;j<LV.length;j++)sels[LV[j]].value='';
+      rebuild();apply();
+    });
+  });
+  rebuild();
   map.on('click',function(){map.scrollWheelZoom.enable()});
 })();
 </script>

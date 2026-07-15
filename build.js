@@ -222,40 +222,69 @@ function guOf(b) {
 }
 // 지역·시군구 허브용 지점 마커 지도 (Leaflet + OSM 타일, 키 불필요)
 // withFilter=true면 시/군/구 선택 셀렉트가 붙고, 고르면 해당 지역 마커만 남기고 확대
-function branchesMap(pts, withFilter) {
+function branchesMap(pts, levels) {
   const valid = pts.filter((p) => p.la && p.lo);
   if (!valid.length) return '';
-  const groups = withFilter ? [...new Set(valid.map((p) => p.g).filter(Boolean))] : [];
+  levels = levels || [];
+  const LABEL = { city: '시/군/구', gu: '구', dong: '읍/면/동' };
+  const selHtml = levels.length
+    ? `<div class="sec-sub" style="margin:10px 0 6px">지역을 차례로 선택하면 지도가 그 지역으로 좁혀집니다.</div>
+<div class="map-sels">${levels.map((l) => `<select id="ms_${l}"><option value="">${LABEL[l]} 전체</option></select>`).join('')}</div>`
+    : '';
   return `<h2>지점 위치</h2>
-${withFilter ? `<div class="sec-sub" style="margin:10px 0 6px">시/군/구를 누르면 지도가 그 지역으로 좁혀집니다.</div>
-<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button>${groups.map((g) => `<button type="button" class="mc" data-g="${esc(g)}">${esc(g)}</button>`).join('')}</div>` : ''}
+${selHtml}
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
   var pts=${JSON.stringify(valid)};
+  var LV=${JSON.stringify(levels)};
+  var LB=${JSON.stringify(LABEL)};
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
-  var ms=pts.map(function(p){
-    return {g:p.g,ll:[p.la,p.lo],m:L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>')};
-  });
+  pts.forEach(function(p){p._m=L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');});
   function fit(list){
-    if(list.length===1){map.setView(list[0].ll,15);}
-    else{map.fitBounds(L.latLngBounds(list.map(function(x){return x.ll})).pad(0.15));}
+    if(list.length===1){map.setView([list[0].la,list[0].lo],15);}
+    else{map.fitBounds(L.latLngBounds(list.map(function(p){return [p.la,p.lo]})).pad(0.15));}
   }
-  fit(ms);
-  var chips=document.getElementById('mapChips');
-  if(chips){chips.addEventListener('click',function(e){
-    var btn=e.target.closest('.mc');if(!btn)return;
-    var v=btn.getAttribute('data-g'),vis=[];
-    chips.querySelectorAll('.mc').forEach(function(c){c.classList.toggle('on',c===btn)});
-    ms.forEach(function(x){
-      if(!v||x.g===v){x.m.addTo(map);vis.push(x);}
-      else{map.removeLayer(x.m);}
+  fit(pts);
+  var sels={};LV.forEach(function(l){sels[l]=document.getElementById('ms_'+l);});
+  function matchBefore(p,idx){
+    for(var i=0;i<idx;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v)return false;}
+    return true;
+  }
+  function rebuild(){
+    var chainOk=true;
+    LV.forEach(function(l,i){
+      var el=sels[l];
+      if(!chainOk){el.innerHTML='<option value="">'+LB[l]+' 전체</option>';el.value='';el.disabled=true;return;}
+      var vals=[];
+      pts.forEach(function(p){if(matchBefore(p,i)&&p[l]&&vals.indexOf(p[l])<0)vals.push(p[l]);});
+      var cur=el.value;
+      el.innerHTML='<option value="">'+LB[l]+' 전체</option>'+vals.map(function(v){return '<option'+(v===cur?' selected':'')+'>'+v+'</option>'}).join('');
+      if(vals.indexOf(cur)<0)el.value='';
+      if(vals.length===0){el.disabled=true;return;}
+      el.disabled=false;
+      if(el.value==='')chainOk=false;
     });
-    fit(vis.length?vis:ms);
-  });}
+  }
+  function apply(){
+    var vis=[];
+    pts.forEach(function(p){
+      var ok=true;
+      for(var i=0;i<LV.length;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v){ok=false;break;}}
+      if(ok){p._m.addTo(map);vis.push(p);}else{map.removeLayer(p._m);}
+    });
+    fit(vis.length?vis:pts);
+  }
+  LV.forEach(function(l,idx){
+    sels[l].addEventListener('change',function(){
+      for(var j=idx+1;j<LV.length;j++)sels[LV[j]].value='';
+      rebuild();apply();
+    });
+  });
+  rebuild();
   map.on('click',function(){map.scrollWheelZoom.enable()});
 })();
 </script>`;
@@ -450,13 +479,12 @@ function buildRegion(r) {
   const n = dists.reduce((s, d) => s + d.branches.length, 0);
   const pts = [];
   for (const d of Object.values(r.districts)) for (const b of d.branches) {
-    const gu = guOf(b);
-    pts.push({ n: b.name, g: gu ? `${d.name} ${gu}` : d.name, la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` });
+    pts.push({ n: b.name, city: d.name, gu: guOf(b) || '', dong: b.dong || '', la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` });
   }
   const body = `<div class="wrap">
 ${crumb(1, [{ name: r.name }])}
 <div class="page-head"><span class="tag">지역 안내</span><h1>${esc(r.name)} ${BRAND} 지점</h1><div class="sub">${esc(r.name)}에는 ${n}개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
-<article class="body">${branchesMap(pts, true)}<h2>시·군·구별 지점</h2><div class="list-grid">${cards}</div></article>
+<article class="body">${branchesMap(pts, ['city', 'gu', 'dong'])}<h2>시·군·구별 지점</h2><div class="list-grid">${cards}</div></article>
 ${ctaBand(null, 1)}</div>`;
   write(`${r.slug}/index.html`, shell({
     title: `${r.name} 초중고 학원 | ${BRAND} ${n}개 지점`,
@@ -483,7 +511,13 @@ function buildDistrict(r, d) {
 ${crumb(2, [{ name: r.name, slug: r.slug }, { name: d.name }])}
 <div class="page-head"><span class="tag">${esc(r.name)}</span><h1>${esc(d.name)} 초중고 학원, ${BRAND}</h1><div class="sub">${esc(d.name)}의 ${d.branches.length}개 지점이 인근 ${schoolsHere.length}개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
-${(() => { const dpts = d.branches.map((b) => ({ n: b.name, g: guOf(b) || '', la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` })); const gus = new Set(dpts.map((p) => p.g).filter(Boolean)); return branchesMap(dpts, gus.size >= 2); })()}
+${(() => {
+  const dpts = d.branches.map((b) => ({ n: b.name, gu: guOf(b) || '', dong: b.dong || '', la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` }));
+  const gus = new Set(dpts.map((p) => p.gu).filter(Boolean));
+  const dongs = new Set(dpts.map((p) => p.dong).filter(Boolean));
+  const lv = gus.size >= 2 ? ['gu', 'dong'] : (dongs.size >= 3 ? ['dong'] : []);
+  return branchesMap(dpts, lv);
+})()}
 <h2>${esc(d.name)} 지점</h2><div class="list-grid">${bCards}</div>
 <h2>관리 학교별 안내</h2>
 <p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다. 목록에 없는 인근 학교 학생도 수업이 가능합니다.</p>

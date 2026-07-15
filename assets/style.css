@@ -321,6 +321,10 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .ev .ed { color: var(--ink-soft); white-space: nowrap; }
 .ev-note { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
 
+.map-sels { display: flex; gap: 6px; margin: 0 0 8px; }
+.map-sels select { flex: 1; min-width: 0; padding: 11px 10px; border: 1.5px solid var(--navy); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--white); color: var(--ink); }
+.map-sels select:disabled { border-color: var(--line); color: #b0a99b; background: #f4f1ea; }
+
 /* ── 지도 ── */
 .map-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
 .map-chips .mc { padding: 7px 14px; border: 1.5px solid var(--line); border-radius: 20px; background: var(--white); font-size: 13.5px; font-family: inherit; cursor: pointer; color: var(--ink-soft); font-weight: 600; transition: background .12s, color .12s, border-color .12s; }

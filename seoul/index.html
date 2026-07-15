@@ -32,35 +32,60 @@
 <div class="crumb"><a href="../">홈</a><span>›</span>서울</div>
 <div class="page-head"><span class="tag">지역 안내</span><h1>서울 와와학습학원 지점</h1><div class="sub">서울에는 24개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
 <article class="body"><h2>지점 위치</h2>
-<div class="sec-sub" style="margin:10px 0 6px">시/군/구를 누르면 지도가 그 지역으로 좁혀집니다.</div>
-<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button><button type="button" class="mc" data-g="노원구">노원구</button><button type="button" class="mc" data-g="강북구">강북구</button><button type="button" class="mc" data-g="영등포구">영등포구</button><button type="button" class="mc" data-g="은평구 은평구">은평구 은평구</button><button type="button" class="mc" data-g="은평구">은평구</button><button type="button" class="mc" data-g="강서구">강서구</button><button type="button" class="mc" data-g="광진구">광진구</button><button type="button" class="mc" data-g="마포구">마포구</button><button type="button" class="mc" data-g="마포구 마포구">마포구 마포구</button><button type="button" class="mc" data-g="송파구">송파구</button><button type="button" class="mc" data-g="서대문구">서대문구</button><button type="button" class="mc" data-g="양천구">양천구</button><button type="button" class="mc" data-g="구로구 구로구">구로구 구로구</button><button type="button" class="mc" data-g="동대문구">동대문구</button><button type="button" class="mc" data-g="성북구">성북구</button><button type="button" class="mc" data-g="성북구 성북구">성북구 성북구</button><button type="button" class="mc" data-g="강동구">강동구</button><button type="button" class="mc" data-g="금천구">금천구</button></div>
+<div class="sec-sub" style="margin:10px 0 6px">지역을 차례로 선택하면 지도가 그 지역으로 좁혀집니다.</div>
+<div class="map-sels"><select id="ms_city"><option value="">시/군/구 전체</option></select><select id="ms_gu"><option value="">구 전체</option></select><select id="ms_dong"><option value="">읍/면/동 전체</option></select></div>
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"하계점","g":"노원구","la":37.6402578,"lo":127.0727398,"u":"/seoul/nowon/hagye/"},{"n":"삼각산점","g":"강북구","la":37.6185505,"lo":127.0188472,"u":"/seoul/gangbuk/samgagsan/"},{"n":"당산점","g":"영등포구","la":37.5319143,"lo":126.9010775,"u":"/seoul/yeongdeungpo/dangsan/"},{"n":"은평점","g":"은평구 은평구","la":37.6357288,"lo":126.9193479,"u":"/seoul/eunpyeong/eunpyeong/"},{"n":"은평점(글로리드)","g":"은평구","la":37.6357288,"lo":126.9193479,"u":"/seoul/eunpyeong/eunpyeong-glory/"},{"n":"은평점(W+)","g":"은평구","la":37.6348572,"lo":126.9195953,"u":"/seoul/eunpyeong/eunpyeong-wplus/"},{"n":"구산점","g":"은평구 은평구","la":37.6102971,"lo":126.9172726,"u":"/seoul/eunpyeong/gusan/"},{"n":"염창점","g":"강서구","la":37.5550456,"lo":126.8675265,"u":"/seoul/gangseo/yeomchang/"},{"n":"신방화점","g":"강서구","la":37.5669962,"lo":126.8170516,"u":"/seoul/gangseo/sinbanghwa/"},{"n":"내발산점","g":"강서구","la":37.5551609,"lo":126.8374944,"u":"/seoul/gangseo/naebalsan/"},{"n":"광장점","g":"광진구","la":37.5430356,"lo":127.0935659,"u":"/seoul/gwangjin/gwangjang/"},{"n":"마포2호점","g":"마포구","la":37.5432284,"lo":126.9383033,"u":"/seoul/mapo/mapo2ho/"},{"n":"마포점","g":"마포구 마포구","la":37.5433662,"lo":126.946174,"u":"/seoul/mapo/mapo/"},{"n":"상암점","g":"마포구 마포구","la":37.5801705,"lo":126.8832185,"u":"/seoul/mapo/sangam/"},{"n":"송파위례점","g":"송파구","la":37.4810773,"lo":127.1424444,"u":"/seoul/songpa/songpawilye/"},{"n":"가좌점","g":"서대문구","la":37.5755488,"lo":126.92155,"u":"/seoul/seodaemun/gajwa/"},{"n":"목동점","g":"양천구","la":37.5168559,"lo":126.8714868,"u":"/seoul/yangcheon/mogdong/"},{"n":"신도림점","g":"구로구 구로구","la":37.5066025,"lo":126.8787422,"u":"/seoul/guro/sindolim/"},{"n":"제기점","g":"동대문구","la":37.5782314,"lo":127.0312387,"u":"/seoul/dongdaemun/jegi/"},{"n":"종암점","g":"성북구","la":37.6026495,"lo":127.0314131,"u":"/seoul/seongbuk/jongam/"},{"n":"돈암점","g":"성북구 성북구","la":37.5988848,"lo":127.0220926,"u":"/seoul/seongbuk/donam/"},{"n":"동소문점","g":"성북구","la":37.5969079,"lo":127.0138407,"u":"/seoul/seongbuk/dongsomun/"},{"n":"명일점","g":"강동구","la":37.5489746,"lo":127.1439099,"u":"/seoul/gangdong/myeongil/"},{"n":"금천점","g":"금천구","la":37.4503622,"lo":126.9146175,"u":"/seoul/geumcheon/geumcheon/"}];
+  var pts=[{"n":"하계점","city":"노원구","gu":"","dong":"하계동","la":37.6402578,"lo":127.0727398,"u":"/seoul/nowon/hagye/"},{"n":"삼각산점","city":"강북구","gu":"","dong":"미아동","la":37.6185505,"lo":127.0188472,"u":"/seoul/gangbuk/samgagsan/"},{"n":"당산점","city":"영등포구","gu":"","dong":"당삼동","la":37.5319143,"lo":126.9010775,"u":"/seoul/yeongdeungpo/dangsan/"},{"n":"은평점","city":"은평구","gu":"은평구","dong":"진관동","la":37.6357288,"lo":126.9193479,"u":"/seoul/eunpyeong/eunpyeong/"},{"n":"은평점(글로리드)","city":"은평구","gu":"","dong":"진관동","la":37.6357288,"lo":126.9193479,"u":"/seoul/eunpyeong/eunpyeong-glory/"},{"n":"은평점(W+)","city":"은평구","gu":"","dong":"진관동","la":37.6348572,"lo":126.9195953,"u":"/seoul/eunpyeong/eunpyeong-wplus/"},{"n":"구산점","city":"은평구","gu":"은평구","dong":"역촌동","la":37.6102971,"lo":126.9172726,"u":"/seoul/eunpyeong/gusan/"},{"n":"염창점","city":"강서구","gu":"","dong":"염창동","la":37.5550456,"lo":126.8675265,"u":"/seoul/gangseo/yeomchang/"},{"n":"신방화점","city":"강서구","gu":"","dong":"마곡동","la":37.5669962,"lo":126.8170516,"u":"/seoul/gangseo/sinbanghwa/"},{"n":"내발산점","city":"강서구","gu":"","dong":"마곡동","la":37.5551609,"lo":126.8374944,"u":"/seoul/gangseo/naebalsan/"},{"n":"광장점","city":"광진구","gu":"","dong":"구의동","la":37.5430356,"lo":127.0935659,"u":"/seoul/gwangjin/gwangjang/"},{"n":"마포2호점","city":"마포구","gu":"","dong":"용강동","la":37.5432284,"lo":126.9383033,"u":"/seoul/mapo/mapo2ho/"},{"n":"마포점","city":"마포구","gu":"마포구","dong":"염리동","la":37.5433662,"lo":126.946174,"u":"/seoul/mapo/mapo/"},{"n":"상암점","city":"마포구","gu":"마포구","dong":"상암동","la":37.5801705,"lo":126.8832185,"u":"/seoul/mapo/sangam/"},{"n":"송파위례점","city":"송파구","gu":"","dong":"장지동","la":37.4810773,"lo":127.1424444,"u":"/seoul/songpa/songpawilye/"},{"n":"가좌점","city":"서대문구","gu":"","dong":"남가좌동","la":37.5755488,"lo":126.92155,"u":"/seoul/seodaemun/gajwa/"},{"n":"목동점","city":"양천구","gu":"","dong":"신정동","la":37.5168559,"lo":126.8714868,"u":"/seoul/yangcheon/mogdong/"},{"n":"신도림점","city":"구로구","gu":"구로구","dong":"신도림동","la":37.5066025,"lo":126.8787422,"u":"/seoul/guro/sindolim/"},{"n":"제기점","city":"동대문구","gu":"","dong":"용두동","la":37.5782314,"lo":127.0312387,"u":"/seoul/dongdaemun/jegi/"},{"n":"종암점","city":"성북구","gu":"","dong":"종암동","la":37.6026495,"lo":127.0314131,"u":"/seoul/seongbuk/jongam/"},{"n":"돈암점","city":"성북구","gu":"성북구","dong":"돈암동","la":37.5988848,"lo":127.0220926,"u":"/seoul/seongbuk/donam/"},{"n":"동소문점","city":"성북구","gu":"","dong":"동소문동","la":37.5969079,"lo":127.0138407,"u":"/seoul/seongbuk/dongsomun/"},{"n":"명일점","city":"강동구","gu":"","dong":"명일동","la":37.5489746,"lo":127.1439099,"u":"/seoul/gangdong/myeongil/"},{"n":"금천점","city":"금천구","gu":"","dong":"시흥동","la":37.4503622,"lo":126.9146175,"u":"/seoul/geumcheon/geumcheon/"}];
+  var LV=["city","gu","dong"];
+  var LB={"city":"시/군/구","gu":"구","dong":"읍/면/동"};
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
-  var ms=pts.map(function(p){
-    return {g:p.g,ll:[p.la,p.lo],m:L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>')};
-  });
+  pts.forEach(function(p){p._m=L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');});
   function fit(list){
-    if(list.length===1){map.setView(list[0].ll,15);}
-    else{map.fitBounds(L.latLngBounds(list.map(function(x){return x.ll})).pad(0.15));}
+    if(list.length===1){map.setView([list[0].la,list[0].lo],15);}
+    else{map.fitBounds(L.latLngBounds(list.map(function(p){return [p.la,p.lo]})).pad(0.15));}
   }
-  fit(ms);
-  var chips=document.getElementById('mapChips');
-  if(chips){chips.addEventListener('click',function(e){
-    var btn=e.target.closest('.mc');if(!btn)return;
-    var v=btn.getAttribute('data-g'),vis=[];
-    chips.querySelectorAll('.mc').forEach(function(c){c.classList.toggle('on',c===btn)});
-    ms.forEach(function(x){
-      if(!v||x.g===v){x.m.addTo(map);vis.push(x);}
-      else{map.removeLayer(x.m);}
+  fit(pts);
+  var sels={};LV.forEach(function(l){sels[l]=document.getElementById('ms_'+l);});
+  function matchBefore(p,idx){
+    for(var i=0;i<idx;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v)return false;}
+    return true;
+  }
+  function rebuild(){
+    var chainOk=true;
+    LV.forEach(function(l,i){
+      var el=sels[l];
+      if(!chainOk){el.innerHTML='<option value="">'+LB[l]+' 전체</option>';el.value='';el.disabled=true;return;}
+      var vals=[];
+      pts.forEach(function(p){if(matchBefore(p,i)&&p[l]&&vals.indexOf(p[l])<0)vals.push(p[l]);});
+      var cur=el.value;
+      el.innerHTML='<option value="">'+LB[l]+' 전체</option>'+vals.map(function(v){return '<option'+(v===cur?' selected':'')+'>'+v+'</option>'}).join('');
+      if(vals.indexOf(cur)<0)el.value='';
+      if(vals.length===0){el.disabled=true;return;}
+      el.disabled=false;
+      if(el.value==='')chainOk=false;
     });
-    fit(vis.length?vis:ms);
-  });}
+  }
+  function apply(){
+    var vis=[];
+    pts.forEach(function(p){
+      var ok=true;
+      for(var i=0;i<LV.length;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v){ok=false;break;}}
+      if(ok){p._m.addTo(map);vis.push(p);}else{map.removeLayer(p._m);}
+    });
+    fit(vis.length?vis:pts);
+  }
+  LV.forEach(function(l,idx){
+    sels[l].addEventListener('change',function(){
+      for(var j=idx+1;j<LV.length;j++)sels[LV[j]].value='';
+      rebuild();apply();
+    });
+  });
+  rebuild();
   map.on('click',function(){map.scrollWheelZoom.enable()});
 })();
 </script><h2>시·군·구별 지점</h2><div class="list-grid"><a href="./eunpyeong/">은평구<span class="cnt">지점 4곳 · 은평점, 은평점(글로리드), 은평점(W+) 외</span></a><a href="./gangseo/">강서구<span class="cnt">지점 3곳 · 염창점, 신방화점, 내발산점</span></a><a href="./mapo/">마포구<span class="cnt">지점 3곳 · 마포2호점, 마포점, 상암점</span></a><a href="./seongbuk/">성북구<span class="cnt">지점 3곳 · 종암점, 돈암점, 동소문점</span></a><a href="./nowon/">노원구<span class="cnt">지점 1곳 · 하계점</span></a><a href="./gangbuk/">강북구<span class="cnt">지점 1곳 · 삼각산점</span></a><a href="./yeongdeungpo/">영등포구<span class="cnt">지점 1곳 · 당산점</span></a><a href="./gwangjin/">광진구<span class="cnt">지점 1곳 · 광장점</span></a><a href="./songpa/">송파구<span class="cnt">지점 1곳 · 송파위례점</span></a><a href="./seodaemun/">서대문구<span class="cnt">지점 1곳 · 가좌점</span></a><a href="./yangcheon/">양천구<span class="cnt">지점 1곳 · 목동점</span></a><a href="./guro/">구로구<span class="cnt">지점 1곳 · 신도림점</span></a><a href="./dongdaemun/">동대문구<span class="cnt">지점 1곳 · 제기점</span></a><a href="./gangdong/">강동구<span class="cnt">지점 1곳 · 명일점</span></a><a href="./geumcheon/">금천구<span class="cnt">지점 1곳 · 금천점</span></a></div></article>
