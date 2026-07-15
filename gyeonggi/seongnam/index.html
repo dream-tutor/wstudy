@@ -33,13 +33,14 @@
 <div class="page-head"><span class="tag">경기</span><h1>성남시 초중고 학원, 와와학습학원</h1><div class="sub">성남시의 7개 지점이 인근 50개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
 <h2>지점 위치</h2>
-
+<div class="sec-sub" style="margin:10px 0 6px">시/군/구를 누르면 지도가 그 지역으로 좁혀집니다.</div>
+<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button><button type="button" class="mc" data-g="분당구">분당구</button><button type="button" class="mc" data-g="중원구">중원구</button><button type="button" class="mc" data-g="수정구">수정구</button></div>
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"미금점","la":37.3503915,"lo":127.1117463,"u":"/gyeonggi/seongnam/migeum/"},{"n":"야탑점","la":37.4171111,"lo":127.1333489,"u":"/gyeonggi/seongnam/yatab/"},{"n":"수진점","la":37.4353912,"lo":127.142943,"u":"/gyeonggi/seongnam/sujin/"},{"n":"이매점","la":37.3949809,"lo":127.1263777,"u":"/gyeonggi/seongnam/imae/"},{"n":"단대점","la":37.4497387,"lo":127.1586545,"u":"/gyeonggi/seongnam/dandae/"},{"n":"위례점","la":37.4734699,"lo":127.1426957,"u":"/gyeonggi/seongnam/wilye/"},{"n":"위례창곡점","la":37.4726432,"lo":127.1500709,"u":"/gyeonggi/seongnam/wilyechanggog/"}];
+  var pts=[{"n":"미금점","g":"분당구","la":37.3503915,"lo":127.1117463,"u":"/gyeonggi/seongnam/migeum/"},{"n":"야탑점","g":"중원구","la":37.4171111,"lo":127.1333489,"u":"/gyeonggi/seongnam/yatab/"},{"n":"수진점","g":"중원구","la":37.4353912,"lo":127.142943,"u":"/gyeonggi/seongnam/sujin/"},{"n":"이매점","g":"분당구","la":37.3949809,"lo":127.1263777,"u":"/gyeonggi/seongnam/imae/"},{"n":"단대점","g":"수정구","la":37.4497387,"lo":127.1586545,"u":"/gyeonggi/seongnam/dandae/"},{"n":"위례점","g":"수정구","la":37.4734699,"lo":127.1426957,"u":"/gyeonggi/seongnam/wilye/"},{"n":"위례창곡점","g":"수정구","la":37.4726432,"lo":127.1500709,"u":"/gyeonggi/seongnam/wilyechanggog/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

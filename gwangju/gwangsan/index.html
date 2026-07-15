@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"수완점","la":35.1877238,"lo":126.8232111,"u":"/gwangju/gwangsan/suwan/"},{"n":"첨단점","la":35.2136383,"lo":126.8464279,"u":"/gwangju/gwangsan/cheomdan/"},{"n":"선운점","la":35.1470706,"lo":126.7768305,"u":"/gwangju/gwangsan/seonun/"},{"n":"신창점","la":35.196887,"lo":126.8384007,"u":"/gwangju/gwangsan/sinchang/"}];
+  var pts=[{"n":"수완점","g":"","la":35.1877238,"lo":126.8232111,"u":"/gwangju/gwangsan/suwan/"},{"n":"첨단점","g":"","la":35.2136383,"lo":126.8464279,"u":"/gwangju/gwangsan/cheomdan/"},{"n":"선운점","g":"","la":35.1470706,"lo":126.7768305,"u":"/gwangju/gwangsan/seonun/"},{"n":"신창점","g":"","la":35.196887,"lo":126.8384007,"u":"/gwangju/gwangsan/sinchang/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

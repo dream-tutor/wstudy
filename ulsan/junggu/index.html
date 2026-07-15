@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"복산점","la":35.5634715,"lo":129.3340562,"u":"/ulsan/junggu/bogsan/"},{"n":"남외점","la":35.5649991,"lo":129.3500155,"u":"/ulsan/junggu/namoe/"}];
+  var pts=[{"n":"복산점","g":"","la":35.5634715,"lo":129.3340562,"u":"/ulsan/junggu/bogsan/"},{"n":"남외점","g":"","la":35.5649991,"lo":129.3500155,"u":"/ulsan/junggu/namoe/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

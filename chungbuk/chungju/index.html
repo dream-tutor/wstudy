@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"칠금점","la":36.9826402,"lo":127.917742,"u":"/chungbuk/chungju/chilgeum/"},{"n":"충주용산점","la":36.9587487,"lo":127.9413166,"u":"/chungbuk/chungju/chungjuyongsan/"}];
+  var pts=[{"n":"칠금점","g":"","la":36.9826402,"lo":127.917742,"u":"/chungbuk/chungju/chilgeum/"},{"n":"충주용산점","g":"","la":36.9587487,"lo":127.9413166,"u":"/chungbuk/chungju/chungjuyongsan/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

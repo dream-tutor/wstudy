@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"부발점","la":37.2533248,"lo":127.491319,"u":"/gyeonggi/icheon/bubal/"},{"n":"갈산점","la":37.2809442,"lo":127.4574947,"u":"/gyeonggi/icheon/galsan/"}];
+  var pts=[{"n":"부발점","g":"","la":37.2533248,"lo":127.491319,"u":"/gyeonggi/icheon/bubal/"},{"n":"갈산점","g":"","la":37.2809442,"lo":127.4574947,"u":"/gyeonggi/icheon/galsan/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

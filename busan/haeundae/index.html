@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"좌동점","la":35.1719523,"lo":129.174951,"u":"/busan/haeundae/jwadong/"},{"n":"반여점","la":35.2005767,"lo":129.1234961,"u":"/busan/haeundae/banyeo/"}];
+  var pts=[{"n":"좌동점","g":"해운대구","la":35.1719523,"lo":129.174951,"u":"/busan/haeundae/jwadong/"},{"n":"반여점","g":"","la":35.2005767,"lo":129.1234961,"u":"/busan/haeundae/banyeo/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

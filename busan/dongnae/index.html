@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"동래점","la":35.2060009,"lo":129.0749102,"u":"/busan/dongnae/donglae/"},{"n":"사직점","la":35.1969782,"lo":129.0557802,"u":"/busan/dongnae/sajig/"}];
+  var pts=[{"n":"동래점","g":"동래구","la":35.2060009,"lo":129.0749102,"u":"/busan/dongnae/donglae/"},{"n":"사직점","g":"","la":35.1969782,"lo":129.0557802,"u":"/busan/dongnae/sajig/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

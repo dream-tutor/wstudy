@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"둔산점","la":36.3509851,"lo":127.389516,"u":"/daejeon/seogu/dunsan/"},{"n":"관저점","la":36.296718,"lo":127.337795,"u":"/daejeon/seogu/gwanjeo/"},{"n":"도안점","la":36.3318258,"lo":127.3398562,"u":"/daejeon/seogu/doan/"},{"n":"둔산점(W+)","la":36.3509716,"lo":127.3881345,"u":"/daejeon/seogu/dunsan-wplus/"}];
+  var pts=[{"n":"둔산점","g":"서구","la":36.3509851,"lo":127.389516,"u":"/daejeon/seogu/dunsan/"},{"n":"관저점","g":"","la":36.296718,"lo":127.337795,"u":"/daejeon/seogu/gwanjeo/"},{"n":"도안점","g":"","la":36.3318258,"lo":127.3398562,"u":"/daejeon/seogu/doan/"},{"n":"둔산점(W+)","g":"","la":36.3509716,"lo":127.3881345,"u":"/daejeon/seogu/dunsan-wplus/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

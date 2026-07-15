@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"석사점","la":37.864,"lo":127.737,"u":"/gangwon/chuncheon/seogsa/"},{"n":"후평점","la":37.8818176,"lo":127.7480278,"u":"/gangwon/chuncheon/hupyeong/"}];
+  var pts=[{"n":"석사점","g":"","la":37.864,"lo":127.737,"u":"/gangwon/chuncheon/seogsa/"},{"n":"후평점","g":"","la":37.8818176,"lo":127.7480278,"u":"/gangwon/chuncheon/hupyeong/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

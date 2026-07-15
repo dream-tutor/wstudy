@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"철산점","la":37.4715773,"lo":126.8654573,"u":"/gyeonggi/gwangmyeong/cheolsan/"},{"n":"소하점","la":37.4332917,"lo":126.8797979,"u":"/gyeonggi/gwangmyeong/soha/"},{"n":"광명점","la":37.4729613,"lo":126.8509787,"u":"/gyeonggi/gwangmyeong/gwangmyeong/"}];
+  var pts=[{"n":"철산점","g":"","la":37.4715773,"lo":126.8654573,"u":"/gyeonggi/gwangmyeong/cheolsan/"},{"n":"소하점","g":"","la":37.4332917,"lo":126.8797979,"u":"/gyeonggi/gwangmyeong/soha/"},{"n":"광명점","g":"","la":37.4729613,"lo":126.8509787,"u":"/gyeonggi/gwangmyeong/gwangmyeong/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

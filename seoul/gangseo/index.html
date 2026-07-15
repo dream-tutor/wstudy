@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"염창점","la":37.5550456,"lo":126.8675265,"u":"/seoul/gangseo/yeomchang/"},{"n":"신방화점","la":37.5669962,"lo":126.8170516,"u":"/seoul/gangseo/sinbanghwa/"},{"n":"내발산점","la":37.5551609,"lo":126.8374944,"u":"/seoul/gangseo/naebalsan/"}];
+  var pts=[{"n":"염창점","g":"","la":37.5550456,"lo":126.8675265,"u":"/seoul/gangseo/yeomchang/"},{"n":"신방화점","g":"","la":37.5669962,"lo":126.8170516,"u":"/seoul/gangseo/sinbanghwa/"},{"n":"내발산점","g":"","la":37.5551609,"lo":126.8374944,"u":"/seoul/gangseo/naebalsan/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

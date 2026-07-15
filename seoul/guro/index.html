@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"신도림점","la":37.5066025,"lo":126.8787422,"u":"/seoul/guro/sindolim/"}];
+  var pts=[{"n":"신도림점","g":"구로구","la":37.5066025,"lo":126.8787422,"u":"/seoul/guro/sindolim/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

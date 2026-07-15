@@ -215,6 +215,11 @@ function osmMap(b) {
   const bbox = encodeURIComponent(`${b.lng - dx},${b.lat - d},${b.lng + dx},${b.lat + d}`);
   return `<h2>오시는 길</h2><div class="mapbox"><iframe loading="lazy" title="${esc(b.name)} 위치 지도" src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${b.lat}%2C${b.lng}"></iframe><div class="cap">${esc(b.address)}${b.nearby_text ? ' · ' + esc((b.nearby_text.split('/')[1] || '').trim()) : ''}</div></div>`;
 }
+// 주소에서 일반구 추출 — "경기 수원시 장안구 …" → "장안구" (없으면 null)
+function guOf(b) {
+  const m = (b.address || '').match(/[가-힣]+시\s+([가-힣]{1,6}구)(?=\s)/);
+  return m ? m[1] : null;
+}
 // 지역·시군구 허브용 지점 마커 지도 (Leaflet + OSM 타일, 키 불필요)
 // withFilter=true면 시/군/구 선택 셀렉트가 붙고, 고르면 해당 지역 마커만 남기고 확대
 function branchesMap(pts, withFilter) {
@@ -444,7 +449,10 @@ function buildRegion(r) {
   const cards = dists.map((d) => `<a href="./${d.slug}/">${esc(d.name)}<span class="cnt">지점 ${d.branches.length}곳 · ${d.branches.map((b) => b.name).slice(0, 3).join(', ')}${d.branches.length > 3 ? ' 외' : ''}</span></a>`).join('');
   const n = dists.reduce((s, d) => s + d.branches.length, 0);
   const pts = [];
-  for (const d of Object.values(r.districts)) for (const b of d.branches) pts.push({ n: b.name, g: d.name, la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` });
+  for (const d of Object.values(r.districts)) for (const b of d.branches) {
+    const gu = guOf(b);
+    pts.push({ n: b.name, g: gu ? `${d.name} ${gu}` : d.name, la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` });
+  }
   const body = `<div class="wrap">
 ${crumb(1, [{ name: r.name }])}
 <div class="page-head"><span class="tag">지역 안내</span><h1>${esc(r.name)} ${BRAND} 지점</h1><div class="sub">${esc(r.name)}에는 ${n}개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
@@ -475,7 +483,7 @@ function buildDistrict(r, d) {
 ${crumb(2, [{ name: r.name, slug: r.slug }, { name: d.name }])}
 <div class="page-head"><span class="tag">${esc(r.name)}</span><h1>${esc(d.name)} 초중고 학원, ${BRAND}</h1><div class="sub">${esc(d.name)}의 ${d.branches.length}개 지점이 인근 ${schoolsHere.length}개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
-${branchesMap(d.branches.map((b) => ({ n: b.name, la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` })))}
+${(() => { const dpts = d.branches.map((b) => ({ n: b.name, g: guOf(b) || '', la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` })); const gus = new Set(dpts.map((p) => p.g).filter(Boolean)); return branchesMap(dpts, gus.size >= 2); })()}
 <h2>${esc(d.name)} 지점</h2><div class="list-grid">${bCards}</div>
 <h2>관리 학교별 안내</h2>
 <p>학교 이름을 선택하면 그 학교 재학생을 위한 내신 대비 안내 페이지로 이동합니다. 목록에 없는 인근 학교 학생도 수업이 가능합니다.</p>

@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"수성2가점","la":35.8541702,"lo":128.6141903,"u":"/daegu/suseong/suseong2ga/"},{"n":"알파시티점","la":35.8398886,"lo":128.6914147,"u":"/daegu/suseong/alpasiti/"},{"n":"수성만촌점","la":35.8704369,"lo":128.6337381,"u":"/daegu/suseong/suseongmanchon/"}];
+  var pts=[{"n":"수성2가점","g":"","la":35.8541702,"lo":128.6141903,"u":"/daegu/suseong/suseong2ga/"},{"n":"알파시티점","g":"","la":35.8398886,"lo":128.6914147,"u":"/daegu/suseong/alpasiti/"},{"n":"수성만촌점","g":"","la":35.8704369,"lo":128.6337381,"u":"/daegu/suseong/suseongmanchon/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

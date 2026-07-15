@@ -33,13 +33,13 @@
 <div class="page-head"><span class="tag">지역 안내</span><h1>충남 와와학습학원 지점</h1><div class="sub">충남에는 6개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
 <article class="body"><h2>지점 위치</h2>
 <div class="sec-sub" style="margin:10px 0 6px">시/군/구를 누르면 지도가 그 지역으로 좁혀집니다.</div>
-<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button><button type="button" class="mc" data-g="천안시">천안시</button><button type="button" class="mc" data-g="아산시">아산시</button><button type="button" class="mc" data-g="당진시">당진시</button></div>
+<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button><button type="button" class="mc" data-g="천안시 동남구">천안시 동남구</button><button type="button" class="mc" data-g="천안시 서북구">천안시 서북구</button><button type="button" class="mc" data-g="아산시">아산시</button><button type="button" class="mc" data-g="당진시">당진시</button></div>
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"신방점","g":"천안시","la":36.7927026,"lo":127.1293072,"u":"/chungnam/cheonan/sinbang/"},{"n":"쌍용점","g":"천안시","la":36.7997683,"lo":127.1245321,"u":"/chungnam/cheonan/ssangyong/"},{"n":"불당점","g":"천안시","la":36.878467,"lo":127.154648,"u":"/chungnam/cheonan/buldang/"},{"n":"두정점","g":"천안시","la":36.8360637,"lo":127.1458465,"u":"/chungnam/cheonan/dujeong/"},{"n":"탕정점(모두)","g":"아산시","la":36.7867785,"lo":127.0839148,"u":"/chungnam/asan/tangjeong-all/"},{"n":"당진중앙점","g":"당진시","la":36.8969401,"lo":126.6349203,"u":"/chungnam/dangjin/dangjinjungang/"}];
+  var pts=[{"n":"신방점","g":"천안시 동남구","la":36.7927026,"lo":127.1293072,"u":"/chungnam/cheonan/sinbang/"},{"n":"쌍용점","g":"천안시 서북구","la":36.7997683,"lo":127.1245321,"u":"/chungnam/cheonan/ssangyong/"},{"n":"불당점","g":"천안시 서북구","la":36.878467,"lo":127.154648,"u":"/chungnam/cheonan/buldang/"},{"n":"두정점","g":"천안시 서북구","la":36.8360637,"lo":127.1458465,"u":"/chungnam/cheonan/dujeong/"},{"n":"탕정점(모두)","g":"아산시","la":36.7867785,"lo":127.0839148,"u":"/chungnam/asan/tangjeong-all/"},{"n":"당진중앙점","g":"당진시","la":36.8969401,"lo":126.6349203,"u":"/chungnam/dangjin/dangjinjungang/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

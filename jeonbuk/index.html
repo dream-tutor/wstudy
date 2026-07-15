@@ -33,13 +33,13 @@
 <div class="page-head"><span class="tag">지역 안내</span><h1>전북 와와학습학원 지점</h1><div class="sub">전북에는 3개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
 <article class="body"><h2>지점 위치</h2>
 <div class="sec-sub" style="margin:10px 0 6px">시/군/구를 누르면 지도가 그 지역으로 좁혀집니다.</div>
-<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button><button type="button" class="mc" data-g="전주시">전주시</button><button type="button" class="mc" data-g="완주군">완주군</button></div>
+<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button><button type="button" class="mc" data-g="전주시 완산구">전주시 완산구</button><button type="button" class="mc" data-g="전주시 덕진구">전주시 덕진구</button><button type="button" class="mc" data-g="완주군">완주군</button></div>
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"서신점","g":"전주시","la":35.8257602,"lo":127.1155814,"u":"/jeonbuk/jeonju/seosin/"},{"n":"송천점","g":"전주시","la":35.8617124,"lo":127.1263177,"u":"/jeonbuk/jeonju/songcheon/"},{"n":"전주혁신점","g":"완주군","la":35.8393654,"lo":127.0574272,"u":"/jeonbuk/wanju/jeonjuhyeogsin/"}];
+  var pts=[{"n":"서신점","g":"전주시 완산구","la":35.8257602,"lo":127.1155814,"u":"/jeonbuk/jeonju/seosin/"},{"n":"송천점","g":"전주시 덕진구","la":35.8617124,"lo":127.1263177,"u":"/jeonbuk/jeonju/songcheon/"},{"n":"전주혁신점","g":"완주군","la":35.8393654,"lo":127.0574272,"u":"/jeonbuk/wanju/jeonjuhyeogsin/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

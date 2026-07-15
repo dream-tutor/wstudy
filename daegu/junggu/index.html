@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"반월당점","la":35.8612577,"lo":128.6001948,"u":"/daegu/junggu/banwoldang/"},{"n":"대구역점","la":35.8759937,"lo":128.5864791,"u":"/daegu/junggu/daeguyeog/"},{"n":"대구역점2호관","la":35.8759937,"lo":128.5864791,"u":"/daegu/junggu/daeguyeog2hogwan/"}];
+  var pts=[{"n":"반월당점","g":"","la":35.8612577,"lo":128.6001948,"u":"/daegu/junggu/banwoldang/"},{"n":"대구역점","g":"","la":35.8759937,"lo":128.5864791,"u":"/daegu/junggu/daeguyeog/"},{"n":"대구역점2호관","g":"","la":35.8759937,"lo":128.5864791,"u":"/daegu/junggu/daeguyeog2hogwan/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"이곡점","la":35.8544887,"lo":128.5094193,"u":"/daegu/dalseo/igog/"},{"n":"신월성점","la":35.824783,"lo":128.527381,"u":"/daegu/dalseo/sinwolseong/"},{"n":"진천점(모두)","la":35.8165622,"lo":128.5174116,"u":"/daegu/dalseo/jincheon-all/"},{"n":"대구장기점","la":35.8439108,"lo":128.5329332,"u":"/daegu/dalseo/daegujanggi/"}];
+  var pts=[{"n":"이곡점","g":"달서구","la":35.8544887,"lo":128.5094193,"u":"/daegu/dalseo/igog/"},{"n":"신월성점","g":"","la":35.824783,"lo":128.527381,"u":"/daegu/dalseo/sinwolseong/"},{"n":"진천점(모두)","g":"달서구","la":35.8165622,"lo":128.5174116,"u":"/daegu/dalseo/jincheon-all/"},{"n":"대구장기점","g":"","la":35.8439108,"lo":128.5329332,"u":"/daegu/dalseo/daegujanggi/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

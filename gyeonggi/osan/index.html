@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"오산점","la":37.1495068,"lo":127.0760449,"u":"/gyeonggi/osan/osan/"},{"n":"세교점","la":37.1766517,"lo":127.0455185,"u":"/gyeonggi/osan/segyo/"},{"n":"오산대역점","la":37.1698713,"lo":127.0659444,"u":"/gyeonggi/osan/osandaeyeog/"}];
+  var pts=[{"n":"오산점","g":"","la":37.1495068,"lo":127.0760449,"u":"/gyeonggi/osan/osan/"},{"n":"세교점","g":"","la":37.1766517,"lo":127.0455185,"u":"/gyeonggi/osan/segyo/"},{"n":"오산대역점","g":"","la":37.1698713,"lo":127.0659444,"u":"/gyeonggi/osan/osandaeyeog/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

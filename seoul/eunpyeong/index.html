@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"은평점","la":37.6357288,"lo":126.9193479,"u":"/seoul/eunpyeong/eunpyeong/"},{"n":"은평점(글로리드)","la":37.6357288,"lo":126.9193479,"u":"/seoul/eunpyeong/eunpyeong-glory/"},{"n":"은평점(W+)","la":37.6348572,"lo":126.9195953,"u":"/seoul/eunpyeong/eunpyeong-wplus/"},{"n":"구산점","la":37.6102971,"lo":126.9172726,"u":"/seoul/eunpyeong/gusan/"}];
+  var pts=[{"n":"은평점","g":"은평구","la":37.6357288,"lo":126.9193479,"u":"/seoul/eunpyeong/eunpyeong/"},{"n":"은평점(글로리드)","g":"","la":37.6357288,"lo":126.9193479,"u":"/seoul/eunpyeong/eunpyeong-glory/"},{"n":"은평점(W+)","g":"","la":37.6348572,"lo":126.9195953,"u":"/seoul/eunpyeong/eunpyeong-wplus/"},{"n":"구산점","g":"은평구","la":37.6102971,"lo":126.9172726,"u":"/seoul/eunpyeong/gusan/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

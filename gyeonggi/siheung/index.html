@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"목감점(모두)","la":37.3811134,"lo":126.8624578,"u":"/gyeonggi/siheung/moggam-all/"},{"n":"배곧점","la":37.3775947,"lo":126.7269799,"u":"/gyeonggi/siheung/baegod/"},{"n":"장곡점","la":37.3780689,"lo":126.7852594,"u":"/gyeonggi/siheung/janggog/"},{"n":"시흥대야점","la":37.4452662,"lo":126.7978569,"u":"/gyeonggi/siheung/siheungdaeya/"}];
+  var pts=[{"n":"목감점(모두)","g":"","la":37.3811134,"lo":126.8624578,"u":"/gyeonggi/siheung/moggam-all/"},{"n":"배곧점","g":"","la":37.3775947,"lo":126.7269799,"u":"/gyeonggi/siheung/baegod/"},{"n":"장곡점","g":"","la":37.3780689,"lo":126.7852594,"u":"/gyeonggi/siheung/janggog/"},{"n":"시흥대야점","g":"","la":37.4452662,"lo":126.7978569,"u":"/gyeonggi/siheung/siheungdaeya/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

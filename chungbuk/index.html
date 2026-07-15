@@ -33,13 +33,13 @@
 <div class="page-head"><span class="tag">지역 안내</span><h1>충북 와와학습학원 지점</h1><div class="sub">충북에는 6개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
 <article class="body"><h2>지점 위치</h2>
 <div class="sec-sub" style="margin:10px 0 6px">시/군/구를 누르면 지도가 그 지역으로 좁혀집니다.</div>
-<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button><button type="button" class="mc" data-g="충주시">충주시</button><button type="button" class="mc" data-g="청주시">청주시</button></div>
+<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button><button type="button" class="mc" data-g="충주시">충주시</button><button type="button" class="mc" data-g="청주시 흥덕구">청주시 흥덕구</button><button type="button" class="mc" data-g="청주시 서원구">청주시 서원구</button></div>
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"칠금점","g":"충주시","la":36.9826402,"lo":127.917742,"u":"/chungbuk/chungju/chilgeum/"},{"n":"충주용산점","g":"충주시","la":36.9587487,"lo":127.9413166,"u":"/chungbuk/chungju/chungjuyongsan/"},{"n":"복대점","g":"청주시","la":36.6345549,"lo":127.429376,"u":"/chungbuk/cheongju/bogdae/"},{"n":"가경점","g":"청주시","la":36.619154,"lo":127.426212,"u":"/chungbuk/cheongju/gagyeong/"},{"n":"개신점","g":"청주시","la":36.6206327,"lo":127.445374,"u":"/chungbuk/cheongju/gaesin/"},{"n":"산남점","g":"청주시","la":36.6118735,"lo":127.471898,"u":"/chungbuk/cheongju/sannam/"}];
+  var pts=[{"n":"칠금점","g":"충주시","la":36.9826402,"lo":127.917742,"u":"/chungbuk/chungju/chilgeum/"},{"n":"충주용산점","g":"충주시","la":36.9587487,"lo":127.9413166,"u":"/chungbuk/chungju/chungjuyongsan/"},{"n":"복대점","g":"청주시 흥덕구","la":36.6345549,"lo":127.429376,"u":"/chungbuk/cheongju/bogdae/"},{"n":"가경점","g":"청주시 흥덕구","la":36.619154,"lo":127.426212,"u":"/chungbuk/cheongju/gagyeong/"},{"n":"개신점","g":"청주시 서원구","la":36.6206327,"lo":127.445374,"u":"/chungbuk/cheongju/gaesin/"},{"n":"산남점","g":"청주시 서원구","la":36.6118735,"lo":127.471898,"u":"/chungbuk/cheongju/sannam/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

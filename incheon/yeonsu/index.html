@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"동춘점","la":37.4066574,"lo":126.6712505,"u":"/incheon/yeonsu/dongchun/"},{"n":"웰카운티점","la":37.3794166,"lo":126.6460146,"u":"/incheon/yeonsu/welkaunti/"},{"n":"송도점","la":37.3948699,"lo":126.6463966,"u":"/incheon/yeonsu/songdo/"},{"n":"송도점(W+)","la":37.3948699,"lo":126.6463966,"u":"/incheon/yeonsu/songdo-wplus/"}];
+  var pts=[{"n":"동춘점","g":"","la":37.4066574,"lo":126.6712505,"u":"/incheon/yeonsu/dongchun/"},{"n":"웰카운티점","g":"","la":37.3794166,"lo":126.6460146,"u":"/incheon/yeonsu/welkaunti/"},{"n":"송도점","g":"","la":37.3948699,"lo":126.6463966,"u":"/incheon/yeonsu/songdo/"},{"n":"송도점(W+)","g":"","la":37.3948699,"lo":126.6463966,"u":"/incheon/yeonsu/songdo-wplus/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

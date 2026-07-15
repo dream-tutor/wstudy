@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"화성태안점","la":37.2062922,"lo":127.0418922,"u":"/gyeonggi/hwaseong/hwaseongtaean/"},{"n":"봉담점","la":37.2262366,"lo":126.9461843,"u":"/gyeonggi/hwaseong/bongdam/"},{"n":"동탄목동점","la":37.1821303,"lo":127.123479,"u":"/gyeonggi/hwaseong/dongtanmogdong/"},{"n":"동탄호수점","la":37.1673796,"lo":127.1072642,"u":"/gyeonggi/hwaseong/dongtanhosu/"},{"n":"병점점","la":37.2135799,"lo":127.0418873,"u":"/gyeonggi/hwaseong/byeong/"},{"n":"향남점","la":37.1317745,"lo":126.9219067,"u":"/gyeonggi/hwaseong/hyangnam/"},{"n":"영천점","la":37.2075814,"lo":127.1107818,"u":"/gyeonggi/hwaseong/yeongcheon/"},{"n":"반송점","la":37.2073616,"lo":127.0736741,"u":"/gyeonggi/hwaseong/bansong/"}];
+  var pts=[{"n":"화성태안점","g":"","la":37.2062922,"lo":127.0418922,"u":"/gyeonggi/hwaseong/hwaseongtaean/"},{"n":"봉담점","g":"","la":37.2262366,"lo":126.9461843,"u":"/gyeonggi/hwaseong/bongdam/"},{"n":"동탄목동점","g":"","la":37.1821303,"lo":127.123479,"u":"/gyeonggi/hwaseong/dongtanmogdong/"},{"n":"동탄호수점","g":"","la":37.1673796,"lo":127.1072642,"u":"/gyeonggi/hwaseong/dongtanhosu/"},{"n":"병점점","g":"","la":37.2135799,"lo":127.0418873,"u":"/gyeonggi/hwaseong/byeong/"},{"n":"향남점","g":"","la":37.1317745,"lo":126.9219067,"u":"/gyeonggi/hwaseong/hyangnam/"},{"n":"영천점","g":"","la":37.2075814,"lo":127.1107818,"u":"/gyeonggi/hwaseong/yeongcheon/"},{"n":"반송점","g":"","la":37.2073616,"lo":127.0736741,"u":"/gyeonggi/hwaseong/bansong/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

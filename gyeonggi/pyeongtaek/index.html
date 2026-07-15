@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"비전점","la":37.0043914,"lo":127.104453,"u":"/gyeonggi/pyeongtaek/bijeon/"},{"n":"이충점","la":37.0601301,"lo":127.0655117,"u":"/gyeonggi/pyeongtaek/ichung/"}];
+  var pts=[{"n":"비전점","g":"","la":37.0043914,"lo":127.104453,"u":"/gyeonggi/pyeongtaek/bijeon/"},{"n":"이충점","g":"","la":37.0601301,"lo":127.0655117,"u":"/gyeonggi/pyeongtaek/ichung/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

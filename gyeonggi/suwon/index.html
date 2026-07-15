@@ -33,13 +33,14 @@
 <div class="page-head"><span class="tag">경기</span><h1>수원시 초중고 학원, 와와학습학원</h1><div class="sub">수원시의 6개 지점이 인근 43개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
 <h2>지점 위치</h2>
-
+<div class="sec-sub" style="margin:10px 0 6px">시/군/구를 누르면 지도가 그 지역으로 좁혀집니다.</div>
+<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button><button type="button" class="mc" data-g="권선구">권선구</button><button type="button" class="mc" data-g="영통구">영통구</button><button type="button" class="mc" data-g="장안구">장안구</button></div>
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"호매실점","la":37.2739115,"lo":126.9430843,"u":"/gyeonggi/suwon/homaesil/"},{"n":"영통구청점","la":37.2600418,"lo":127.0439429,"u":"/gyeonggi/suwon/yeongtonggucheong/"},{"n":"천천점","la":37.2973076,"lo":126.9826899,"u":"/gyeonggi/suwon/cheoncheon/"},{"n":"영통점","la":37.2559363,"lo":127.0747301,"u":"/gyeonggi/suwon/yeongtong/"},{"n":"망포점","la":37.2387661,"lo":127.0558859,"u":"/gyeonggi/suwon/mangpo/"},{"n":"서수원점","la":37.2595845,"lo":126.9627028,"u":"/gyeonggi/suwon/seosuwon/"}];
+  var pts=[{"n":"호매실점","g":"권선구","la":37.2739115,"lo":126.9430843,"u":"/gyeonggi/suwon/homaesil/"},{"n":"영통구청점","g":"영통구","la":37.2600418,"lo":127.0439429,"u":"/gyeonggi/suwon/yeongtonggucheong/"},{"n":"천천점","g":"장안구","la":37.2973076,"lo":126.9826899,"u":"/gyeonggi/suwon/cheoncheon/"},{"n":"영통점","g":"영통구","la":37.2559363,"lo":127.0747301,"u":"/gyeonggi/suwon/yeongtong/"},{"n":"망포점","g":"영통구","la":37.2387661,"lo":127.0558859,"u":"/gyeonggi/suwon/mangpo/"},{"n":"서수원점","g":"권선구","la":37.2595845,"lo":126.9627028,"u":"/gyeonggi/suwon/seosuwon/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

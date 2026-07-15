@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"교하점","la":37.7261179,"lo":126.717702,"u":"/gyeonggi/paju/gyoha/"},{"n":"산내점","la":37.7295167,"lo":126.7351114,"u":"/gyeonggi/paju/sannae/"},{"n":"운정중앙점","la":37.7097389,"lo":126.7233652,"u":"/gyeonggi/paju/unjeongjungang/"},{"n":"금릉점","la":37.7519372,"lo":126.7683492,"u":"/gyeonggi/paju/geumleung/"},{"n":"운정점","la":37.7117457,"lo":126.744466,"u":"/gyeonggi/paju/unjeong/"},{"n":"운정호수점","la":37.7287542,"lo":126.7636587,"u":"/gyeonggi/paju/unjeonghosu/"}];
+  var pts=[{"n":"교하점","g":"","la":37.7261179,"lo":126.717702,"u":"/gyeonggi/paju/gyoha/"},{"n":"산내점","g":"","la":37.7295167,"lo":126.7351114,"u":"/gyeonggi/paju/sannae/"},{"n":"운정중앙점","g":"","la":37.7097389,"lo":126.7233652,"u":"/gyeonggi/paju/unjeongjungang/"},{"n":"금릉점","g":"","la":37.7519372,"lo":126.7683492,"u":"/gyeonggi/paju/geumleung/"},{"n":"운정점","g":"","la":37.7117457,"lo":126.744466,"u":"/gyeonggi/paju/unjeong/"},{"n":"운정호수점","g":"","la":37.7287542,"lo":126.7636587,"u":"/gyeonggi/paju/unjeonghosu/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

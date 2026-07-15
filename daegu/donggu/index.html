@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"율하점","la":35.8623994,"lo":128.7015455,"u":"/daegu/donggu/yulha/"},{"n":"이시아폴리스점","la":35.9229047,"lo":128.6371487,"u":"/daegu/donggu/isiapolliseu/"}];
+  var pts=[{"n":"율하점","g":"","la":35.8623994,"lo":128.7015455,"u":"/daegu/donggu/yulha/"},{"n":"이시아폴리스점","g":"","la":35.9229047,"lo":128.6371487,"u":"/daegu/donggu/isiapolliseu/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

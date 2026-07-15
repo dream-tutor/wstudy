@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"지족점","la":36.3746441,"lo":127.3195244,"u":"/daejeon/yuseong/jijog/"},{"n":"반석점","la":36.3872542,"lo":127.3081266,"u":"/daejeon/yuseong/banseog/"},{"n":"관평점","la":36.4228506,"lo":127.3886025,"u":"/daejeon/yuseong/gwanpyeong/"}];
+  var pts=[{"n":"지족점","g":"","la":36.3746441,"lo":127.3195244,"u":"/daejeon/yuseong/jijog/"},{"n":"반석점","g":"","la":36.3872542,"lo":127.3081266,"u":"/daejeon/yuseong/banseog/"},{"n":"관평점","g":"","la":36.4228506,"lo":127.3886025,"u":"/daejeon/yuseong/gwanpyeong/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

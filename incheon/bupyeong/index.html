@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"인천삼산점","la":37.50831,"lo":126.7351678,"u":"/incheon/bupyeong/incheonsamsan/"},{"n":"부평점","la":37.4983356,"lo":126.7211007,"u":"/incheon/bupyeong/bupyeong/"}];
+  var pts=[{"n":"인천삼산점","g":"","la":37.50831,"lo":126.7351678,"u":"/incheon/bupyeong/incheonsamsan/"},{"n":"부평점","g":"부평구","la":37.4983356,"lo":126.7211007,"u":"/incheon/bupyeong/bupyeong/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

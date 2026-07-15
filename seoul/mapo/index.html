@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"마포2호점","la":37.5432284,"lo":126.9383033,"u":"/seoul/mapo/mapo2ho/"},{"n":"마포점","la":37.5433662,"lo":126.946174,"u":"/seoul/mapo/mapo/"},{"n":"상암점","la":37.5801705,"lo":126.8832185,"u":"/seoul/mapo/sangam/"}];
+  var pts=[{"n":"마포2호점","g":"","la":37.5432284,"lo":126.9383033,"u":"/seoul/mapo/mapo2ho/"},{"n":"마포점","g":"마포구","la":37.5433662,"lo":126.946174,"u":"/seoul/mapo/mapo/"},{"n":"상암점","g":"마포구","la":37.5801705,"lo":126.8832185,"u":"/seoul/mapo/sangam/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

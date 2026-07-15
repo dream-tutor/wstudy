@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"종암점","la":37.6026495,"lo":127.0314131,"u":"/seoul/seongbuk/jongam/"},{"n":"돈암점","la":37.5988848,"lo":127.0220926,"u":"/seoul/seongbuk/donam/"},{"n":"동소문점","la":37.5969079,"lo":127.0138407,"u":"/seoul/seongbuk/dongsomun/"}];
+  var pts=[{"n":"종암점","g":"","la":37.6026495,"lo":127.0314131,"u":"/seoul/seongbuk/jongam/"},{"n":"돈암점","g":"성북구","la":37.5988848,"lo":127.0220926,"u":"/seoul/seongbuk/donam/"},{"n":"동소문점","g":"","la":37.5969079,"lo":127.0138407,"u":"/seoul/seongbuk/dongsomun/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

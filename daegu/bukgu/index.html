@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"대구도남점","la":35.9523804,"lo":128.5821591,"u":"/daegu/bukgu/daegudonam/"},{"n":"침산점","la":35.8880586,"lo":128.5909473,"u":"/daegu/bukgu/chimsan/"},{"n":"칠곡점","la":35.9319924,"lo":128.5571618,"u":"/daegu/bukgu/chilgog/"},{"n":"복현점","la":35.8952832,"lo":128.6196602,"u":"/daegu/bukgu/boghyeon/"}];
+  var pts=[{"n":"대구도남점","g":"","la":35.9523804,"lo":128.5821591,"u":"/daegu/bukgu/daegudonam/"},{"n":"침산점","g":"","la":35.8880586,"lo":128.5909473,"u":"/daegu/bukgu/chimsan/"},{"n":"칠곡점","g":"","la":35.9319924,"lo":128.5571618,"u":"/daegu/bukgu/chilgog/"},{"n":"복현점","g":"","la":35.8952832,"lo":128.6196602,"u":"/daegu/bukgu/boghyeon/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

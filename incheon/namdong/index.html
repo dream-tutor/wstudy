@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"구월점","la":37.4425513,"lo":126.7094029,"u":"/incheon/namdong/guwol/"},{"n":"논현점","la":37.4009455,"lo":126.7214453,"u":"/incheon/namdong/nonhyeon/"}];
+  var pts=[{"n":"구월점","g":"","la":37.4425513,"lo":126.7094029,"u":"/incheon/namdong/guwol/"},{"n":"논현점","g":"","la":37.4009455,"lo":126.7214453,"u":"/incheon/namdong/nonhyeon/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

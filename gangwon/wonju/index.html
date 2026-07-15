@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"단구점","la":37.3302107,"lo":127.9496766,"u":"/gangwon/wonju/dangu/"},{"n":"원주시청점","la":37.3401544,"lo":127.922209,"u":"/gangwon/wonju/wonjusicheong/"},{"n":"혁신점","la":37.3234174,"lo":127.9816785,"u":"/gangwon/wonju/hyeogsin/"}];
+  var pts=[{"n":"단구점","g":"","la":37.3302107,"lo":127.9496766,"u":"/gangwon/wonju/dangu/"},{"n":"원주시청점","g":"","la":37.3401544,"lo":127.922209,"u":"/gangwon/wonju/wonjusicheong/"},{"n":"혁신점","g":"","la":37.3234174,"lo":127.9816785,"u":"/gangwon/wonju/hyeogsin/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

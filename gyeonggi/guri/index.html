@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"갈매점","la":37.6316461,"lo":127.1169637,"u":"/gyeonggi/guri/galmae/"},{"n":"인창점","la":37.6090687,"lo":127.1382395,"u":"/gyeonggi/guri/inchang/"}];
+  var pts=[{"n":"갈매점","g":"","la":37.6316461,"lo":127.1169637,"u":"/gyeonggi/guri/galmae/"},{"n":"인창점","g":"","la":37.6090687,"lo":127.1382395,"u":"/gyeonggi/guri/inchang/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

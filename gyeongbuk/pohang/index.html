@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"양덕점","la":36.0823635,"lo":129.3972202,"u":"/gyeongbuk/pohang/yangdeog/"},{"n":"두호점","la":36.0666077,"lo":129.3814014,"u":"/gyeongbuk/pohang/duho/"}];
+  var pts=[{"n":"양덕점","g":"북구","la":36.0823635,"lo":129.3972202,"u":"/gyeongbuk/pohang/yangdeog/"},{"n":"두호점","g":"북구","la":36.0666077,"lo":129.3814014,"u":"/gyeongbuk/pohang/duho/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"삼산점","la":35.5444274,"lo":129.3380405,"u":"/ulsan/namgu/samsan/"}];
+  var pts=[{"n":"삼산점","g":"남구","la":35.5444274,"lo":129.3380405,"u":"/ulsan/namgu/samsan/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){

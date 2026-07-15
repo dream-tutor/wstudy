@@ -39,7 +39,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  var pts=[{"n":"청라점","la":37.5321086,"lo":126.6502646,"u":"/incheon/seogu/cheongla/"},{"n":"루원시티점","la":37.5224607,"lo":126.6640258,"u":"/incheon/seogu/luwonsiti/"}];
+  var pts=[{"n":"청라점","g":"","la":37.5321086,"lo":126.6502646,"u":"/incheon/seogu/cheongla/"},{"n":"루원시티점","g":"","la":37.5224607,"lo":126.6640258,"u":"/incheon/seogu/luwonsiti/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   var ms=pts.map(function(p){
