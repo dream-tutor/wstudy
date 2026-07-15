@@ -216,10 +216,13 @@ function osmMap(b) {
   return `<h2>오시는 길</h2><div class="mapbox"><iframe loading="lazy" title="${esc(b.name)} 위치 지도" src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${b.lat}%2C${b.lng}"></iframe><div class="cap">${esc(b.address)}${b.nearby_text ? ' · ' + esc((b.nearby_text.split('/')[1] || '').trim()) : ''}</div></div>`;
 }
 // 지역·시군구 허브용 지점 마커 지도 (Leaflet + OSM 타일, 키 불필요)
-function branchesMap(pts) {
+// withFilter=true면 시/군/구 선택 셀렉트가 붙고, 고르면 해당 지역 마커만 남기고 확대
+function branchesMap(pts, withFilter) {
   const valid = pts.filter((p) => p.la && p.lo);
   if (!valid.length) return '';
+  const groups = withFilter ? [...new Set(valid.map((p) => p.g).filter(Boolean))] : [];
   return `<h2>지점 위치</h2>
+${withFilter ? `<div class="map-filter"><select id="mapGu"><option value="">시/군/구를 선택하면 지도가 그 지역으로 좁혀집니다</option>${groups.map((g) => `<option>${esc(g)}</option>`).join('')}</select></div>` : ''}
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -228,13 +231,23 @@ function branchesMap(pts) {
   var pts=${JSON.stringify(valid)};
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
-  var bounds=[];
-  pts.forEach(function(p){
-    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
-    bounds.push([p.la,p.lo]);
+  var ms=pts.map(function(p){
+    return {g:p.g,ll:[p.la,p.lo],m:L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>')};
   });
-  if(bounds.length===1){map.setView(bounds[0],15);}
-  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  function fit(list){
+    if(list.length===1){map.setView(list[0].ll,15);}
+    else{map.fitBounds(L.latLngBounds(list.map(function(x){return x.ll})).pad(0.15));}
+  }
+  fit(ms);
+  var selEl=document.getElementById('mapGu');
+  if(selEl){selEl.addEventListener('change',function(){
+    var v=selEl.value,vis=[];
+    ms.forEach(function(x){
+      if(!v||x.g===v){x.m.addTo(map);vis.push(x);}
+      else{map.removeLayer(x.m);}
+    });
+    fit(vis.length?vis:ms);
+  });}
   map.on('click',function(){map.scrollWheelZoom.enable()});
 })();
 </script>`;
@@ -428,11 +441,11 @@ function buildRegion(r) {
   const cards = dists.map((d) => `<a href="./${d.slug}/">${esc(d.name)}<span class="cnt">지점 ${d.branches.length}곳 · ${d.branches.map((b) => b.name).slice(0, 3).join(', ')}${d.branches.length > 3 ? ' 외' : ''}</span></a>`).join('');
   const n = dists.reduce((s, d) => s + d.branches.length, 0);
   const pts = [];
-  for (const d of Object.values(r.districts)) for (const b of d.branches) pts.push({ n: b.name, la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` });
+  for (const d of Object.values(r.districts)) for (const b of d.branches) pts.push({ n: b.name, g: d.name, la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` });
   const body = `<div class="wrap">
 ${crumb(1, [{ name: r.name }])}
 <div class="page-head"><span class="tag">지역 안내</span><h1>${esc(r.name)} ${BRAND} 지점</h1><div class="sub">${esc(r.name)}에는 ${n}개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
-<article class="body">${branchesMap(pts)}<h2>시·군·구별 지점</h2><div class="list-grid">${cards}</div></article>
+<article class="body">${branchesMap(pts, true)}<h2>시·군·구별 지점</h2><div class="list-grid">${cards}</div></article>
 ${ctaBand(null, 1)}</div>`;
   write(`${r.slug}/index.html`, shell({
     title: `${r.name} 초중고 학원 | ${BRAND} ${n}개 지점`,

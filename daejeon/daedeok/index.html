@@ -33,6 +33,7 @@
 <div class="page-head"><span class="tag">대전</span><h1>대덕구 초중고 학원, 와와학습학원</h1><div class="sub">대덕구의 1개 지점이 인근 9개 학교의 진도와 내신을 관리합니다.</div></div>
 <article class="body">
 <h2>지점 위치</h2>
+
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -41,13 +42,23 @@
   var pts=[{"n":"송촌점","la":36.3658722,"lo":127.4396741,"u":"/daejeon/daedeok/songchon/"}];
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
-  var bounds=[];
-  pts.forEach(function(p){
-    L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');
-    bounds.push([p.la,p.lo]);
+  var ms=pts.map(function(p){
+    return {g:p.g,ll:[p.la,p.lo],m:L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>')};
   });
-  if(bounds.length===1){map.setView(bounds[0],15);}
-  else{map.fitBounds(L.latLngBounds(bounds).pad(0.15));}
+  function fit(list){
+    if(list.length===1){map.setView(list[0].ll,15);}
+    else{map.fitBounds(L.latLngBounds(list.map(function(x){return x.ll})).pad(0.15));}
+  }
+  fit(ms);
+  var selEl=document.getElementById('mapGu');
+  if(selEl){selEl.addEventListener('change',function(){
+    var v=selEl.value,vis=[];
+    ms.forEach(function(x){
+      if(!v||x.g===v){x.m.addTo(map);vis.push(x);}
+      else{map.removeLayer(x.m);}
+    });
+    fit(vis.length?vis:ms);
+  });}
   map.on('click',function(){map.scrollWheelZoom.enable()});
 })();
 </script>
