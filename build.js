@@ -222,7 +222,8 @@ function branchesMap(pts, withFilter) {
   if (!valid.length) return '';
   const groups = withFilter ? [...new Set(valid.map((p) => p.g).filter(Boolean))] : [];
   return `<h2>지점 위치</h2>
-${withFilter ? `<div class="map-filter"><select id="mapGu"><option value="">시/군/구를 선택하면 지도가 그 지역으로 좁혀집니다</option>${groups.map((g) => `<option>${esc(g)}</option>`).join('')}</select></div>` : ''}
+${withFilter ? `<div class="sec-sub" style="margin:10px 0 6px">시/군/구를 누르면 지도가 그 지역으로 좁혀집니다.</div>
+<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button>${groups.map((g) => `<button type="button" class="mc" data-g="${esc(g)}">${esc(g)}</button>`).join('')}</div>` : ''}
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -239,9 +240,11 @@ ${withFilter ? `<div class="map-filter"><select id="mapGu"><option value="">시/
     else{map.fitBounds(L.latLngBounds(list.map(function(x){return x.ll})).pad(0.15));}
   }
   fit(ms);
-  var selEl=document.getElementById('mapGu');
-  if(selEl){selEl.addEventListener('change',function(){
-    var v=selEl.value,vis=[];
+  var chips=document.getElementById('mapChips');
+  if(chips){chips.addEventListener('click',function(e){
+    var btn=e.target.closest('.mc');if(!btn)return;
+    var v=btn.getAttribute('data-g'),vis=[];
+    chips.querySelectorAll('.mc').forEach(function(c){c.classList.toggle('on',c===btn)});
     ms.forEach(function(x){
       if(!v||x.g===v){x.m.addTo(map);vis.push(x);}
       else{map.removeLayer(x.m);}

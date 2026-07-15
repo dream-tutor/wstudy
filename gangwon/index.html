@@ -32,7 +32,8 @@
 <div class="crumb"><a href="../">홈</a><span>›</span>강원</div>
 <div class="page-head"><span class="tag">지역 안내</span><h1>강원 와와학습학원 지점</h1><div class="sub">강원에는 6개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
 <article class="body"><h2>지점 위치</h2>
-<div class="map-filter"><select id="mapGu"><option value="">시/군/구를 선택하면 지도가 그 지역으로 좁혀집니다</option><option>원주시</option><option>춘천시</option><option>강릉시</option></select></div>
+<div class="sec-sub" style="margin:10px 0 6px">시/군/구를 누르면 지도가 그 지역으로 좁혀집니다.</div>
+<div class="map-chips" id="mapChips"><button type="button" class="mc on" data-g="">전체</button><button type="button" class="mc" data-g="원주시">원주시</button><button type="button" class="mc" data-g="춘천시">춘천시</button><button type="button" class="mc" data-g="강릉시">강릉시</button></div>
 <div id="lmap" class="lmap"></div>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -49,9 +50,11 @@
     else{map.fitBounds(L.latLngBounds(list.map(function(x){return x.ll})).pad(0.15));}
   }
   fit(ms);
-  var selEl=document.getElementById('mapGu');
-  if(selEl){selEl.addEventListener('change',function(){
-    var v=selEl.value,vis=[];
+  var chips=document.getElementById('mapChips');
+  if(chips){chips.addEventListener('click',function(e){
+    var btn=e.target.closest('.mc');if(!btn)return;
+    var v=btn.getAttribute('data-g'),vis=[];
+    chips.querySelectorAll('.mc').forEach(function(c){c.classList.toggle('on',c===btn)});
     ms.forEach(function(x){
       if(!v||x.g===v){x.m.addTo(map);vis.push(x);}
       else{map.removeLayer(x.m);}
