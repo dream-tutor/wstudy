@@ -83,5 +83,24 @@
 })();
 </script>
 <script defer src="https://xn--vb0by3y5wigqb.com/t.js" data-site="wstudy"></script>
+<!-- WAWA_AUTO_PROTECT_START -->
+<script>
+(function(){
+  // 우클릭 차단 (폼 입력칸은 허용 — 붙여넣기 등 정상 사용 보존)
+  document.addEventListener('contextmenu', function(e){
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+    e.preventDefault();
+  }, false);
+  // F12 / 개발자도구·소스보기 단축키 차단
+  document.addEventListener('keydown', function(e){
+    var k = e.keyCode || e.which;
+    if (k === 123) { e.preventDefault(); return false; }                                      // F12
+    if (e.ctrlKey && e.shiftKey && (k === 73 || k === 74 || k === 67)) { e.preventDefault(); return false; } // Ctrl+Shift+I/J/C
+    if (e.ctrlKey && k === 85) { e.preventDefault(); return false; }                           // Ctrl+U (소스 보기)
+  }, false);
+})();
+</script>
+<!-- WAWA_AUTO_PROTECT_END -->
 </body>
 </html>
