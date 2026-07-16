@@ -46,7 +46,7 @@
       function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
       var rows=ev.map(function(e){
         return '<div class="ev"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
-      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 방학·개학 일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 방학은 부족한 과목을 메우고 다음 학기를 준비하기 좋은 시기입니다.</p>';
+      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 방학·개학 일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준이며, 학교 사정에 따라 바뀔 수 있습니다.</p>';
     }).catch(function(){});
 })();
 </script>

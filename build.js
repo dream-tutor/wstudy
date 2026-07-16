@@ -341,7 +341,7 @@ function distM(a1, o1, a2, o2) {
   return Math.round(2 * R * Math.asin(Math.sqrt(h)));
 }
 function classPhoto(depth) {
-  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/wawa-class.jpg" alt="와와 교실 내부" width="900" height="664"><div class="cap">와와 교실 환경 — 지점별 시설과 배치는 다를 수 있습니다.</div></div>`;
+  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/wawa-class.jpg" alt="와와 교실 내부" width="900" height="664"><div class="cap">와와 교실 환경 (지점별 시설과 배치는 다를 수 있습니다)</div></div>`;
 }
 const LEVEL_GUIDES = {
   초: ['elem-habit', 'pre-middle', 'study-planner'],
@@ -420,7 +420,7 @@ function buildHome() {
 <h1>학교 시험은<br><em>학교를 아는 학원</em>에서</h1>
 <p>${BRAND}은 전국 ${total}개 지점이 있는 초·중·고 교과 학원입니다. 학생이 다니는 학교의 진도에 맞춰 수업하고, 시험 기간에는 학교별 자료로 내신을 준비합니다. 국어·영어·수학·사회·과학, ${totalSchools}개 학교를 관리하고 있습니다.</p>
 <div class="btns"><a class="b1" href="./inquiry/">상담 신청</a><a class="b2" href="#regions">가까운 지점 찾기</a></div>
-<div class="stats"><div class="s"><div class="n">${total}</div><div class="k">전국 지점</div></div><div class="s"><div class="n">${totalSchools}</div><div class="k">관리 학교</div></div><div class="s"><div class="n">5과목</div><div class="k">국·영·수·사·과</div></div><div class="s"><div class="n">${GUIDES.length}편</div><div class="k">공부법 칼럼</div></div></div>
+<div class="stats"><div class="s"><div class="n">${total}</div><div class="k">전국 지점</div></div><div class="s"><div class="n">${totalSchools}</div><div class="k">관리 학교</div></div><div class="s"><div class="n">5과목</div><div class="k">국·영·수·사·과</div></div></div>
 </div></div>
 <div class="wrap"><section class="home">
 
@@ -453,7 +453,7 @@ ${classPhoto(0)}
 
 <h2 id="regions">지역별 지점 찾기</h2>
 <div class="sec-sub">지점명, 동네, 학교 이름으로 검색하거나 지도에서 지역을 선택하세요.</div>
-<div class="sbox"><input id="q" type="search" placeholder="지점·동네·학교 검색 — 예: 산본점, 덕풍동, 산본중" autocomplete="off" aria-label="지점 검색"><div id="sres" class="sres"></div></div>
+<div class="sbox"><input id="q" type="search" placeholder="지점·동네·학교 검색 (예: 산본점, 덕풍동, 산본중)" autocomplete="off" aria-label="지점 검색"><div id="sres" class="sres"></div></div>
 <div class="kmap">${kmapHtml}</div>
 
 <h2>영상으로 보는 와와</h2>
@@ -461,10 +461,6 @@ ${classPhoto(0)}
 ${video(VIDEOS.pools.brand[0])}
 ${video(VIDEOS.pools.interview[0], '합격 인터뷰: 평택 와와에서 서울대 합격생이 나온 이유')}
 <p style="font-size:14px;color:var(--ink-soft)">더 많은 영상은 <a href="https://www.youtube.com/@wawacoachingcenter" target="_blank" rel="noopener" style="color:var(--brick);font-weight:600">유튜브 채널</a>에서 볼 수 있습니다.</p>
-
-<h2>공부법 칼럼</h2>
-<div class="sec-sub">학원에서 학생들을 가르치며 정리한 공부 방법입니다. <a href="./guide/" style="color:var(--brick);font-weight:600">전체 ${GUIDES.length}편 보기</a></div>
-<div class="list-grid">${['exam-4weeks', 'study-planner', 'math-wrong', 'english-voca', 'saenggibu-setek', 'pre-high'].map((s) => { const g = GUIDES.find((x) => x.slug === s); return `<a href="./guide/${g.slug}/">${esc(g.title)}<span class="cnt">${esc(g.cat)}</span></a>`; }).join('')}</div>
 
 <h2>자주 묻는 질문</h2>
 <div class="faq">${HOME_FAQ.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>
@@ -727,7 +723,7 @@ ${schedCode ? `<div id="sched" data-code="${esc(schedCode)}" data-school="${esc(
       function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
       var rows=ev.map(function(e){
         return '<div class="ev"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
-      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 방학·개학 일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 방학은 부족한 과목을 메우고 다음 학기를 준비하기 좋은 시기입니다.</p>';
+      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 방학·개학 일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준이며, 학교 사정에 따라 바뀔 수 있습니다.</p>';
     }).catch(function(){});
 })();
 </script>` : ''}
@@ -771,7 +767,7 @@ ${crumb(1, [{ name: '공부법 칼럼' }])}
 ${ctaBand(null, 1)}</div>`;
   write('guide/index.html', shell({
     title: `공부법 칼럼 | ${BRAND}`,
-    desc: `공부 습관, 내신 대비, 과목별 공부법, 학년별 가이드, 입시와 생기부 — ${BRAND}이 정리한 공부법 칼럼 ${GUIDES.length}편.`,
+    desc: `공부 습관, 내신 대비, 과목별 공부법, 학년별 가이드, 입시와 생기부까지 ${BRAND}이 정리한 공부법 칼럼 ${GUIDES.length}편.`,
     canonical: `${DOMAIN}/guide/`, body, depth: 1,
   }));
 }
