@@ -917,6 +917,16 @@ fs.writeFileSync(path.join(ROOT, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
   urls.map((u) => `<url><loc>${DOMAIN}/${encodeURI(u)}</loc><lastmod>${LASTMOD}</lastmod></url>`).join('\n') + '\n</urlset>', 'utf8');
 fs.writeFileSync(path.join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${DOMAIN}/sitemap.xml\n`, 'utf8');
+// RSS (공부법 칼럼 33편 — 네이버 서치어드바이저 RSS 제출용)
+{
+  const rfc822 = (d) => new Date(d + 'T09:00:00+09:00').toUTCString();
+  const items = GUIDES.map((g, i) => {
+    const pub = new Date(Date.UTC(2026, 6, 8) + (i % 8) * 86400000).toISOString().slice(0, 10);
+    return `<item><title>${esc(g.title)}</title><link>${DOMAIN}/guide/${g.slug}/</link><guid isPermaLink="true">${DOMAIN}/guide/${g.slug}/</guid><description>${esc(g.desc)}</description><category>${esc(g.cat)}</category><pubDate>${rfc822(pub)}</pubDate></item>`;
+  }).join('\n');
+  fs.writeFileSync(path.join(ROOT, 'rss.xml'),
+    `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>\n<title>${BRAND} 공부법 칼럼</title>\n<link>${DOMAIN}/guide/</link>\n<description>공부 습관, 내신 대비, 과목별 공부법, 학년별 가이드까지 ${BRAND}이 정리한 공부법 칼럼</description>\n<language>ko</language>\n<lastBuildDate>${new Date().toUTCString()}</lastBuildDate>\n${items}\n</channel></rss>`, 'utf8');
+}
 fs.writeFileSync(path.join(ROOT, 'CNAME'), 'wstudycenter.com\n', 'utf8');
 fs.writeFileSync(path.join(ROOT, 'favicon.svg'),
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#22314e"/><text x="32" y="44" font-size="34" font-weight="800" text-anchor="middle" fill="#f0b58f" font-family="sans-serif">W</text></svg>`, 'utf8');
