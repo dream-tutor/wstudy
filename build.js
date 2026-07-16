@@ -64,6 +64,20 @@ function feeSection(b) {
   return `<h2 id="fee">수강료 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">교육청 등록 기준 공시 금액(월, 원)입니다. 자세한 시간, 횟수는 상담 시 조율합니다.</p>
 <div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th>${hasMin ? '<th>1회 수업</th>' : ''}<th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
+// 학교 페이지용: 해당 학교 학년(초/중/고)에 맞춘 지점별 수업비
+function schoolFeeSection(s) {
+  const lv = s.level === '초' ? '초등' : s.level === '중' ? '중등' : '고등';
+  const minKey = { 초등: 'time_elem', 중등: 'time_mid', 고등: 'time_high' }[lv];
+  const many = s.branches.length > 1;
+  const rows = s.branches.map((b) => {
+    const p = FEE_TABLES[/A/.test(b.fee_type || '') ? 'A' : 'B'][lv];
+    const mm = parseInt(b[minKey], 10);
+    const m = mm > 20 ? `${mm}분` : '상담 시 안내';
+    return `<tr><th><a href="../../${b.branch_slug}/#fee" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td class="tm">${m}</td><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr>`;
+  }).join('');
+  return `<h2 id="fee">${esc(s.name)} 학생 수업비 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">${lv}부 기준, 교육청 등록 공시 금액(월, 원)입니다. ${many ? '지점에 따라 회비와 수업시간이 다를 수 있으니 지점명을 눌러 확인하세요.' : '자세한 시간, 횟수는 상담 시 조율합니다.'}</p>
+<div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>지점</th><th>1회 수업</th><th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
 
 // ── 데이터 구조화 ──
 // 학교명 정규화: "쌍용초.미라초." / "나곡중/보라중/상갈중" 처럼 붙은 항목을 분리 (경로 문자 제거)
@@ -728,10 +742,13 @@ ${(() => {
 })()}
 ${(b0.subjects || []).length ? `<h2>${esc(s.name)} 재학생 수업 과목</h2><p>${esc(b0.name)}에서 ${esc(s.name)} 학생이 들을 수 있는 과목은 ${esc((b0.subjects || []).join(', '))}입니다. ${s.level === '초' ? '초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.' : s.level === '중' ? '평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 ' + esc(s.name) + ' 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.' : '수업은 학교 진도와 동기화되며, 내신 4주 전부터 ' + esc(s.name) + ' 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.'}</p><div class="chips">${(b0.subjects || []).filter((su) => SUBJ_SLUG[su]).map((su) => `<a href="../../${b0.branch_slug}/${SUBJ_SLUG[su]}/">${esc(b0.dong)} ${esc(su)}학원</a>`).join('')}</div>` : ''}
 ${bv ? '<h2>영상으로 보는 ' + esc(b0.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, key + 'promo'), '와와 소개 영상')}
-${guideLinks(LEVEL_GUIDES[s.level], 4)}
 ${faq.html}
 </article>
-${ctaBand(b0, 4)}</div>`;
+${ctaBand(b0, 4)}
+<article class="body">
+${guideLinks(LEVEL_GUIDES[s.level], 4)}
+${schoolFeeSection(s)}
+</article></div>`;
   write(`${s.region_slug}/${s.district_slug}/school/${s.name}/index.html`, shell({
     title: `${s.name} 내신 학원 | ${s.district} ${BRAND}`,
     desc: `${s.name} 재학생을 위한 내신 대비 안내. ${s.district} ${BRAND} ${s.branches.map((b) => b.name).join(', ')}에서 ${s.name} 진도와 기출 기준으로 시험을 준비합니다.`,
