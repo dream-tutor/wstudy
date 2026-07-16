@@ -307,6 +307,18 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .kmap a:hover .cnt2 { color: #f6dccd; }
 .kmap .off { background: #eee9de; color: #a9a291; font-weight: 500; font-size: 12.5px; }
 
+/* ── 상담 팝업 ── */
+.c-ov { position: fixed; inset: 0; background: rgba(15,20,35,.55); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.c-ov[hidden] { display: none; }
+.c-box { position: relative; width: min(560px, 100%); height: min(760px, 92vh); background: var(--paper); border-radius: 14px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.c-box iframe { width: 100%; height: 100%; border: 0; }
+.c-x { position: absolute; top: 8px; right: 10px; width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(0,0,0,.08); font-size: 20px; cursor: pointer; color: var(--ink); z-index: 2; line-height: 1; }
+.c-x:hover { background: rgba(0,0,0,.16); }
+.embed .topbar, .embed header.site, .embed footer.site, .embed .float-cta, .embed .crumb, .embed .cta-band { display: none !important; }
+.embed .wrap { padding: 0 18px 30px; }
+.embed .page-head { padding-top: 14px; }
+.fee-table .tm { text-align: center; color: var(--ink-soft); }
+
 /* ── 플로팅 상담 버튼 ── */
 .float-cta { position: fixed; right: 14px; bottom: 14px; display: flex; flex-direction: column; gap: 8px; z-index: 900; }
 .float-cta a { display: block; padding: 12px 20px; border-radius: 30px; font-weight: 700; font-size: 14.5px; box-shadow: 0 6px 20px rgba(0,0,0,.25); text-align: center; }

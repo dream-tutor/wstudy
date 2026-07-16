@@ -55,9 +55,14 @@ const FEE_TABLES = {
 };
 function feeSection(b) {
   const t = FEE_TABLES[/A/.test(b.fee_type || '') ? 'A' : 'B'];
-  const rows = Object.entries(t).map(([lv, p]) => `<tr><th>${lv}</th><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr>`).join('');
+  const mins = { 초등: b.time_elem, 중등: b.time_mid, 고등: b.time_high };
+  const hasMin = Object.values(mins).some((m) => parseInt(m, 10) > 20);
+  const rows = Object.entries(t).map(([lv, p]) => {
+    const m = parseInt(mins[lv], 10) > 20 ? `${parseInt(mins[lv], 10)}분` : '상담 시 안내';
+    return `<tr><th>${lv}</th>${hasMin ? `<td class="tm">${m}</td>` : ''}<td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr>`;
+  }).join('');
   return `<h2 id="fee">수강료 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">교육청 등록 기준 공시 금액(월, 원)입니다. 자세한 시간, 횟수는 상담 시 조율합니다.</p>
-<div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th><th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+<div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th>${hasMin ? '<th>1회 수업</th>' : ''}<th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 // ── 데이터 구조화 ──
@@ -139,6 +144,29 @@ ${body}
 ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
 </div></footer>
 <div class="float-cta"><a class="f-form" href="${base}inquiry/">상담 문의</a><a class="f-tel" href="tel:${TEL}">전화 상담</a></div>
+<div id="cOv" class="c-ov" hidden><div class="c-box"><button type="button" class="c-x" aria-label="닫기">×</button><iframe id="cFrame" title="상담 신청"></iframe></div></div>
+<script>
+(function(){
+  if(location.search.indexOf('embed=1')>-1)return;
+  var ov=document.getElementById('cOv'),fr=document.getElementById('cFrame');
+  if(!ov)return;
+  function openM(href){
+    var u=new URL(href,location.href);
+    u.searchParams.set('embed','1');
+    fr.src=u.pathname+u.search;
+    ov.hidden=false;document.body.style.overflow='hidden';
+  }
+  function closeM(){ov.hidden=true;fr.src='about:blank';document.body.style.overflow='';}
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[href*="inquiry"]');
+    if(!a)return;
+    e.preventDefault();openM(a.getAttribute('href'));
+  });
+  ov.addEventListener('click',function(e){if(e.target===ov)closeM();});
+  document.querySelector('.c-x').addEventListener('click',closeM);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
+})();
+</script>
 ${TRACKER}
 </body>
 </html>`;
@@ -786,6 +814,7 @@ ${crumb(1, [{ name: '상담 신청' }])}
 </div></div>
 <script>
 (function(){
+  if(new URLSearchParams(location.search).get('embed')==='1'){document.documentElement.classList.add('embed');}
   var DATA=${JSON.stringify(Object.fromEntries(Object.values(regions).map((r) => [r.name, Object.fromEntries(Object.values(r.districts).map((d) => [d.name, d.branches.map((b) => ({ n: b.name, d: b.dong }))]))])))};
   var sido=document.getElementById('fSido'),gu=document.getElementById('fGu'),sel=document.getElementById('fBranch');
   function fill(s,items,ph){s.innerHTML='<option value=\"\">'+ph+'</option>'+items.join('');s.disabled=false;}

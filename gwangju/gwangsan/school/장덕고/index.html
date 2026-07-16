@@ -75,6 +75,29 @@
 
 </div></footer>
 <div class="float-cta"><a class="f-form" href="../../../../inquiry/">상담 문의</a><a class="f-tel" href="tel:010-4864-5345">전화 상담</a></div>
+<div id="cOv" class="c-ov" hidden><div class="c-box"><button type="button" class="c-x" aria-label="닫기">×</button><iframe id="cFrame" title="상담 신청"></iframe></div></div>
+<script>
+(function(){
+  if(location.search.indexOf('embed=1')>-1)return;
+  var ov=document.getElementById('cOv'),fr=document.getElementById('cFrame');
+  if(!ov)return;
+  function openM(href){
+    var u=new URL(href,location.href);
+    u.searchParams.set('embed','1');
+    fr.src=u.pathname+u.search;
+    ov.hidden=false;document.body.style.overflow='hidden';
+  }
+  function closeM(){ov.hidden=true;fr.src='about:blank';document.body.style.overflow='';}
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[href*="inquiry"]');
+    if(!a)return;
+    e.preventDefault();openM(a.getAttribute('href'));
+  });
+  ov.addEventListener('click',function(e){if(e.target===ov)closeM();});
+  document.querySelector('.c-x').addEventListener('click',closeM);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
+})();
+</script>
 <script defer src="https://xn--vb0by3y5wigqb.com/t.js" data-site="wstudy"></script>
 </body>
 </html>
