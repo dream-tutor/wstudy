@@ -567,7 +567,7 @@ ${schoolHtml}
 </article>
 ${ctaBand(null, 2)}</div>`;
   write(`${r.slug}/${d.slug}/index.html`, shell({
-    title: `${d.name} 초중고 학원 | ${BRAND} 지점 ${d.branches.length}곳`,
+    title: `${r.name} ${d.name} 초중고 학원 | ${BRAND} 지점 ${d.branches.length}곳`,
     desc: `${r.name} ${d.name}의 ${BRAND} 지점 안내. ${d.branches.map((b) => b.name).join(', ')}. 관리 학교 ${schoolsHere.length}곳의 내신 대비.`,
     canonical: `${DOMAIN}/${r.slug}/${d.slug}/`, body, depth: 2,
   }));
