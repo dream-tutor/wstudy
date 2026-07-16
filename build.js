@@ -706,11 +706,12 @@ ${schedCode ? `<div id="sched" data-code="${esc(schedCode)}" data-school="${esc(
   fetch('https://xn--vb0b6fp35b6njbws.com/api/schedule?code='+encodeURIComponent(el.getAttribute('data-code')))
     .then(function(r){return r.json()})
     .then(function(ev){
-      if(!ev||!ev.length)return;
+      ev=(ev||[]).filter(function(e){return /방학|개학/.test(e.n)});
+      if(!ev.length)return;
       function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
-      var rows=ev.map(function(e){var exam=/고사|시험|지필|평가|수능/.test(e.n);
-        return '<div class="ev'+(exam?' exam':'')+'"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
-      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 학사일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 시험 일정이 보이면 3~4주 전부터 내신 대비를 시작할 때입니다.</p>';
+      var rows=ev.map(function(e){
+        return '<div class="ev"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
+      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 방학·개학 일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준으로 학교 사정에 따라 바뀔 수 있습니다. 방학은 부족한 과목을 메우고 다음 학기를 준비하기 좋은 시기입니다.</p>';
     }).catch(function(){});
 })();
 </script>` : ''}
