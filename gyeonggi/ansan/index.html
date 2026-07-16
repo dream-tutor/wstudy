@@ -45,11 +45,13 @@
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   pts.forEach(function(p){p._m=L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');});
+  var sc=null;
+  if(sc){L.circleMarker([sc.la,sc.lo],{radius:9,color:'#b9552f',weight:3,fillColor:'#fff',fillOpacity:1}).addTo(map).bindPopup('<b>'+sc.n+'</b>').bindTooltip(sc.n,{permanent:true,direction:'top',offset:[0,-10],className:'sc-tip'});}
   function fit(list){
     if(list.length===1){map.setView([list[0].la,list[0].lo],15);}
     else{map.fitBounds(L.latLngBounds(list.map(function(p){return [p.la,p.lo]})).pad(0.15));}
   }
-  fit(pts);
+  fit(sc?pts.concat([sc]):pts);
   var sels={};LV.forEach(function(l){sels[l]=document.getElementById('ms_'+l);});
   function matchBefore(p,idx){
     for(var i=0;i<idx;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v)return false;}

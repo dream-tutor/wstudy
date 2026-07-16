@@ -250,7 +250,7 @@ function guOf(b) {
 }
 // 지역·시군구 허브용 지점 마커 지도 (Leaflet + OSM 타일, 키 불필요)
 // withFilter=true면 시/군/구 선택 셀렉트가 붙고, 고르면 해당 지역 마커만 남기고 확대
-function branchesMap(pts, levels) {
+function branchesMap(pts, levels, school) {
   const valid = pts.filter((p) => p.la && p.lo);
   if (!valid.length) return '';
   levels = levels || [];
@@ -272,11 +272,13 @@ ${selHtml}
   var map=L.map('lmap',{scrollWheelZoom:false});
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
   pts.forEach(function(p){p._m=L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');});
+  var sc=${JSON.stringify(school || null)};
+  if(sc){L.circleMarker([sc.la,sc.lo],{radius:9,color:'#b9552f',weight:3,fillColor:'#fff',fillOpacity:1}).addTo(map).bindPopup('<b>'+sc.n+'</b>').bindTooltip(sc.n,{permanent:true,direction:'top',offset:[0,-10],className:'sc-tip'});}
   function fit(list){
     if(list.length===1){map.setView([list[0].la,list[0].lo],15);}
     else{map.fitBounds(L.latLngBounds(list.map(function(p){return [p.la,p.lo]})).pad(0.15));}
   }
-  fit(pts);
+  fit(sc?pts.concat([sc]):pts);
   var sels={};LV.forEach(function(l){sels[l]=document.getElementById('ms_'+l);});
   function matchBefore(p,idx){
     for(var i=0;i<idx;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v)return false;}
@@ -719,6 +721,11 @@ ${bodyBlock}
 ${pick(COPY.wawaWay, key + 'way')()}
 <h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2>
 <div class="tbl-scroll"><table class="info-table">${bRows}</table></div>
+${(() => {
+  const mpts = s.branches.filter((b) => b.lat && b.lng).map((b) => ({ n: b.name, la: b.lat, lo: b.lng, u: `../../${b.branch_slug}/` }));
+  const scOk = geo && s.branches.some((b) => b.lat && b.lng && distM(geo.lat, geo.lng, b.lat, b.lng) <= 8000);
+  return branchesMap(mpts, [], scOk ? { n: s.name, la: geo.lat, lo: geo.lng } : null);
+})()}
 ${(b0.subjects || []).length ? `<h2>${esc(s.name)} 재학생 수업 과목</h2><p>${esc(b0.name)}에서 ${esc(s.name)} 학생이 들을 수 있는 과목은 ${esc((b0.subjects || []).join(', '))}입니다. ${s.level === '초' ? '초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.' : s.level === '중' ? '평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 ' + esc(s.name) + ' 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.' : '수업은 학교 진도와 동기화되며, 내신 4주 전부터 ' + esc(s.name) + ' 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.'}</p><div class="chips">${(b0.subjects || []).filter((su) => SUBJ_SLUG[su]).map((su) => `<a href="../../${b0.branch_slug}/${SUBJ_SLUG[su]}/">${esc(b0.dong)} ${esc(su)}학원</a>`).join('')}</div>` : ''}
 ${bv ? '<h2>영상으로 보는 ' + esc(b0.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, key + 'promo'), '와와 소개 영상')}
 ${guideLinks(LEVEL_GUIDES[s.level], 4)}

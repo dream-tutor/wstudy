@@ -57,6 +57,65 @@
 <p>개설 과목과 대상 학년, 수업 시간대는 지점마다 다를 수 있습니다.</p>
 <h2>수월초 학생이 다닐 수 있는 지점</h2>
 <div class="tbl-scroll"><table class="info-table"><tr><th><a href="../../geojesuwol/" style="color:var(--brick);font-weight:600">거제수월점</a></th><td><span style="color:var(--brick);font-weight:600;font-size:13.5px">수월초에서 약 400m · 도보 6분</span><br>경남 거제시 수양로 462 3층<br><span style="color:var(--ink-soft);font-size:13.5px">영어 · 수학 · 평일 오후 12시 이후</span></td></tr></table></div>
+<h2>지점 위치</h2>
+
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"거제수월점","la":34.8924222,"lo":128.640404,"u":"../../geojesuwol/"}];
+  var LV=[];
+  var LB={"city":"시/군/구","gu":"구","dong":"읍/면/동"};
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  pts.forEach(function(p){p._m=L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');});
+  var sc={"n":"수월초","la":34.8901918,"lo":128.6438328};
+  if(sc){L.circleMarker([sc.la,sc.lo],{radius:9,color:'#b9552f',weight:3,fillColor:'#fff',fillOpacity:1}).addTo(map).bindPopup('<b>'+sc.n+'</b>').bindTooltip(sc.n,{permanent:true,direction:'top',offset:[0,-10],className:'sc-tip'});}
+  function fit(list){
+    if(list.length===1){map.setView([list[0].la,list[0].lo],15);}
+    else{map.fitBounds(L.latLngBounds(list.map(function(p){return [p.la,p.lo]})).pad(0.15));}
+  }
+  fit(sc?pts.concat([sc]):pts);
+  var sels={};LV.forEach(function(l){sels[l]=document.getElementById('ms_'+l);});
+  function matchBefore(p,idx){
+    for(var i=0;i<idx;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v)return false;}
+    return true;
+  }
+  function rebuild(){
+    var chainOk=true;
+    LV.forEach(function(l,i){
+      var el=sels[l];
+      if(!chainOk){el.innerHTML='<option value="">'+LB[l]+' 전체</option>';el.value='';el.disabled=true;return;}
+      var vals=[];
+      pts.forEach(function(p){if(matchBefore(p,i)&&p[l]&&vals.indexOf(p[l])<0)vals.push(p[l]);});
+      var cur=el.value;
+      el.innerHTML='<option value="">'+LB[l]+' 전체</option>'+vals.map(function(v){return '<option'+(v===cur?' selected':'')+'>'+v+'</option>'}).join('');
+      if(vals.indexOf(cur)<0)el.value='';
+      if(vals.length===0){el.disabled=true;return;}
+      el.disabled=false;
+      if(el.value==='')chainOk=false;
+    });
+  }
+  function apply(){
+    var vis=[];
+    pts.forEach(function(p){
+      var ok=true;
+      for(var i=0;i<LV.length;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v){ok=false;break;}}
+      if(ok){p._m.addTo(map);vis.push(p);}else{map.removeLayer(p._m);}
+    });
+    fit(vis.length?vis:pts);
+  }
+  LV.forEach(function(l,idx){
+    sels[l].addEventListener('change',function(){
+      for(var j=idx+1;j<LV.length;j++)sels[LV[j]].value='';
+      rebuild();apply();
+    });
+  });
+  rebuild();
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>
 <h2>수월초 재학생 수업 과목</h2><p>거제수월점에서 수월초 학생이 들을 수 있는 과목은 영어, 수학입니다. 초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.</p><div class="chips"><a href="../../geojesuwol/english/">수월동 영어학원</a><a href="../../geojesuwol/math/">수월동 수학학원</a></div>
 <h2>영상으로 보는 와와</h2><div class="video-box"><div class="frame vertical"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/Vt8syzeacbc" title="시험기간 고등학생 특 (쇼츠)" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 와와 소개 영상 (와와 공식 유튜브)</div></div>
 <h2>함께 읽을 공부법 칼럼</h2><div class="chips"><a href="../../../../guide/elem-habit/">초등 고학년, 성적보다 습관</a><a href="../../../../guide/pre-middle/">예비 중1, 겨울방학에 챙길 것</a><a href="../../../../guide/study-planner/">공부 플래너, 계획이 아니라 기록부터</a></div>

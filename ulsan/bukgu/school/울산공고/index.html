@@ -46,6 +46,65 @@
 </ul>
 <h2>울산공고 학생이 다닐 수 있는 지점</h2>
 <div class="tbl-scroll"><table class="info-table"><tr><th><a href="../../songjeong/" style="color:var(--brick);font-weight:600">송정점</a></th><td>울산 북구 화산로 123 골드테라스 404호<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 사회 · 평일 오후 3시 이후</span></td></tr></table></div>
+<h2>지점 위치</h2>
+
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"송정점","la":35.6029089,"lo":129.3650787,"u":"../../songjeong/"}];
+  var LV=[];
+  var LB={"city":"시/군/구","gu":"구","dong":"읍/면/동"};
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  pts.forEach(function(p){p._m=L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');});
+  var sc=null;
+  if(sc){L.circleMarker([sc.la,sc.lo],{radius:9,color:'#b9552f',weight:3,fillColor:'#fff',fillOpacity:1}).addTo(map).bindPopup('<b>'+sc.n+'</b>').bindTooltip(sc.n,{permanent:true,direction:'top',offset:[0,-10],className:'sc-tip'});}
+  function fit(list){
+    if(list.length===1){map.setView([list[0].la,list[0].lo],15);}
+    else{map.fitBounds(L.latLngBounds(list.map(function(p){return [p.la,p.lo]})).pad(0.15));}
+  }
+  fit(sc?pts.concat([sc]):pts);
+  var sels={};LV.forEach(function(l){sels[l]=document.getElementById('ms_'+l);});
+  function matchBefore(p,idx){
+    for(var i=0;i<idx;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v)return false;}
+    return true;
+  }
+  function rebuild(){
+    var chainOk=true;
+    LV.forEach(function(l,i){
+      var el=sels[l];
+      if(!chainOk){el.innerHTML='<option value="">'+LB[l]+' 전체</option>';el.value='';el.disabled=true;return;}
+      var vals=[];
+      pts.forEach(function(p){if(matchBefore(p,i)&&p[l]&&vals.indexOf(p[l])<0)vals.push(p[l]);});
+      var cur=el.value;
+      el.innerHTML='<option value="">'+LB[l]+' 전체</option>'+vals.map(function(v){return '<option'+(v===cur?' selected':'')+'>'+v+'</option>'}).join('');
+      if(vals.indexOf(cur)<0)el.value='';
+      if(vals.length===0){el.disabled=true;return;}
+      el.disabled=false;
+      if(el.value==='')chainOk=false;
+    });
+  }
+  function apply(){
+    var vis=[];
+    pts.forEach(function(p){
+      var ok=true;
+      for(var i=0;i<LV.length;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v){ok=false;break;}}
+      if(ok){p._m.addTo(map);vis.push(p);}else{map.removeLayer(p._m);}
+    });
+    fit(vis.length?vis:pts);
+  }
+  LV.forEach(function(l,idx){
+    sels[l].addEventListener('change',function(){
+      for(var j=idx+1;j<LV.length;j++)sels[LV[j]].value='';
+      rebuild();apply();
+    });
+  });
+  rebuild();
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>
 <h2>울산공고 재학생 수업 과목</h2><p>송정점에서 울산공고 학생이 들을 수 있는 과목은 국어, 영어, 수학, 과학, 사회입니다. 수업은 학교 진도와 동기화되며, 내신 4주 전부터 울산공고 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.</p><div class="chips"><a href="../../songjeong/korean/">송정동 국어학원</a><a href="../../songjeong/english/">송정동 영어학원</a><a href="../../songjeong/math/">송정동 수학학원</a><a href="../../songjeong/science/">송정동 과학학원</a><a href="../../songjeong/social/">송정동 사회학원</a></div>
 <h2>영상으로 보는 와와</h2><div class="video-box"><div class="frame vertical"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/QldZT2Q_8bw" title="와와학습코칭센터란? (쇼츠)" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 와와 소개 영상 (와와 공식 유튜브)</div></div>
 <h2>함께 읽을 공부법 칼럼</h2><div class="chips"><a href="../../../../guide/high1-first-exam/">고1 첫 내신이 중요한 진짜 이유</a><a href="../../../../guide/saenggibu-setek/">교과 세특, 수업에서 만드는 생기부</a><a href="../../../../guide/high23-balance/">고2·3, 내신과 모의고사 사이 시간 배분</a></div>

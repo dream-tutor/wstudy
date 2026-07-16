@@ -61,6 +61,65 @@
 </ul>
 <h2>백석중 학생이 다닐 수 있는 지점</h2>
 <div class="tbl-scroll"><table class="info-table"><tr><th><a href="../../madu/" style="color:var(--brick);font-weight:600">마두점</a></th><td><span style="color:var(--brick);font-weight:600;font-size:13.5px">백석중에서 약 1.3km · 도보 20분</span><br>경기 고양시 일산동구 중앙로 1191 굿모닝법조타운 1 604호<br><span style="color:var(--ink-soft);font-size:13.5px">국어 · 영어 · 수학 · 과학 · 사회 · 평일 오후 2시반 이후</span></td></tr></table></div>
+<h2>지점 위치</h2>
+
+<div id="lmap" class="lmap"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var pts=[{"n":"마두점","la":37.6529471,"lo":126.7767206,"u":"../../madu/"}];
+  var LV=[];
+  var LB={"city":"시/군/구","gu":"구","dong":"읍/면/동"};
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+  pts.forEach(function(p){p._m=L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');});
+  var sc={"n":"백석중","la":37.6417419,"lo":126.7824533};
+  if(sc){L.circleMarker([sc.la,sc.lo],{radius:9,color:'#b9552f',weight:3,fillColor:'#fff',fillOpacity:1}).addTo(map).bindPopup('<b>'+sc.n+'</b>').bindTooltip(sc.n,{permanent:true,direction:'top',offset:[0,-10],className:'sc-tip'});}
+  function fit(list){
+    if(list.length===1){map.setView([list[0].la,list[0].lo],15);}
+    else{map.fitBounds(L.latLngBounds(list.map(function(p){return [p.la,p.lo]})).pad(0.15));}
+  }
+  fit(sc?pts.concat([sc]):pts);
+  var sels={};LV.forEach(function(l){sels[l]=document.getElementById('ms_'+l);});
+  function matchBefore(p,idx){
+    for(var i=0;i<idx;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v)return false;}
+    return true;
+  }
+  function rebuild(){
+    var chainOk=true;
+    LV.forEach(function(l,i){
+      var el=sels[l];
+      if(!chainOk){el.innerHTML='<option value="">'+LB[l]+' 전체</option>';el.value='';el.disabled=true;return;}
+      var vals=[];
+      pts.forEach(function(p){if(matchBefore(p,i)&&p[l]&&vals.indexOf(p[l])<0)vals.push(p[l]);});
+      var cur=el.value;
+      el.innerHTML='<option value="">'+LB[l]+' 전체</option>'+vals.map(function(v){return '<option'+(v===cur?' selected':'')+'>'+v+'</option>'}).join('');
+      if(vals.indexOf(cur)<0)el.value='';
+      if(vals.length===0){el.disabled=true;return;}
+      el.disabled=false;
+      if(el.value==='')chainOk=false;
+    });
+  }
+  function apply(){
+    var vis=[];
+    pts.forEach(function(p){
+      var ok=true;
+      for(var i=0;i<LV.length;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v){ok=false;break;}}
+      if(ok){p._m.addTo(map);vis.push(p);}else{map.removeLayer(p._m);}
+    });
+    fit(vis.length?vis:pts);
+  }
+  LV.forEach(function(l,idx){
+    sels[l].addEventListener('change',function(){
+      for(var j=idx+1;j<LV.length;j++)sels[LV[j]].value='';
+      rebuild();apply();
+    });
+  });
+  rebuild();
+  map.on('click',function(){map.scrollWheelZoom.enable()});
+})();
+</script>
 <h2>백석중 재학생 수업 과목</h2><p>마두점에서 백석중 학생이 들을 수 있는 과목은 국어, 영어, 수학, 과학, 사회입니다. 평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 백석중 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.</p><div class="chips"><a href="../../madu/korean/">장항동 국어학원</a><a href="../../madu/english/">장항동 영어학원</a><a href="../../madu/math/">장항동 수학학원</a><a href="../../madu/science/">장항동 과학학원</a><a href="../../madu/social/">장항동 사회학원</a></div>
 <h2>영상으로 보는 와와</h2><div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/LzXjyrm1EWk" title="초·중·고 맞춤 학습 코칭, 자기주도 학습의 시작" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 와와 소개 영상 (와와 공식 유튜브)</div></div>
 <h2>함께 읽을 공부법 칼럼</h2><div class="chips"><a href="../../../../guide/exam-4weeks/">내신 4주 대비 플랜 짜는 법</a><a href="../../../../guide/performance-assessment/">수행평가 관리, 점수 새는 곳 막기</a><a href="../../../../guide/wrong-note/">오답노트, 만들다 지치지 않는 방식</a></div>
