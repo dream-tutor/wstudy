@@ -80,8 +80,11 @@ function feeSection(b) {
     const m = parseInt(mins[lv], 10) > 20 ? `${parseInt(mins[lv], 10)}분` : '상담 시 안내';
     return `<tr><th>${lv}</th>${hasMin ? `<td class="tm">${m}</td>` : ''}<td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr>`;
   }).join('');
+  const legal = b.office && b.reg
+    ? `<div class="fee-legal"><span>${esc(b.office)} (${esc(b.reg)})</span>${b.fee_link ? `<a class="fee-doc" href="${esc(b.fee_link)}" target="_blank" rel="noopener">교습비 공시 자료</a>` : ''}</div>`
+    : '';
   return `<h2 id="fee">수강료 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">교육청 등록 기준 공시 금액(월, 원)입니다. 자세한 시간, 횟수는 상담 시 조율합니다.</p>
-<div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th>${hasMin ? '<th>1회 수업</th>' : ''}<th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+<div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th>${hasMin ? '<th>1회 수업</th>' : ''}<th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>${legal}`;
 }
 // 학교 페이지용: 해당 학교 학년(초/중/고)에 맞춘 지점별 수업비
 function schoolFeeSection(s) {
