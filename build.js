@@ -940,6 +940,8 @@ fs.writeFileSync(path.join(ROOT, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
   urls.map((u) => `<url><loc>${DOMAIN}/${encodeURI(u)}</loc><lastmod>${LASTMOD}</lastmod></url>`).join('\n') + '\n</urlset>', 'utf8');
 fs.writeFileSync(path.join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${DOMAIN}/sitemap.xml\n`, 'utf8');
+// IndexNow 키 검증 파일 (제출 크론은 sangsang-workers 중앙 크론이 매일 실행)
+fs.writeFileSync(path.join(ROOT, '5e5ad86af25533efae3948773b676a6c.txt'), '5e5ad86af25533efae3948773b676a6c', 'utf8');
 // RSS (공부법 칼럼 33편 — 네이버 서치어드바이저 RSS 제출용)
 {
   const rfc822 = (d) => new Date(d + 'T09:00:00+09:00').toUTCString();
