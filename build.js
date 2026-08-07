@@ -850,13 +850,22 @@ ${crumb(1, [{ name: '상담 신청' }])}
 <select name="지점" id="fBranch" disabled style="margin-top:6px"><option value="">지점 (시/군/구를 먼저 선택하세요)</option></select>
 <label>학생 이름</label><input name="이름" required placeholder="이름">
 <label>연락처</label><input name="연락처" required placeholder="010-0000-0000" inputmode="tel">
-<label>주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label><input name="거주주소" placeholder="예: 경기 군포시 산본로 394">
+<label>주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label>
+<div class="sel-row" style="align-items:stretch">
+<input name="거주주소" id="fAddr" placeholder="예: 경기 군포시 산본로 394" style="flex:1;min-width:0">
+<button type="button" id="addrBtn" style="flex:0 0 auto;padding:0 14px;border:1.5px solid var(--brick);border-radius:8px;background:#fff;color:var(--brick);font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap">도로명 검색</button>
+</div>
 <label>학교 / 학년</label><input name="학년" placeholder="예: 덕풍중 2학년">
 <label>희망 과목 <span style="font-weight:400;color:var(--ink-soft)">(누르면 선택됩니다)</span></label>
 <div class="subj-pills">${['국어', '영어', '수학', '사회', '과학'].map((s) => `<button type="button" class="sp" data-v="${s}">${s}</button>`).join('')}</div>
 <button type="submit" class="submit-btn">상담 신청하기</button>
 </form>
 <div class="form-ok" id="ok"><div class="big">신청이 접수되었습니다</div><p>지점에서 상담 시간을 잡아 연락드리겠습니다.</p></div>
+</div></div>
+<div id="addrLayer" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.45)">
+<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,94vw);background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.25)">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #eee"><strong style="font-size:15px">도로명 주소 검색</strong><button type="button" id="addrClose" style="border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:#666">&times;</button></div>
+<div id="addrBox" style="width:100%;height:440px"></div>
 </div></div>
 <script>
 (function(){
@@ -885,6 +894,21 @@ ${crumb(1, [{ name: '상담 신청' }])}
       }}}}
   }
   document.querySelectorAll('.subj-pills .sp').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('on')})});
+  var addrLayer=document.getElementById('addrLayer');
+  function closeAddr(){addrLayer.style.display='none';document.getElementById('addrBox').innerHTML='';}
+  document.getElementById('addrClose').addEventListener('click',closeAddr);
+  addrLayer.addEventListener('click',function(e){if(e.target===addrLayer)closeAddr();});
+  document.getElementById('addrBtn').addEventListener('click',function(){
+    function openPost(){
+      addrLayer.style.display='block';
+      new daum.Postcode({
+        oncomplete:function(d){document.getElementById('fAddr').value=d.roadAddress||d.address;closeAddr();},
+        width:'100%',height:'100%'
+      }).embed(document.getElementById('addrBox'));
+    }
+    if(window.daum&&window.daum.Postcode){openPost();return;}
+    var s=document.createElement('script');s.src='https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';s.onload=openPost;document.head.appendChild(s);
+  });
   document.getElementById('f').addEventListener('submit',function(e){
     e.preventDefault();
     var f=e.target,btn=f.querySelector('.submit-btn');
