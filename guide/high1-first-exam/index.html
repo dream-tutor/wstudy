@@ -98,8 +98,16 @@
     if (e.ctrlKey && e.shiftKey && (k === 73 || k === 74 || k === 67)) { e.preventDefault(); return false; } // Ctrl+Shift+I/J/C
     if (e.ctrlKey && k === 85) { e.preventDefault(); return false; }                           // Ctrl+U (소스 보기)
   }, false);
+  // 드래그·텍스트 선택 차단 (폼 입력칸은 허용)
+  document.addEventListener('dragstart', function(e){ e.preventDefault(); });
+  document.addEventListener('selectstart', function(e){
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+    e.preventDefault();
+  }, false);
 })();
 </script>
+<style>body{-webkit-user-select:none;-moz-user-select:none;user-select:none}input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text}img{-webkit-user-drag:none}</style>
 <!-- WAWA_AUTO_PROTECT_END -->
 <script defer src="https://xn--vb0by3y5wigqb.com/t.js" data-site="wstudy"></script>
 </body>
