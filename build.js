@@ -635,7 +635,7 @@ ${gradeRows}
 <tr><th>운영 안내</th><td>상담은 예약제로 진행됩니다 · 셔틀버스는 운영하지 않습니다 · 수업비는 아래 <a href="#fee" style="color:var(--brick);font-weight:600">수강료 안내</a> 참고</td></tr>
 </table></div>
 ${osmMap(b)}
-${pick(COPY.wawaWay, b.branch_slug + 'way')()}
+${pick(COPY.wawaWay, b.branch_slug + 'way')(b.subjects)}
 ${classPhoto(3)}
 ${gradeBlocks}
 <h2>과목별 수업 안내</h2>
@@ -761,7 +761,7 @@ ${schedCode ? `<div id="sched" data-code="${esc(schedCode)}" data-school="${esc(
 })();
 </script>` : ''}
 ${bodyBlock}
-${pick(COPY.wawaWay, key + 'way')()}
+${pick(COPY.wawaWay, key + 'way')(['국어', '영어', '수학', '사회', '과학'].filter((x) => s.branches.some((br) => br.subjects.includes(x))))}
 <h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2>
 <div class="tbl-scroll"><table class="info-table">${bRows}</table></div>
 ${(() => {
