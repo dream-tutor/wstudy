@@ -186,7 +186,7 @@ ${body}
 <div class="brand">${BRAND}</div>
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
 <a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/">상담 신청</a> · <a href="${base}review/">수강후기</a><br>
-교습소·학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
+학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
 ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
 </div></footer>
 <div class="float-cta"><a class="f-form" href="${base}inquiry/">상담 문의</a><a class="f-tel" href="tel:${TEL}">전화 상담</a></div>
@@ -787,7 +787,7 @@ ${schoolFeeSection(s)}
 }
 
 // ── 공부법 칼럼 ──
-const GUIDE_CATS = ['공부 습관', '내신 대비', '과목별 공부법', '학년별 가이드', '입시와 생기부'];
+const GUIDE_CATS = ['공부 습관', '내신 대비', '과목별 공부법', '학년별 가이드', '대학 준비와 생기부'];
 function buildGuideIndex() {
   const sections = GUIDE_CATS.map((cat) => {
     const items = GUIDES.filter((g) => g.cat === cat);
@@ -800,7 +800,7 @@ ${crumb(1, [{ name: '공부법 칼럼' }])}
 ${ctaBand(null, 1)}</div>`;
   write('guide/index.html', shell({
     title: `공부법 칼럼 | ${BRAND}`,
-    desc: `공부 습관, 내신 대비, 과목별 공부법, 학년별 가이드, 입시와 생기부까지 ${BRAND}이 정리한 공부법 칼럼 ${GUIDES.length}편.`,
+    desc: `공부 습관, 내신 대비, 과목별 공부법, 학년별 가이드, 대학 준비와 생기부까지 ${BRAND}이 정리한 공부법 칼럼 ${GUIDES.length}편.`,
     canonical: `${DOMAIN}/guide/`, body, depth: 1,
   }));
 }
