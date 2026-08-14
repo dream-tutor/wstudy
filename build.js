@@ -187,6 +187,7 @@ ${body}
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
 <a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/">상담 신청</a> · <a href="${base}review/">수강후기</a><br>
 학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
+${/assets\/(illust\/|wawa-class)/.test(body) ? '<div style="margin-top:8px;font-size:11px;opacity:.75">사진출처: 와와학습코칭센터, AI로 이미지 생성</div>' : ''}
 ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
 </div></footer>
 <div class="float-cta"><a class="f-form" href="${base}inquiry/">상담 문의</a><a class="f-tel" href="tel:${TEL}">전화 상담</a></div>
@@ -376,7 +377,7 @@ function distM(a1, o1, a2, o2) {
 const CLASS_ILLUST = ['illust/c05.jpg', 'illust/c10.jpg', 'illust/c12.jpg', 'illust/c13.jpg', 'illust/c15.jpg', 'illust/c03.jpg'];
 function classPhoto(depth, key = '') {
   const f = key ? pick(CLASS_ILLUST, key + 'photo') : 'wawa-class.jpg';
-  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/${f}" alt="와와 교실 공간 일러스트" width="900" height="664"><div class="cap">와와 교실 공간 일러스트 (지점별 시설과 배치는 다를 수 있습니다) · 사진출처: 와와학습코칭센터, AI로 이미지 생성</div></div>`;
+  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/${f}" alt="와와 교실 공간 일러스트" width="900" height="664"><div class="cap">와와 교실 공간 일러스트 (지점별 시설과 배치는 다를 수 있습니다)</div></div>`;
 }
 const LEVEL_GUIDES = {
   초: ['elem-habit', 'pre-middle', 'study-planner'],
