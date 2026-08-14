@@ -373,8 +373,10 @@ function distM(a1, o1, a2, o2) {
   const h = Math.sin(dA / 2) ** 2 + Math.cos(a1 * r) * Math.cos(a2 * r) * Math.sin(dO / 2) ** 2;
   return Math.round(2 * R * Math.asin(Math.sqrt(h)));
 }
-function classPhoto(depth) {
-  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/wawa-class.jpg" alt="와와 교실 내부" width="900" height="664"><div class="cap">와와 교실 환경 (지점별 시설과 배치는 다를 수 있습니다)</div></div>`;
+const CLASS_ILLUST = ['illust/c05.jpg', 'illust/c10.jpg', 'illust/c12.jpg', 'illust/c13.jpg', 'illust/c15.jpg', 'illust/c03.jpg'];
+function classPhoto(depth, key = '') {
+  const f = key ? pick(CLASS_ILLUST, key + 'photo') : 'wawa-class.jpg';
+  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/${f}" alt="와와 교실 공간 일러스트" width="900" height="664"><div class="cap">와와 교실 공간 일러스트 (지점별 시설과 배치는 다를 수 있습니다) · 사진출처: 와와학습코칭센터, AI로 이미지 생성</div></div>`;
 }
 const LEVEL_GUIDES = {
   초: ['elem-habit', 'pre-middle', 'study-planner'],
@@ -636,7 +638,7 @@ ${gradeRows}
 </table></div>
 ${osmMap(b)}
 ${pick(COPY.wawaWay, b.branch_slug + 'way')(b.subjects)}
-${classPhoto(3)}
+${classPhoto(3, b.branch_slug)}
 ${gradeBlocks}
 <h2>과목별 수업 안내</h2>
 <p>과목을 선택하면 ${esc(b.dong)} 기준의 수업 방식과 내신 대비 흐름을 자세히 볼 수 있습니다.</p>
@@ -878,7 +880,7 @@ ${crumb(1, [{ name: '상담 신청' }])}
 <script>
 (function(){
   if(new URLSearchParams(location.search).get('embed')==='1'){document.documentElement.classList.add('embed');}
-  var DATA=${JSON.stringify(Object.fromEntries(Object.values(regions).map((r) => [r.name, Object.fromEntries(Object.values(r.districts).map((d) => [d.name, d.branches.map((b) => ({ n: b.name, d: b.dong }))]))])))};
+  var DATA=${JSON.stringify(Object.fromEntries(Object.values(regions).map((r) => [r.name, Object.fromEntries(Object.values(r.districts).map((d) => [d.name, d.branches.map((b) => ({ n: b.name, d: b.dong, s: b.subjects }))]))])))};
   var sido=document.getElementById('fSido'),gu=document.getElementById('fGu'),sel=document.getElementById('fBranch');
   function fill(s,items,ph){s.innerHTML='<option value=\"\">'+ph+'</option>'+items.join('');s.disabled=false;}
   sido.addEventListener('change',function(){
@@ -901,7 +903,25 @@ ${crumb(1, [{ name: '상담 신청' }])}
         sel.value=p;break outer;
       }}}}
   }
-  document.querySelectorAll('.subj-pills .sp').forEach(function(b){b.addEventListener('click',function(){b.classList.toggle('on')})});
+  document.querySelectorAll('.subj-pills .sp').forEach(function(b){b.addEventListener('click',function(){if(b.disabled)return;b.classList.toggle('on')})});
+  // 지점 선택 시 해당 지점 미개설 과목은 선택 불가 처리
+  function updatePills(){
+    var subs=null;
+    if(sel.value&&sido.value&&gu.value){
+      (DATA[sido.value][gu.value]||[]).forEach(function(b){if(b.n===sel.value)subs=b.s||null;});
+    }
+    document.querySelectorAll('.subj-pills .sp').forEach(function(b){
+      var ok=!subs||subs.indexOf(b.getAttribute('data-v'))>-1;
+      b.disabled=!ok;
+      b.style.opacity=ok?'':'0.35';
+      b.style.textDecoration=ok?'':'line-through';
+      if(!ok)b.classList.remove('on');
+    });
+  }
+  sel.addEventListener('change',updatePills);
+  gu.addEventListener('change',updatePills);
+  sido.addEventListener('change',updatePills);
+  updatePills();
   var addrLayer=document.getElementById('addrLayer');
   function closeAddr(){addrLayer.style.display='none';document.getElementById('addrBox').innerHTML='';}
   document.getElementById('addrClose').addEventListener('click',closeAddr);
