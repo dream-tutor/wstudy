@@ -187,7 +187,7 @@ ${body}
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
 <a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/">상담 신청</a> · <a href="${base}review/">수강후기</a><br>
 학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
-${/assets\/(illust\/|wawa-class)/.test(body) ? '<div style="margin-top:8px;font-size:11px;opacity:.75">사진출처: 와와학습코칭센터, AI로 이미지 생성</div>' : ''}
+${/assets\/(illust\/|wawa-class)/.test(body) ? '<div style="margin-top:8px;font-size:11px;opacity:.75">사진 출처: 와와학습코칭센터, AI로 이미지 생성</div>' : ''}
 ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
 </div></footer>
 <div class="float-cta"><a class="f-form" href="${base}inquiry/">상담 문의</a><a class="f-tel" href="tel:${TEL}">전화 상담</a></div>
@@ -944,7 +944,8 @@ ${crumb(1, [{ name: '상담 신청' }])}
     var subj=Array.from(document.querySelectorAll('.subj-pills .sp.on')).map(function(x){return x.getAttribute('data-v')}).join(', ');
     if(!subj){alert('희망 과목을 1개 이상 선택해 주세요.');return;}
     btn.disabled=true;btn.textContent='전송 중...';
-    var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,연락처:f.연락처.value,거주주소:f.거주주소.value,학년:f.학년.value,과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:location.href,유입페이지제목:document.title,유입경로:document.referrer||'직접입력'};
+    function normPhone(v){v=String(v||'').replace(/\\D/g,'');if(v.length===11)return v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);if(v.length===10)return v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);return v;}
+    var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,연락처:normPhone(f.연락처.value),거주주소:f.거주주소.value,학년:f.학년.value,과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:location.href,유입페이지제목:document.title,유입경로:document.referrer||'직접입력'};
     var q=Object.keys(data).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(data[k])}).join('&');
     (new Image()).src='${GAS}?'+q;
     setTimeout(function(){f.style.display='none';document.getElementById('ok').classList.add('on');},700);
