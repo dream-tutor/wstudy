@@ -860,7 +860,7 @@ ${crumb(1, [{ name: '상담 신청' }])}
 </div>
 <select name="지점" id="fBranch" disabled style="margin-top:6px"><option value="">지점 (시/군/구를 먼저 선택하세요)</option></select>
 <label>학생 이름</label><input name="이름" required placeholder="이름">
-<label>연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 86px"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div>
+<label>연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 68px"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div>
 <label>주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label>
 <div class="sel-row" style="align-items:stretch">
 <input name="거주주소" id="fAddr" placeholder="예: 경기 군포시 산본로 394" style="flex:1;min-width:0">
