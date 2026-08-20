@@ -247,8 +247,17 @@ function video(v, cap) {
 function ctaBand(b, depth) {
   const base = '../'.repeat(depth);
   const q = b ? '?지점=' + encodeURIComponent(b.name) : '';
-  const kko = b && (b.kakao_link || b.link);
-  return `<div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:${TEL}">전화 상담</a><a class="form" href="${base}inquiry/${q}">상담 신청서 작성</a>${kko ? `<a class="map" href="${kko}" target="_blank" rel="noopener">카카오맵으로 길찾기</a>` : ''}</div></div>`;
+  // 카카오 '장소' 링크는 등록업체 페이지로 연결돼 센터 대표번호가 노출된다.
+  // 좌표 길찾기로만 보낸다 (2026-08-20). 되돌리지 말 것.
+  const _road = (a) => {
+    const t = String(a || '').trim();
+    const m = t.match(/^(.*(?:로|길)\s*\d+(?:-\d+)?)(?=\s|$)/);
+    return m ? m[1].trim() : t.replace(/\s*(제?\S*\d+호|\S*\d+층)\b.*$/, '').replace(/\s*와와\S*$/, '').replace(/\s+\d+$/, '').trim();
+  };
+  const kko = b && b.lat && b.lng
+    ? `https://map.kakao.com/link/to/${encodeURIComponent(_road(b.address) || b.name || '')},${b.lat},${b.lng}`
+    : '';
+  return `<div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:${TEL}">전화 상담</a><a class="form" href="${base}inquiry/${q}">상담 신청서 작성</a>${kko ? `<a class="map" href="${kko}" target="_blank" rel="noopener">카카오맵 길찾기</a>` : ''}</div></div>`;
 }
 function faqHtml(items, ctx) {
   const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [] };
