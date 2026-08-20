@@ -45,7 +45,7 @@
 <label>연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div>
 <label>주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label>
 <div class="sel-row" style="align-items:stretch">
-<input name="거주주소" id="fAddr" placeholder="예: 경기 군포시 산본로 394" style="flex:1;min-width:0">
+<input name="거주주소" id="fAddr" required placeholder="예: 경기 군포시 산본로 394" style="flex:1;min-width:0">
 <button type="button" id="addrBtn" style="flex:0 0 auto;padding:0 14px;border:1.5px solid var(--brick);border-radius:8px;background:#fff;color:var(--brick);font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap">도로명 검색</button>
 </div>
 <label>학교 / 학년</label><input name="학년" placeholder="예: 덕풍중 2학년">
@@ -125,6 +125,7 @@
     var f=e.target,btn=f.querySelector('.submit-btn');
     var subj=Array.from(document.querySelectorAll('.subj-pills .sp.on')).map(function(x){return x.getAttribute('data-v')}).join(', ');
     if(!subj){alert('희망 과목을 1개 이상 선택해 주세요.');return;}
+    if(!f.거주주소.value.trim()){alert('주소를 입력해 주세요. 도로명 검색 또는 직접 입력 모두 가능합니다.');f.거주주소.focus();return;}
     btn.disabled=true;btn.textContent='전송 중...';
     function normPhone(p,v){v=String(v||'').replace(/\D/g,'');if(v.length===11)return v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);if(v.length===10)return v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);if(v.length===8)return p+'-'+v.slice(0,4)+'-'+v.slice(4);if(v.length===7)return p+'-'+v.slice(0,3)+'-'+v.slice(3);return p+'-'+v;}
     var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:f.학년.value,과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:location.href,유입페이지제목:document.title,유입경로:document.referrer||'직접입력'};
