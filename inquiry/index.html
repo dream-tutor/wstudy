@@ -45,7 +45,7 @@
 <label>연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div>
 <label>주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label>
 <div class="sel-row" style="align-items:stretch">
-<input name="거주주소" id="fAddr" required placeholder="예: 경기 군포시 산본로 394" style="flex:1;min-width:0">
+<input name="거주주소" id="fAddr" required readonly onclick="document.getElementById(&quot;addrBtn&quot;).click()" placeholder="주소 검색을 눌러 선택하세요" style="flex:1;min-width:0;cursor:pointer;background:#fff">
 <button type="button" id="addrBtn" style="flex:0 0 auto;padding:0 14px;border:1.5px solid var(--brick);border-radius:8px;background:#fff;color:var(--brick);font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap">도로명 검색</button>
 </div>
 <label>학년</label>
@@ -123,7 +123,7 @@
       }).embed(document.getElementById('addrBox'));
     }
     if(window.daum&&window.daum.Postcode){openPost();return;}
-    var s=document.createElement('script');s.src='https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';s.onload=openPost;document.head.appendChild(s);
+    var s=document.createElement('script');s.src='https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';s.onload=openPost;s.onerror=function(){alert('주소 검색을 불러오지 못했습니다. 이번만 주소를 직접 입력해 주세요.');var a=document.getElementById('fAddr');if(a){a.removeAttribute('readonly');a.focus();}};document.head.appendChild(s);
   });
 
   (function(){
