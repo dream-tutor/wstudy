@@ -142,7 +142,9 @@ for (const b of Object.values(BRANCHES)) {
 const urls = [];
 
 // ── 공통 레이아웃 ──
-function shell({ title, desc, canonical, body, depth, ld, ogTitle, footExtra }) {
+function shell({ title, desc, canonical, body, depth, ld, ogTitle, footExtra, branch = '' }) {
+  // 지점 페이지에서는 모든 상담 CTA 가 해당 지점을 달고 이동한다
+  const cq = branch ? `?지점=${encodeURIComponent(branch)}` : '';
   const base = depth ? '../'.repeat(depth) : './';
   // 페이지 LD + 브레드크럼 LD 병합 (@graph)
   const graph = [];
@@ -179,18 +181,18 @@ ${ldJson ? `<script type="application/ld+json">${ldJson}</script>` : ''}
 <div class="topbar"><span>초·중·고 교과 전문 ${BRAND}</span><a href="tel:${TEL}">전화 상담</a></div>
 <header class="site"><div class="in">
 <a class="logo" href="${base}">와와학습학원<span class="dot">.</span></a>
-<nav class="gnb"><a class="cta" href="${base}inquiry/">상담 신청</a></nav>
+<nav class="gnb"><a class="cta" href="${base}inquiry/${cq}">상담 신청</a></nav>
 </div></header>
 ${body}
 <footer class="site"><div class="in">
 <div class="brand">${BRAND}</div>
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
-<a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/">상담 신청</a> · <a href="${base}review/">수강후기</a><br>
+<a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/${cq}">상담 신청</a> · <a href="${base}review/">수강후기</a><br>
 학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
 ${/assets\/(illust\/|wawa-class)/.test(body) ? '<div style="margin-top:8px;font-size:11px;opacity:.75">사진 출처: 와와학습코칭센터, AI로 이미지 생성</div>' : ''}
 ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
 </div></footer>
-<div class="float-cta"><a class="f-form" href="${base}inquiry/">상담 문의</a><a class="f-tel" href="tel:${TEL}">전화 상담</a></div>
+<div class="float-cta"><a class="f-form" href="${base}inquiry/${cq}">상담 문의</a><a class="f-tel" href="tel:${TEL}">전화 상담</a></div>
 <div id="cOv" class="c-ov" hidden><div class="c-box"><button type="button" class="c-x" aria-label="닫기">×</button><iframe id="cFrame" title="상담 신청"></iframe></div></div>
 <script>
 (function(){
@@ -661,6 +663,7 @@ ${faq.html}
 ${ctaBand(b, 3)}
 <article class="body">${feeSection(b)}</article></div>`;
   write(`${r.slug}/${d.slug}/${b.branch_slug}/index.html`, shell({
+    branch: b.name,
     title: `${BRAND} ${b.name} | ${b.dong} 초중고 학원`,
     desc: `${b.region} ${b.district} ${b.dong}의 ${BRAND} ${b.name}. ${(b.subjects || []).join('·')} 수업, ${COPY.schoolLine(b)} 내신 관리. ${esc(b.open_time || '')}`,
     canonical: `${DOMAIN}/${r.slug}/${d.slug}/${b.branch_slug}/`, body, depth: 3,
@@ -708,6 +711,7 @@ ${faq.html}
 ${ctaBand(b, 4)}
 <article class="body">${feeSection(b)}</article></div>`;
   write(`${r.slug}/${d.slug}/${b.branch_slug}/${slug}/index.html`, shell({
+    branch: b.name,
     title: `${b.dong} ${subj}학원 | ${BRAND} ${b.name}`,
     desc: `${b.district} ${b.dong} ${subj}학원 안내. ${BRAND} ${b.name}의 ${subj} 수업 방식과 학년별 커리큘럼, ${ctx.schoolShort} 내신 대비.`,
     canonical: `${DOMAIN}/${r.slug}/${d.slug}/${b.branch_slug}/${slug}/`, body, depth: 4,
