@@ -295,12 +295,21 @@ function nearbyRow(b) {
   const nb = (b.nearby_text || '').split('/').slice(1).join('').trim();
   return nb ? `<tr><th>주변</th><td>${esc(nb)}</td></tr>` : '';
 }
-// 지점 위치 지도 (OSM 임베드 — 키 불필요)
+// 지점 위치 지도 (Leaflet + OSM 래스터 타일 — 키 불필요)
+// OSM 임베드(export/embed.html)는 2026-08 MapLibre GL로 바뀌어 WebGL이 꺼진 환경에서
+// "브라우저가 WebGL을 지원하지 않습니다"만 뜬다. 허브 지도(branchesMap)와 같은 래스터 방식으로 통일.
 function osmMap(b) {
   if (!b.lat || !b.lng) return '';
-  const d = 0.005, dx = 0.008;
-  const bbox = encodeURIComponent(`${b.lng - dx},${b.lat - d},${b.lng + dx},${b.lat + d}`);
-  return `<h2>오시는 길</h2><div class="mapbox"><iframe loading="lazy" title="${esc(b.name)} 위치 지도" src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${b.lat}%2C${b.lng}"></iframe><div class="cap">${esc(b.address)}${b.nearby_text ? ' · ' + esc((b.nearby_text.split('/')[1] || '').trim()) : ''}</div></div>`;
+  return `<h2>오시는 길</h2><div class="mapbox"><div id="bmap" class="bmap"></div><div class="cap">${esc(b.address)}${b.nearby_text ? ' · ' + esc((b.nearby_text.split('/')[1] || '').trim()) : ''}</div></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var m=L.map('bmap',{scrollWheelZoom:false}).setView([${b.lat},${b.lng}],16);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',maxZoom:19}).addTo(m);
+  L.marker([${b.lat},${b.lng}]).addTo(m).bindPopup(${JSON.stringify(b.name)});
+})();
+</script>`;
 }
 // 주소에서 일반구 추출 — "경기 수원시 장안구 …" → "장안구" (없으면 null)
 function guOf(b) {

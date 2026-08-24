@@ -44,7 +44,16 @@
 <tr><th>수업 시간</th><td>평일 오후 2시 이후 · 가능</td></tr>
 <tr><th>운영 안내</th><td>상담은 예약제로 진행됩니다 · 셔틀버스는 운영하지 않습니다 · 수업비는 아래 <a href="#fee" style="color:var(--brick);font-weight:600">수강료 안내</a> 참고</td></tr>
 </table></div>
-<h2>오시는 길</h2><div class="mapbox"><iframe loading="lazy" title="범박점 위치 지도" src="https://www.openstreetmap.org/export/embed.html?bbox=126.796211%2C37.4680507%2C126.81221099999999%2C37.478050700000004&layer=mapnik&marker=37.4730507%2C126.804211"></iframe><div class="cap">경기 부천시 소사구 은성로 132 5층 · 소안초등학교 옆</div></div>
+<h2>오시는 길</h2><div class="mapbox"><div id="bmap" class="bmap"></div><div class="cap">경기 부천시 소사구 은성로 132 5층 · 소안초등학교 옆</div></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var m=L.map('bmap',{scrollWheelZoom:false}).setView([37.4730507,126.804211],16);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',maxZoom:19}).addTo(m);
+  L.marker([37.4730507,126.804211]).addTo(m).bindPopup("범박점");
+})();
+</script>
 <h2>수업은 이렇게 다릅니다</h2>
 <p>와와학습학원의 수업은 과목 수업입니다. 국어, 영어, 수학, 과학, 사회 각 과목을 그 과목 선생님이 가르치고, 여기에 공부 방법과 공부 습관을 잡아 주는 코칭이 더해집니다. 자기주도학습을 한다고 해서 학생을 혼자 두는 방식이 아닙니다.</p>
 <p>강의식으로 진도를 일괄로 나가는 수업이 아니기 때문에 반 개강일이나 고정된 클래스 횟수가 없습니다. 교재와 커리큘럼은 진단 결과에 따라 학생마다 다르게 잡히고, 그래서 학기 중이든 방학이든 언제든 시작할 수 있습니다.</p>
