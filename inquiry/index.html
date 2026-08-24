@@ -142,7 +142,7 @@
     var f=e.target,btn=f.querySelector('.submit-btn');
     var subj=Array.from(document.querySelectorAll('.subj-pills .sp.on')).map(function(x){return x.getAttribute('data-v')}).join(', ');
     if(!subj){alert('희망 과목을 1개 이상 선택해 주세요.');return;}
-    if(!f.거주주소.value.trim()){alert('주소를 입력해 주세요. 도로명 검색 또는 직접 입력 모두 가능합니다.');f.거주주소.focus();return;}
+    if(!f.거주주소.value.trim()){document.getElementById('addrBtn').click();return;}
     btn.disabled=true;btn.textContent='전송 중...';
     function normPhone(p,v){v=String(v||'').replace(/\D/g,'');if(v.length===11)return v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);if(v.length===10)return v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);if(v.length===8)return p+'-'+v.slice(0,4)+'-'+v.slice(4);if(v.length===7)return p+'-'+v.slice(0,3)+'-'+v.slice(3);return p+'-'+v;}
     var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:(function(){var sc=f.학교?f.학교.value.trim():'',lv=f.학년급?f.학년급.value:'',gd=f.학년상세?f.학년상세.value:'';return sc?[sc,gd||lv].filter(Boolean).join(' '):[lv,gd].filter(Boolean).join(' ');})(),학교:f.학교?f.학교.value.trim():'',과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:location.href,유입페이지제목:document.title,유입경로:document.referrer||'직접입력'};
