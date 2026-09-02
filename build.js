@@ -49,6 +49,34 @@ const SUBJ_SLUG = { 영어: 'english', 수학: 'math', 국어: 'korean', 과학:
 // ── 유틸 ──
 function hash(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h; }
 function pick(arr, key) { return arr[hash(key) % arr.length]; }
+// 페이지별 날짜 — URL 시드 기반, 월 단위로만 변동 (학교별과외 seo.js pageDates와 같은 방식)
+//   dateModified: 이번 달 안에서 시드로 고정한 날(1~28일). 아직 오지 않은 날이면 지난달 같은 날.
+//   datePublished: 시드로 2026-07-13 ~ 2026-08-15 사이에 고정 분산 (빌드 시각과 무관).
+//   sitemap <lastmod>도 같은 값을 쓴다. 주 단위 랜덤 회전은 넣지 말 것.
+const SITE_LAUNCH_EPOCH = Date.UTC(2026, 6, 13);
+const LAUNCH_SPAN_DAYS = 34; // 2026-07-13 ~ 2026-08-15
+function seedHash(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+function pageDates(seed) {
+  let s = String(seed == null ? '' : seed);
+  try { s = decodeURIComponent(s); } catch (e) {}
+  s = '/' + s.replace(/^\/+/, ''); // '/busan/bukgu/' 형태로 정규화 (shell·sitemap이 같은 시드를 쓰도록)
+  const h = seedHash(s);
+  const h2 = seedHash('m:' + s);
+  const published = new Date(SITE_LAUNCH_EPOCH + (h % LAUNCH_SPAN_DAYS) * 86400000);
+  const nowKst = new Date(Date.now() + 9 * 3600 * 1000); // KST 기준 오늘
+  const y = nowKst.getUTCFullYear();
+  const m = nowKst.getUTCMonth();
+  const dayOff = h2 % 28;
+  let modified = new Date(Date.UTC(y, m, 1 + dayOff));
+  if (modified.getTime() > nowKst.getTime()) modified = new Date(Date.UTC(y, m - 1, 1 + dayOff));
+  if (modified.getTime() < published.getTime()) modified = published; // 수정일이 발행일보다 앞설 수 없음
+  const iso = (d) => d.toISOString().slice(0, 10);
+  return { datePublished: iso(published), dateModified: iso(modified) };
+}
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function write(rel, html) {
   const p = path.join(ROOT, rel);
@@ -150,7 +178,11 @@ function shell({ title, desc, canonical, body, depth, ld, ogTitle, footExtra, br
   const graph = [];
   if (ld) { if (ld['@graph']) graph.push(...ld['@graph']); else { const o = { ...ld }; delete o['@context']; graph.push(o); } }
   if (CRUMB_LD) { graph.push(CRUMB_LD); CRUMB_LD = null; }
+  // 페이지 날짜 (URL 시드·월 단위) — WebPage LD + article:*_time 메타 + 브레드크럼 옆 표시 문구
+  const { datePublished, dateModified } = pageDates(canonical.replace(DOMAIN, ''));
+  graph.push({ '@type': 'WebPage', name: title, description: desc, url: canonical, datePublished, dateModified, inLanguage: 'ko-KR' });
   const ldJson = graph.length ? JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }) : '';
+  const bodyOut = body.replace(/__UPD_ISO__/g, dateModified).replace(/__UPD_DOT__/g, dateModified.replace(/-/g, '.'));
   return `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -170,6 +202,8 @@ function shell({ title, desc, canonical, body, depth, ld, ogTitle, footExtra, br
 <meta property="og:image:width" content="900">
 <meta property="og:image:height" content="664">
 <meta name="twitter:card" content="summary_large_image">
+<meta property="article:published_time" content="${datePublished}T00:00:00+09:00">
+<meta property="article:modified_time" content="${dateModified}T00:00:00+09:00">
 <link rel="icon" href="${base}favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -183,7 +217,7 @@ ${ldJson ? `<script type="application/ld+json">${ldJson}</script>` : ''}
 <a class="logo" href="${base}">와와학습학원<span class="dot">.</span></a>
 <nav class="gnb"><a class="cta" href="${base}inquiry/${cq}">상담 신청</a></nav>
 </div></header>
-${body}
+${bodyOut}
 <footer class="site"><div class="in">
 <div class="brand">${BRAND}</div>
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
@@ -240,7 +274,8 @@ function crumb(depth, items) {
     }
   }
   CRUMB_LD = { '@type': 'BreadcrumbList', itemListElement: ldItems };
-  return html + '</div>';
+  // 날짜 토큰은 shell()이 페이지 dateModified로 치환 (crumb는 경로를 모르므로)
+  return html + '<time class="upd" datetime="__UPD_ISO__">정보 업데이트 __UPD_DOT__</time></div>';
 }
 function video(v, cap) {
   if (!v) return '';
@@ -1029,10 +1064,10 @@ fs.writeFileSync(path.join(ROOT, 'assets', 'search-index.json'), JSON.stringify(
 console.log('검색 인덱스:', searchIndex.length, '건');
 
 // sitemap / robots / CNAME / favicon
-const LASTMOD = new Date().toISOString().slice(0, 10);
+// lastmod는 URL마다 그 페이지의 dateModified(pageDates, 월 단위)와 동일 — 빌드 날짜 일괄 기입 아님
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  urls.map((u) => `<url><loc>${DOMAIN}/${encodeURI(u)}</loc><lastmod>${LASTMOD}</lastmod></url>`).join('\n') + '\n</urlset>', 'utf8');
+  urls.map((u) => `<url><loc>${DOMAIN}/${encodeURI(u)}</loc><lastmod>${pageDates(u).dateModified}</lastmod></url>`).join('\n') + '\n</urlset>', 'utf8');
 fs.writeFileSync(path.join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${DOMAIN}/sitemap.xml\n`, 'utf8');
 // IndexNow 키 검증 파일 (제출 크론은 sangsang-workers 중앙 크론이 매일 실행)
 fs.writeFileSync(path.join(ROOT, '5e5ad86af25533efae3948773b676a6c.txt'), '5e5ad86af25533efae3948773b676a6c', 'utf8');
