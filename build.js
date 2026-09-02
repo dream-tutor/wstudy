@@ -223,6 +223,7 @@ ${bodyOut}
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
 <a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/${cq}">상담 신청</a> · <a href="${base}review/">수강후기</a><br>
 학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
+${body.includes('class="upd"') ? '' : `<div style="margin-top:8px;font-size:12px;opacity:.8">정보 업데이트 ${dateModified.replace(/-/g, '.')}</div>`}
 ${/assets\/(illust\/|wawa-class)/.test(body) ? '<div style="margin-top:8px;font-size:11px;opacity:.75">사진 출처: 와와학습코칭센터, AI로 이미지 생성</div>' : ''}
 ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
 </div></footer>
