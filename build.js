@@ -253,6 +253,10 @@ ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
 })();
 (function(){
+  // 썸네일 대체: 없는 해상도는 404여도 120x90 자리표시 이미지가 오므로 크기로 판단해 다음 후보로 교체
+  function fb(img){var f=(img.dataset.fb||'').split(',').filter(Boolean);if(img.naturalWidth>120||!f.length)return;img.dataset.fb=f.slice(1).join(',');img.src=img.src.replace(/[^/]+\.jpg$/,f[0]+'.jpg');}
+  var imgs=document.querySelectorAll('.frame[data-yt] img');
+  for(var i=0;i<imgs.length;i++){(function(img){img.addEventListener('load',function(){fb(img)});img.addEventListener('error',function(){fb(img)});if(img.complete&&img.naturalWidth)fb(img);})(imgs[i]);}
   document.addEventListener('click',function(e){
     var f=e.target.closest('.frame[data-yt]');
     if(!f||f.classList.contains('on'))return;
@@ -293,13 +297,11 @@ function crumb(depth, items) {
   return html + '</div>'; // 정보 업데이트 날짜는 푸터에 표시 (2026-09-07: 브레드크럼 옆 표기 제거)
 }
 // 유튜브: 썸네일+재생 버튼 파사드(제목바·로고 없이 노출, 누르면 iframe 자동재생). 쇼츠는 세로 크롭(wcoachingcenter와 동일)
-// 유튜브 썸네일 대체: 없는 해상도는 404여도 120x90 자리표시 이미지가 오므로(onerror 안 뜸) 크기로 판단해 다음 후보로 교체
-const YT_FB = "var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+\.jpg$/,f[0]+'.jpg')";
 function video(v, cap) {
   if (!v) return '';
   const vert = !!v.shorts;
   const thumbs = vert ? ['oardefault', 'hqdefault'] : ['hq720', 'sddefault', 'hqdefault'];
-  return `<div class="video-box"><div class="frame${vert ? ' vertical' : ''}" data-yt="${v.id}" data-title="${esc(v.title)}"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/${thumbs[0]}.jpg" data-fb="${thumbs.slice(1).join(',')}" alt="${esc(v.title)}" width="${vert ? 300 : 1280}" height="${vert ? 533 : 720}" onload="${YT_FB}" onerror="${YT_FB}"><button type="button" class="yt-play" aria-label="${esc(v.title)} 재생"><span></span></button></div><div class="cap">▶ ${esc(cap || v.title)} (와와 공식 유튜브)</div></div>`;
+  return `<div class="video-box"><div class="frame${vert ? ' vertical' : ''}" data-yt="${v.id}" data-title="${esc(v.title)}"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/${thumbs[0]}.jpg" data-fb="${thumbs.slice(1).join(',')}" alt="${esc(v.title)}" width="${vert ? 300 : 1280}" height="${vert ? 533 : 720}"><button type="button" class="yt-play" aria-label="${esc(v.title)} 재생"><span></span></button></div><div class="cap">▶ ${esc(cap || v.title)} (와와 공식 유튜브)</div></div>`;
 }
 function ctaBand(b, depth) {
   const base = '../'.repeat(depth);
@@ -314,7 +316,7 @@ function ctaBand(b, depth) {
   const kko = b && b.lat && b.lng
     ? `https://map.kakao.com/link/to/${encodeURIComponent(_road(b.address) || b.name || '')},${b.lat},${b.lng}`
     : '';
-  return `<div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:${TEL}">전화 상담</a><a class="form" href="${base}inquiry/${q}">상담 신청서 작성</a>${kko ? `<a class="map" href="${kko}" target="_blank" rel="noopener">카카오맵 길찾기</a>` : ''}</div></div>`;
+  return `<div class="cta-band"><div class="t">상담 안내</div><div class="d">${pick(['학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.', '학교와 학년, 궁금한 과목을 남겨 주시면 지점에서 연락드려 수업 방법과 시간을 안내합니다.', '지금 성적과 다니는 학교를 알려 주시면 어느 단원부터 시작하면 좋을지 상담에서 정리해 드립니다.'], ((b && b.name) || 'home') + 'cta')}</div><div class="btns"><a class="tel" href="tel:${TEL}">전화 상담</a><a class="form" href="${base}inquiry/${q}">상담 신청서 작성</a>${kko ? `<a class="map" href="${kko}" target="_blank" rel="noopener">카카오맵 길찾기</a>` : ''}</div></div>`;
 }
 function faqHtml(items, ctx) {
   const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [] };
@@ -450,37 +452,43 @@ function distM(a1, o1, a2, o2) {
   return Math.round(2 * R * Math.asin(Math.sqrt(h)));
 }
 const CLASS_ILLUST = ['illust/c05.jpg', 'illust/c10.jpg', 'illust/c12.jpg', 'illust/c13.jpg', 'illust/c15.jpg', 'illust/c03.jpg'];
+const PHOTO_CAPS = ['와와 교실 공간 일러스트 (지점별 시설과 배치는 다를 수 있습니다)', '교실 일러스트입니다. 실제 지점의 시설과 배치는 다를 수 있습니다.', '와와 교실 모습을 그린 그림입니다. 지점마다 시설은 조금씩 다릅니다.'];
 function classPhoto(depth, key = '') {
   const f = key ? pick(CLASS_ILLUST, key + 'photo') : 'wawa-class.jpg';
-  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/${f}" alt="와와 교실 공간 일러스트" width="900" height="664"><div class="cap">와와 교실 공간 일러스트 (지점별 시설과 배치는 다를 수 있습니다)</div></div>`;
+  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/${f}" alt="와와 교실 공간 일러스트" width="900" height="664"><div class="cap">${pick(PHOTO_CAPS, key + 'cap')}</div></div>`;
 }
 // 수업 방식 강조 블록 — 큰 글씨 선언 + 원칙 3개 (2026-09-07 지시: 자기주도·개별진도·강의식 없음·학습코칭 강조)
 // 같은 문장이 2,300페이지에 반복되면 페이지 간 유사도가 오르므로 슬롯별 변형을 페이지 키 해시로 고른다.
 const WAY_L1 = [
   '강의식 수업이 아닙니다.<br>학생마다 자기 진도로 공부합니다.',
-  '칠판 앞에서 설명하는 수업이 없습니다.<br>각자 자기 교재를 풉니다.',
-  '받아 적는 수업이 아니라<br>직접 푸는 수업입니다.',
+  '칠판 강의가 없습니다.<br>학생은 각자 자기 교재를 풉니다.',
+  '설명을 듣는 수업이 아니라<br>직접 푸는 수업입니다.',
+  '진도는 학생마다 다르고,<br>선생님은 옆에서 봐 줍니다.',
 ];
 const WAY_L2 = [
   '선생님이 칠판 앞에서 진도를 나가고 받아 적는 방식이 아니라, 학생이 <em>자기 교재를 직접 풀고</em> 선생님이 <em>옆에서 봐 주는</em> 방식입니다. <em>공부 방법과 습관</em>도 같이 잡아 줍니다.',
   '진단으로 정한 <em>자기 진도</em>를 각자 나가고, 막히는 곳은 선생님이 <em>그 자리에서</em> 설명해 줍니다. 계획 짜기와 오답 정리 같은 <em>공부 습관</em>도 수업 안에서 챙깁니다.',
-  '같은 교실에 있어도 학생마다 <em>교재와 단원이 다릅니다</em>. 선생님은 앞에 서는 대신 <em>학생 옆에서</em> 확인하고, <em>공부하는 방법</em>까지 같이 잡아 줍니다.',
+  '같은 교실에 있어도 학생마다 <em>교재와 단원이 다릅니다</em>. 선생님은 앞에서 설명하는 대신 <em>학생 옆에서</em> 확인하고, <em>공부하는 방법</em>까지 같이 잡아 줍니다.',
+  '칠판에 쓰고 받아 적는 시간이 없습니다. 수업 시간은 학생이 <em>직접 푸는 시간</em>이고, 선생님은 <em>막힌 곳을 개별로</em> 설명합니다. <em>공부 습관</em>은 매 수업 확인하면서 잡습니다.',
 ];
 const WAY_CARDS = [
-  { t: ['개별 진도', '학생마다 다른 진도', '자기 진도'], d: [
+  { t: ['개별 진도', '학생마다 다른 진도', '자기 진도 수업', '진단 후 개별 진도'], d: [
     '처음에 진단을 해서 어디서부터 할지 정합니다. 교재, 단원, 주당 횟수가 학생마다 다르고, 학기 중간에 와도 그 자리에서 시작하면 됩니다.',
-    '등록하면 먼저 진단부터 합니다. 그 결과로 교재와 시작 단원을 정하기 때문에 옆자리 학생과 진도가 다르고, 개강일을 기다릴 필요도 없습니다.',
+    '등록하면 먼저 진단부터 합니다. 그 결과로 교재와 시작 단원을 정하기 때문에 학생마다 진도가 다르고, 개강일을 기다릴 필요도 없습니다.',
     '정해진 반 진도가 없습니다. 학생의 현재 위치에서 시작해 자기 속도로 나가고, 주당 횟수와 교재도 상담에서 학생에 맞춰 정합니다.',
+    '이전 학년에서 빠진 단원이 있으면 거기서부터, 여유가 있으면 상담 후 앞 단원까지 나갑니다. 시작점과 속도가 학생마다 다른 이유입니다.',
   ] },
-  { t: ['칠판·판서 수업 없음', '강의식 수업 없음', '받아 적는 수업 없음'], d: [
-    '앞에서 설명하고 받아 적는 시간이 없습니다. 학생이 푸는 동안 선생님이 돌면서 보고, 막히면 그 자리에서 설명해 줍니다.',
+  { t: ['칠판·판서 수업 없음', '강의식 수업 없음', '판서 수업 없음', '강의 대신 직접 풀기'], d: [
+    '앞에서 설명하고 받아 적는 시간이 없습니다. 학생이 푸는 동안 선생님이 옆에서 보고, 막히면 그 자리에서 설명해 줍니다.',
     '선생님이 칠판에 쓰고 학생이 옮겨 적는 수업을 하지 않습니다. 수업 시간 대부분은 학생이 직접 푸는 시간이고, 선생님은 옆에서 확인합니다.',
-    '듣기만 하는 수업은 알 것 같다가도 혼자 풀면 막히는 경우가 많습니다. 그래서 설명은 막힌 학생에게 개별로 하고, 나머지 시간은 직접 풀게 합니다.',
+    '설명을 들을 때는 아는 것 같다가도 혼자 풀면 막히는 경우가 많습니다. 그래서 설명은 막힌 학생에게 개별로 하고, 나머지 시간은 직접 풀게 합니다.',
+    '진도를 일괄로 나가는 강의가 없으니 이해하지 못한 채 넘어가는 일이 없습니다. 한 문제를 붙잡고 있으면 선생님이 와서 같이 풉니다.',
   ] },
-  { t: ['학습코칭', '공부 방법과 습관', '습관까지 같이'], d: [
-    '계획 짜기, 오답 정리, 그날 분량 확인까지 선생님이 챙깁니다. 혼자 앉혀 놓는 자습이 아니라, 스스로 공부하는 습관을 들이는 과정입니다.',
+  { t: ['학습코칭', '공부 방법과 습관', '공부 습관 관리', '코칭이 붙는 수업'], d: [
+    '계획 짜기, 오답 정리, 그날 분량 확인까지 선생님이 챙깁니다. 혼자 두는 자습이 아니라, 스스로 공부하는 습관을 들이는 과정입니다.',
     '과목 수업에 공부 방법 지도가 같이 붙습니다. 오늘 할 분량을 정하고, 틀린 문제를 정리하고, 다음 수업 전까지 할 일을 확인하는 것을 매번 반복합니다.',
     '성적은 공부 습관에서 갈립니다. 계획을 세우고 지키는 것, 오답을 다시 보는 것을 선생님이 매 수업 확인하면서 습관으로 만듭니다.',
+    '무엇을 얼마나 할지 학생이 정하고 선생님이 확인합니다. 처음에는 선생님이 잡아 주지만, 학년이 올라갈수록 학생이 스스로 계획하는 쪽으로 넘깁니다.',
   ] },
 ];
 function wayBlock(compact = false, key = 'home') {
@@ -562,7 +570,7 @@ function buildHome() {
     { q: '수업료는 어떻게 되나요?', a: '학년과 주당 횟수에 따라 다르며, 교육청 등록 기준 공시 금액을 각 지점 페이지의 수강료 안내 표에 그대로 올려 두었습니다. 자세한 시간과 횟수는 상담에서 조율합니다.' },
     { q: '우리 동네에도 지점이 있나요?', a: `전국에 ${total}개 지점이 있습니다. 지역별 지점 찾기에서 시·군·구를 선택하면 지점 위치와 관리 학교를 확인할 수 있습니다.` },
     { q: '다른 학원과 무엇이 다른가요?', a: '칠판·판서 강의가 없습니다. 진단 후 학생마다 교재와 단원을 다르게 잡는 개별 진도로 각자 공부하고, 과목 선생님이 옆에서 확인하며 공부 방법과 습관까지 코칭합니다. 시험 기간에는 학생이 다니는 학교의 기출과 수업 자료 기준으로 내신을 준비합니다.' },
-    { q: '강의를 안 하면 학생이 혼자 공부하는 건가요?', a: '아닙니다. 과목 선생님이 소수 인원을 개별로 봐 주면서 막히는 부분을 바로 설명합니다. 계획 짜기, 오답 정리, 그날 분량 확인도 선생님이 챙기기 때문에 혼자 앉혀 놓는 자습과는 다릅니다.' },
+    { q: '강의를 안 하면 학생이 혼자 공부하는 건가요?', a: '아닙니다. 과목 선생님이 소수 인원을 개별로 봐 주면서 막히는 부분을 바로 설명합니다. 계획 짜기, 오답 정리, 그날 분량 확인도 선생님이 챙기기 때문에 혼자 두는 자습과는 다릅니다.' },
     { q: '몇 학년부터 다닐 수 있나요?', a: '지점에 따라 초등 저학년부터 고3까지 받습니다. 각 지점 페이지의 과목별 대상 학년 표에서 확인할 수 있습니다.' },
   ];
   const faqLd = { '@type': 'FAQPage', mainEntity: HOME_FAQ.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
@@ -753,18 +761,18 @@ ${wayBlock(false, b.branch_slug)}
 <tr><th>주소</th><td>${esc(b.address)}${b.location_guide ? `<br><span style="color:var(--ink-soft);font-size:13.5px">${esc(b.location_guide).replace(/\n/g, '<br>')}</span>` : ''}</td></tr>
 ${nearbyRow(b)}
 <tr><th>수업 과목</th><td><div class="sp-row">${subjPills}</div></td></tr>
-<tr><th>수업 시간</th><td>${esc(b.open_time || '상담 시 안내')}${b.weekend ? ` · ${esc(b.weekend)}` : ''}<br><span class="td-sub">상담 예약제 · 셔틀버스 없음 · 수업비는 아래 <a href="#fee">수강료 안내</a> 참고</span></td></tr>
+<tr><th>수업 시간</th><td>${esc(b.open_time || '상담 시 안내')}${b.weekend ? ` · ${esc(b.weekend)}` : ''}<br><span class="td-sub">${pick(['상담 예약제 · 셔틀버스 없음 · 수업비는 아래 <a href="#fee">수강료 안내</a> 참고', '방문 상담은 예약 후 · 셔틀 운행 없음 · 수업비는 <a href="#fee">수강료 안내</a>에서 확인', '상담은 미리 예약 · 셔틀버스 운영 안 함 · 금액은 아래 <a href="#fee">수강료 표</a> 참고'], key + 'ops')}</span></td></tr>
 </table></div>
 ${osmMap(b)}
 ${pick(COPY.wawaWay, b.branch_slug + 'way')(b.subjects)}
 ${gradeBlocks}
 <h2>과목별 수업 안내</h2>
-<p>과목을 선택하면 ${esc(b.dong)} 기준의 수업 방식과 내신 대비 흐름을 자세히 볼 수 있습니다.</p>
+<p>${pick([`과목을 선택하면 ${esc(b.dong)} 기준의 수업 방식과 내신 대비 흐름을 자세히 볼 수 있습니다.`, `${esc(b.dong)}에서 듣는 과목별 수업 내용과 시험 대비 방식은 과목 이름을 누르면 볼 수 있습니다.`, `아래 과목을 누르면 ${esc(b.name)}의 과목별 수업 순서와 내신 준비 방법을 확인할 수 있습니다.`], key + 'subp')}</p>
 <div class="chips">${subjectLinks}</div>
 <h2>관리 학교</h2>
-<p>${esc(b.name)}에 다니는 학생들의 소속 학교입니다. 학교별 시험 대비 안내는 학교 이름을 눌러 확인하세요. <strong>목록에 없는 인근 학교 학생도 수업이 가능하니</strong> 상담에서 확인해 주세요.</p>
+<p>${pick([`${esc(b.name)}에 다니는 학생들의 소속 학교입니다. 학교별 시험 대비 안내는 학교 이름을 눌러 확인하세요. <strong>목록에 없는 인근 학교 학생도 수업이 가능하니</strong> 상담에서 확인해 주세요.`, `${esc(b.name)} 학생들이 다니는 학교입니다. 학교 이름을 누르면 그 학교 기준의 시험 대비 안내가 나옵니다. <strong>목록에 없는 학교도 인근이면 수업할 수 있으니</strong> 상담 때 말씀해 주세요.`, `현재 ${esc(b.name)}에 다니는 학생들의 학교 목록입니다. 학교별 시험 준비 방법은 이름을 눌러 보세요. <strong>여기 없는 학교 학생도 상담 후 수업이 가능합니다.</strong>`], key + 'schp')}</p>
 <div class="chips">${schoolChips}</div>
-${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, b.branch_slug + 'promo'), '와와 소개 영상')}
+${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, b.branch_slug + 'promo'), pick(['와와 소개 영상', '와와학습학원 소개 영상', '와와 공식 채널의 소개 영상'], b.branch_slug + 'vcap'))}
 ${faq.html}
 </article>
 ${ctaBand(b, 3)}
@@ -794,7 +802,7 @@ function buildSubject(r, d, b, subj) {
   const gradeBlocks = levels.map((lv) => pick(COPY.gradeBlock[lv], key + lv)()).join('');
   const grades = (b.grades_by_subject || {})[subj];
   const bv = branchVideo(b); // 지점 매칭 영상이 있을 때만 노출
-  const faq = faqHtml([COPY.faqPool.subject[0], COPY.faqPool.subject[1], COPY.faqPool.common[3], COPY.faqPool.common[1]], { tel: TEL, branchName: b.name, schoolShort: ctx.schoolShort });
+  const faq = faqHtml([COPY.faqPool.subject[0], COPY.faqPool.subject[1], COPY.faqPool.common[3], COPY.faqPool.common[1]], { tel: TEL, branchName: b.name, schoolShort: ctx.schoolShort, subject: subj });
   const otherSubjects = (b.subjects || []).filter((s) => s !== subj).map((s) => `<a href="../${SUBJ_SLUG[s]}/">${esc(b.dong)} ${esc(s)}학원</a>`).join('');
   const body = `<div class="wrap">
 ${crumb(4, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { name: b.name, slug: b.branch_slug }, { name: `${b.dong} ${subj}학원` }])}
@@ -895,7 +903,7 @@ ${(() => {
 })()}
 ${(b0.subjects || []).length ? `<h2>${esc(s.name)} 재학생 수업 과목</h2><p>${esc(b0.name)}에서 ${esc(s.name)} 학생이 들을 수 있는 과목은 ${esc((b0.subjects || []).join(', '))}입니다. ${s.level === '초' ? '초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.' : s.level === '중' ? '평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 ' + esc(s.name) + ' 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.' : '수업은 학교 진도와 동기화되며, 내신 4주 전부터 ' + esc(s.name) + ' 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.'}</p><div class="chips">${(b0.subjects || []).filter((su) => SUBJ_SLUG[su]).map((su) => `<a href="../../${b0.branch_slug}/${SUBJ_SLUG[su]}/">${esc(b0.dong)} ${esc(su)}학원</a>`).join('')}</div>` : ''}
 ${wayBlock(true, key)}
-${bv ? '<h2>영상으로 보는 ' + esc(b0.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, key + 'promo'), '와와 소개 영상')}
+${bv ? '<h2>영상으로 보는 ' + esc(b0.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, key + 'promo'), pick(['와와 소개 영상', '와와학습학원 소개 영상', '와와 공식 채널의 소개 영상'], key + 'vcap'))}
 ${faq.html}
 </article>
 ${ctaBand(b0, 4)}

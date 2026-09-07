@@ -48,11 +48,11 @@
 <li>모의고사 성적에 일희일비해서 매달 전략을 바꾸는 것: 전략은 학기 단위로만 조정합니다.</li>
 <li>정시로 돌린다며 내신을 완전히 놓는 것: 수능 최저기준이 있는 수시 전형, 그리고 재학생의 학교 수업 시간을 생각하면 내신을 버리는 선택의 실익은 대부분 계산보다 작습니다.</li>
 </ul>
-<h2>관련 영상</h2><div class="video-box"><div class="frame" data-yt="09jTqUlFwCQ" data-title="변별력이 없어진 상황, 대학 선발 기준"><img loading="lazy" src="https://i.ytimg.com/vi/09jTqUlFwCQ/hq720.jpg" data-fb="sddefault,hqdefault" alt="변별력이 없어진 상황, 대학 선발 기준" width="1280" height="720" onload="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')" onerror="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')"><button type="button" class="yt-play" aria-label="변별력이 없어진 상황, 대학 선발 기준 재생"><span></span></button></div><div class="cap">▶ 변별력이 없어진 상황, 대학 선발 기준 (와와 공식 유튜브)</div></div>
+<h2>관련 영상</h2><div class="video-box"><div class="frame" data-yt="09jTqUlFwCQ" data-title="변별력이 없어진 상황, 대학 선발 기준"><img loading="lazy" src="https://i.ytimg.com/vi/09jTqUlFwCQ/hq720.jpg" data-fb="sddefault,hqdefault" alt="변별력이 없어진 상황, 대학 선발 기준" width="1280" height="720"><button type="button" class="yt-play" aria-label="변별력이 없어진 상황, 대학 선발 기준 재생"><span></span></button></div><div class="cap">▶ 변별력이 없어진 상황, 대학 선발 기준 (와와 공식 유튜브)</div></div>
 <h2>이 카테고리의 다른 글</h2>
 <div class="chips"><a href="../elem-habit/">초등 고학년, 성적보다 습관</a><a href="../pre-middle/">예비 중1, 겨울방학에 챙길 것</a><a href="../free-semester/">자유학기제, 놀면서 보내지 않으려면</a><a href="../pre-high/">예비 고1, 중3 겨울이 반이다</a><a href="../social-structure/">사회, 통암기 대신 구조로 외우기</a></div>
 </article>
-<div class="cta-band"><div class="t">상담 안내</div><div class="d">학생의 학교, 학년, 현재 성적을 알려 주시면 필요한 수업을 구체적으로 안내해 드립니다.</div><div class="btns"><a class="tel" href="tel:010-4864-5345">전화 상담</a><a class="form" href="../../inquiry/">상담 신청서 작성</a></div></div></div>
+<div class="cta-band"><div class="t">상담 안내</div><div class="d">학교와 학년, 궁금한 과목을 남겨 주시면 지점에서 연락드려 수업 방법과 시간을 안내합니다.</div><div class="btns"><a class="tel" href="tel:010-4864-5345">전화 상담</a><a class="form" href="../../inquiry/">상담 신청서 작성</a></div></div></div>
 <footer class="site"><div class="in">
 <div class="brand">와와학습학원</div>
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
@@ -86,6 +86,10 @@
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
 })();
 (function(){
+  // 썸네일 대체: 없는 해상도는 404여도 120x90 자리표시 이미지가 오므로 크기로 판단해 다음 후보로 교체
+  function fb(img){var f=(img.dataset.fb||'').split(',').filter(Boolean);if(img.naturalWidth>120||!f.length)return;img.dataset.fb=f.slice(1).join(',');img.src=img.src.replace(/[^/]+.jpg$/,f[0]+'.jpg');}
+  var imgs=document.querySelectorAll('.frame[data-yt] img');
+  for(var i=0;i<imgs.length;i++){(function(img){img.addEventListener('load',function(){fb(img)});img.addEventListener('error',function(){fb(img)});if(img.complete&&img.naturalWidth)fb(img);})(imgs[i]);}
   document.addEventListener('click',function(e){
     var f=e.target.closest('.frame[data-yt]');
     if(!f||f.classList.contains('on'))return;

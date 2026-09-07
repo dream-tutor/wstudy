@@ -187,6 +187,10 @@
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
 })();
 (function(){
+  // 썸네일 대체: 없는 해상도는 404여도 120x90 자리표시 이미지가 오므로 크기로 판단해 다음 후보로 교체
+  function fb(img){var f=(img.dataset.fb||'').split(',').filter(Boolean);if(img.naturalWidth>120||!f.length)return;img.dataset.fb=f.slice(1).join(',');img.src=img.src.replace(/[^/]+.jpg$/,f[0]+'.jpg');}
+  var imgs=document.querySelectorAll('.frame[data-yt] img');
+  for(var i=0;i<imgs.length;i++){(function(img){img.addEventListener('load',function(){fb(img)});img.addEventListener('error',function(){fb(img)});if(img.complete&&img.naturalWidth)fb(img);})(imgs[i]);}
   document.addEventListener('click',function(e){
     var f=e.target.closest('.frame[data-yt]');
     if(!f||f.classList.contains('on'))return;
