@@ -100,6 +100,21 @@ article.body li { margin-bottom: 7px; }
   color: var(--ink-soft);
 }
 
+/* ── 수업 방식 강조 블록 (선언 + 원칙 3개) ── */
+.say { margin: 30px 0 18px; padding: 8px 0 0; border-top: 3px solid var(--navy); }
+.say .k { font-size: 13px; font-weight: 700; letter-spacing: .8px; color: var(--brick); margin: 14px 0 10px; }
+.say .l1 { font-size: clamp(24px, 3.6vw, 36px); font-weight: 800; color: var(--navy); letter-spacing: -1px; line-height: 1.32; }
+.say .l2 { font-size: clamp(15.5px, 1.6vw, 18px); color: var(--ink-soft); margin-top: 14px; line-height: 1.7; max-width: 720px; }
+.say .l2 em { font-style: normal; color: var(--brick); font-weight: 700; }
+.say.compact { margin-top: 26px; }
+.say.compact .l1 { font-size: clamp(21px, 3vw, 28px); }
+.way { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 18px 0 30px; }
+.way .w { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 22px 20px 20px; }
+.way .n { font-size: 13px; font-weight: 800; color: var(--brick); letter-spacing: 1px; margin-bottom: 8px; }
+.way .t { font-size: 18px; font-weight: 800; color: var(--navy); letter-spacing: -.4px; margin-bottom: 10px; line-height: 1.35; }
+.way .d { font-size: 14px; color: var(--ink-soft); line-height: 1.65; }
+@media (max-width: 780px) { .way { grid-template-columns: 1fr; gap: 10px; } .way .w { padding: 18px 16px; } .say .l1 br { display: none; } }
+
 /* ── 정보 테이블 ── */
 .info-table { width: 100%; border-collapse: collapse; margin: 14px 0 22px; background: var(--white); font-size: 15px; }
 .info-table th, .info-table td { border: 1px solid var(--line); padding: 11px 14px; text-align: left; vertical-align: top; }
@@ -211,6 +226,7 @@ article.body li { margin-bottom: 7px; }
 .hero .btns a { padding: 13px 24px; border-radius: 8px; font-weight: 700; }
 .hero .btns .b1 { background: var(--brick); color: #fff; }
 .hero .btns .b2 { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+.hero .eyebrow { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: 1px; color: #f0c9a8; border: 1px solid rgba(240,201,168,.45); border-radius: 999px; padding: 6px 14px; margin-bottom: 18px; }
 .stats { display: flex; gap: 34px; margin-top: 34px; flex-wrap: wrap; }
 .stats .s .n { font-size: 26px; font-weight: 800; color: #fff; }
 .stats .s .k { font-size: 13px; color: #9aa6c0; }
