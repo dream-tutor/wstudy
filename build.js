@@ -250,6 +250,18 @@ ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
   document.querySelector('.c-x').addEventListener('click',closeM);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
 })();
+(function(){
+  document.addEventListener('click',function(e){
+    var f=e.target.closest('.frame[data-yt]');
+    if(!f||f.classList.contains('on'))return;
+    var ifr=document.createElement('iframe');
+    ifr.src='https://www.youtube-nocookie.com/embed/'+f.getAttribute('data-yt')+'?autoplay=1&rel=0&playsinline=1';
+    ifr.title=f.getAttribute('data-title')||'와와 영상';
+    ifr.setAttribute('allow','accelerometer; autoplay; encrypted-media; picture-in-picture');
+    ifr.setAttribute('allowfullscreen','');
+    f.classList.add('on');f.innerHTML='';f.appendChild(ifr);
+  });
+})();
 </script>
 ${PROTECT}
 ${TRACKER}
@@ -278,9 +290,14 @@ function crumb(depth, items) {
   // 날짜 토큰은 shell()이 페이지 dateModified로 치환 (crumb는 경로를 모르므로)
   return html + '<time class="upd" datetime="__UPD_ISO__">정보 업데이트 __UPD_DOT__</time></div>';
 }
+// 유튜브: 썸네일+재생 버튼 파사드(제목바·로고 없이 노출, 누르면 iframe 자동재생). 쇼츠는 세로 크롭(wcoachingcenter와 동일)
+// 유튜브 썸네일 대체: 없는 해상도는 404여도 120x90 자리표시 이미지가 오므로(onerror 안 뜸) 크기로 판단해 다음 후보로 교체
+const YT_FB = "var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+\.jpg$/,f[0]+'.jpg')";
 function video(v, cap) {
   if (!v) return '';
-  return `<div class="video-box"><div class="frame${v.shorts ? ' vertical' : ''}"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/${v.id}" title="${esc(v.title)}" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ ${esc(cap || v.title)} (와와 공식 유튜브)</div></div>`;
+  const vert = !!v.shorts;
+  const thumbs = vert ? ['oardefault', 'hqdefault'] : ['hq720', 'sddefault', 'hqdefault'];
+  return `<div class="video-box"><div class="frame${vert ? ' vertical' : ''}" data-yt="${v.id}" data-title="${esc(v.title)}"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/${thumbs[0]}.jpg" data-fb="${thumbs.slice(1).join(',')}" alt="${esc(v.title)}" width="${vert ? 300 : 1280}" height="${vert ? 533 : 720}" onload="${YT_FB}" onerror="${YT_FB}"><button type="button" class="yt-play" aria-label="${esc(v.title)} 재생"><span></span></button></div><div class="cap">▶ ${esc(cap || v.title)} (와와 공식 유튜브)</div></div>`;
 }
 function ctaBand(b, depth) {
   const base = '../'.repeat(depth);
@@ -683,7 +700,7 @@ function buildBranch(r, d, b) {
 ${crumb(3, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { name: b.name }])}
 <div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b.name)}<h1>${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
-${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, b.branch_slug + 'promo'), '와와 소개 영상')}
+${classPhoto(3, b.branch_slug)}
 <h2>지점 안내</h2>
 <div class="tbl-scroll"><table class="info-table">
 <tr><th>주소</th><td>${esc(b.address)}${b.location_guide ? `<br><span style="color:var(--ink-soft);font-size:13.5px">${esc(b.location_guide).replace(/\n/g, '<br>')}</span>` : ''}</td></tr>
@@ -695,7 +712,6 @@ ${gradeRows}
 </table></div>
 ${osmMap(b)}
 ${pick(COPY.wawaWay, b.branch_slug + 'way')(b.subjects)}
-${classPhoto(3, b.branch_slug)}
 ${gradeBlocks}
 <h2>과목별 수업 안내</h2>
 <p>과목을 선택하면 ${esc(b.dong)} 기준의 수업 방식과 내신 대비 흐름을 자세히 볼 수 있습니다.</p>
@@ -703,6 +719,7 @@ ${gradeBlocks}
 <h2>관리 학교</h2>
 <p>${esc(b.name)}에 다니는 학생들의 소속 학교입니다. 학교별 시험 대비 안내는 학교 이름을 눌러 확인하세요. <strong>목록에 없는 인근 학교 학생도 수업이 가능하니</strong> 상담에서 확인해 주세요.</p>
 <div class="chips">${schoolChips}</div>
+${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, b.branch_slug + 'promo'), '와와 소개 영상')}
 ${faq.html}
 </article>
 ${ctaBand(b, 3)}

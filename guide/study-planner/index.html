@@ -50,7 +50,7 @@
 <li>주말 하루는 비워 둡니다. 밀린 것을 처리하는 날이 있어야 평일 계획이 무너지지 않습니다.</li>
 </ul>
 <p>플래너의 목적은 예쁘게 쓰는 것이 아니라, 자기가 어떻게 공부하는 사람인지 데이터를 쌓는 것입니다. 한 달치 기록이 쌓인 플래너는 어떤 상담보다 정확한 진단 자료가 됩니다.</p>
-<h2>관련 영상</h2><div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/G54iOKUqknw" title="방학 플래너 쓰는 법" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 방학 플래너 쓰는 법 (와와 공식 유튜브)</div></div>
+<h2>관련 영상</h2><div class="video-box"><div class="frame" data-yt="G54iOKUqknw" data-title="방학 플래너 쓰는 법"><img loading="lazy" src="https://i.ytimg.com/vi/G54iOKUqknw/hq720.jpg" data-fb="sddefault,hqdefault" alt="방학 플래너 쓰는 법" width="1280" height="720" onload="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')" onerror="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')"><button type="button" class="yt-play" aria-label="방학 플래너 쓰는 법 재생"><span></span></button></div><div class="cap">▶ 방학 플래너 쓰는 법 (와와 공식 유튜브)</div></div>
 <h2>이 카테고리의 다른 글</h2>
 <div class="chips"><a href="../focus/">집중력을 올리는 현실적인 방법</a><a href="../spare-time/">자투리 시간 공부, 되는 것과 안 되는 것</a><a href="../smartphone/">시험 기간 스마트폰 관리법</a><a href="../wrong-note/">오답노트, 만들다 지치지 않는 방식</a><a href="../korean-nonfiction/">국어 비문학, 읽는 속도보다 읽는 방법</a></div>
 </article>
@@ -86,6 +86,18 @@
   ov.addEventListener('click',function(e){if(e.target===ov)closeM();});
   document.querySelector('.c-x').addEventListener('click',closeM);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
+})();
+(function(){
+  document.addEventListener('click',function(e){
+    var f=e.target.closest('.frame[data-yt]');
+    if(!f||f.classList.contains('on'))return;
+    var ifr=document.createElement('iframe');
+    ifr.src='https://www.youtube-nocookie.com/embed/'+f.getAttribute('data-yt')+'?autoplay=1&rel=0&playsinline=1';
+    ifr.title=f.getAttribute('data-title')||'와와 영상';
+    ifr.setAttribute('allow','accelerometer; autoplay; encrypted-media; picture-in-picture');
+    ifr.setAttribute('allowfullscreen','');
+    f.classList.add('on');f.innerHTML='';f.appendChild(ifr);
+  });
 })();
 </script>
 <!-- WAWA_AUTO_PROTECT_START -->

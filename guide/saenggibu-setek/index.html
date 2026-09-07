@@ -49,7 +49,7 @@
 </ul>
 <h2>학원 수업과의 연결</h2>
 <p>학원에서 내신 진도를 나가며 만난 개념 중 학생이 흥미를 보인 지점은 좋은 탐구 주제 후보입니다. 와와학습학원 고등부가 수업 내용을 세특 주제로 이어 주는 것도 이 맥락입니다. 성적을 위한 공부와 생기부를 위한 활동이 따로 놀지 않게 만드는 것이 시간이 부족한 고등학생에게 가장 효율적인 구조입니다.</p>
-<h2>관련 영상</h2><div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/04NC6ivL90Y" title="생기부에 필수적인 항목 포인트" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 생기부에 필수적인 항목 포인트 (와와 공식 유튜브)</div></div>
+<h2>관련 영상</h2><div class="video-box"><div class="frame" data-yt="04NC6ivL90Y" data-title="생기부에 필수적인 항목 포인트"><img loading="lazy" src="https://i.ytimg.com/vi/04NC6ivL90Y/hq720.jpg" data-fb="sddefault,hqdefault" alt="생기부에 필수적인 항목 포인트" width="1280" height="720" onload="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')" onerror="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')"><button type="button" class="yt-play" aria-label="생기부에 필수적인 항목 포인트 재생"><span></span></button></div><div class="cap">▶ 생기부에 필수적인 항목 포인트 (와와 공식 유튜브)</div></div>
 <h2>이 카테고리의 다른 글</h2>
 <div class="chips"><a href="../susi-jungsi/">수시와 정시, 기초 개념 정리</a><a href="../student-record/">학생부종합전형, 대학은 무엇을 보나</a><a href="../performance-ipsi/">수행평가가 대학 입학까지 이어지는 이유</a><a href="../study-planner/">공부 플래너, 계획이 아니라 기록부터</a></div>
 </article>
@@ -85,6 +85,18 @@
   ov.addEventListener('click',function(e){if(e.target===ov)closeM();});
   document.querySelector('.c-x').addEventListener('click',closeM);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
+})();
+(function(){
+  document.addEventListener('click',function(e){
+    var f=e.target.closest('.frame[data-yt]');
+    if(!f||f.classList.contains('on'))return;
+    var ifr=document.createElement('iframe');
+    ifr.src='https://www.youtube-nocookie.com/embed/'+f.getAttribute('data-yt')+'?autoplay=1&rel=0&playsinline=1';
+    ifr.title=f.getAttribute('data-title')||'와와 영상';
+    ifr.setAttribute('allow','accelerometer; autoplay; encrypted-media; picture-in-picture');
+    ifr.setAttribute('allowfullscreen','');
+    f.classList.add('on');f.innerHTML='';f.appendChild(ifr);
+  });
 })();
 </script>
 <!-- WAWA_AUTO_PROTECT_START -->

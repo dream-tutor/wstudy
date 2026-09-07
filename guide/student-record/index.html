@@ -50,7 +50,7 @@
 <li>3학년: 1학기까지 반영되므로 마지막까지 내신과 세특을 챙기고, 여름부터는 지원 대학의 평가 기준에 맞춰 서류를 점검합니다.</li>
 </ul>
 <p>학종 준비의 요체는 특별한 스펙 만들기가 아니라, 학교 생활을 기록이 남는 방식으로 하는 것입니다. 수업 → 호기심 → 탐구 → 기록의 사이클이 3년 돌아가면, 그 자체가 경쟁력 있는 생기부입니다.</p>
-<h2>관련 영상</h2><div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/C8heLO8V-lk" title="우수 생기부 사례: 대학과정 탐구" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 우수 생기부 사례: 대학과정 탐구 (와와 공식 유튜브)</div></div>
+<h2>관련 영상</h2><div class="video-box"><div class="frame" data-yt="C8heLO8V-lk" data-title="우수 생기부 사례: 대학과정 탐구"><img loading="lazy" src="https://i.ytimg.com/vi/C8heLO8V-lk/hq720.jpg" data-fb="sddefault,hqdefault" alt="우수 생기부 사례: 대학과정 탐구" width="1280" height="720" onload="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')" onerror="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')"><button type="button" class="yt-play" aria-label="우수 생기부 사례: 대학과정 탐구 재생"><span></span></button></div><div class="cap">▶ 우수 생기부 사례: 대학과정 탐구 (와와 공식 유튜브)</div></div>
 <h2>이 카테고리의 다른 글</h2>
 <div class="chips"><a href="../saenggibu-setek/">교과 세특, 수업에서 만드는 생기부</a><a href="../susi-jungsi/">수시와 정시, 기초 개념 정리</a><a href="../performance-ipsi/">수행평가가 대학 입학까지 이어지는 이유</a><a href="../school-print/">학교 프린트 정리법: 시험의 본체</a></div>
 </article>
@@ -86,6 +86,18 @@
   ov.addEventListener('click',function(e){if(e.target===ov)closeM();});
   document.querySelector('.c-x').addEventListener('click',closeM);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
+})();
+(function(){
+  document.addEventListener('click',function(e){
+    var f=e.target.closest('.frame[data-yt]');
+    if(!f||f.classList.contains('on'))return;
+    var ifr=document.createElement('iframe');
+    ifr.src='https://www.youtube-nocookie.com/embed/'+f.getAttribute('data-yt')+'?autoplay=1&rel=0&playsinline=1';
+    ifr.title=f.getAttribute('data-title')||'와와 영상';
+    ifr.setAttribute('allow','accelerometer; autoplay; encrypted-media; picture-in-picture');
+    ifr.setAttribute('allowfullscreen','');
+    f.classList.add('on');f.innerHTML='';f.appendChild(ifr);
+  });
 })();
 </script>
 <!-- WAWA_AUTO_PROTECT_START -->

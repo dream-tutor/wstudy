@@ -128,6 +128,18 @@
   document.querySelector('.c-x').addEventListener('click',closeM);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
 })();
+(function(){
+  document.addEventListener('click',function(e){
+    var f=e.target.closest('.frame[data-yt]');
+    if(!f||f.classList.contains('on'))return;
+    var ifr=document.createElement('iframe');
+    ifr.src='https://www.youtube-nocookie.com/embed/'+f.getAttribute('data-yt')+'?autoplay=1&rel=0&playsinline=1';
+    ifr.title=f.getAttribute('data-title')||'와와 영상';
+    ifr.setAttribute('allow','accelerometer; autoplay; encrypted-media; picture-in-picture');
+    ifr.setAttribute('allowfullscreen','');
+    f.classList.add('on');f.innerHTML='';f.appendChild(ifr);
+  });
+})();
 </script>
 <!-- WAWA_AUTO_PROTECT_START -->
 <script>

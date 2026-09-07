@@ -50,7 +50,7 @@
 <h2>집중이 깨졌을 때</h2>
 <p>딴생각이 나는 것 자체는 막을 수 없습니다. 종이 한 장을 옆에 두고, 떠오르는 딴생각을 한 줄 적고 다시 돌아오는 방법이 실제로 통합니다. 적어 두면 잊어버릴 걱정이 없어져서 생각이 머리에 머물지 않습니다.</p>
 <p>마지막으로, 수면을 줄여서 공부 시간을 늘리는 방식은 집중력 관점에서 손해입니다. 6시간 이하로 자는 학생은 깨어 있는 시간의 밀도가 떨어져서, 총 학습량이 오히려 줄어드는 경우가 많습니다.</p>
-<h2>관련 영상</h2><div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/eZb6FelbjTM" title="집중력을 올리는 방법" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 집중력을 올리는 방법 (와와 공식 유튜브)</div></div>
+<h2>관련 영상</h2><div class="video-box"><div class="frame" data-yt="eZb6FelbjTM" data-title="집중력을 올리는 방법"><img loading="lazy" src="https://i.ytimg.com/vi/eZb6FelbjTM/hq720.jpg" data-fb="sddefault,hqdefault" alt="집중력을 올리는 방법" width="1280" height="720" onload="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')" onerror="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')"><button type="button" class="yt-play" aria-label="집중력을 올리는 방법 재생"><span></span></button></div><div class="cap">▶ 집중력을 올리는 방법 (와와 공식 유튜브)</div></div>
 <h2>이 카테고리의 다른 글</h2>
 <div class="chips"><a href="../study-planner/">공부 플래너, 계획이 아니라 기록부터</a><a href="../spare-time/">자투리 시간 공부, 되는 것과 안 되는 것</a><a href="../smartphone/">시험 기간 스마트폰 관리법</a><a href="../wrong-note/">오답노트, 만들다 지치지 않는 방식</a><a href="../social-structure/">사회, 통암기 대신 구조로 외우기</a></div>
 </article>
@@ -86,6 +86,18 @@
   ov.addEventListener('click',function(e){if(e.target===ov)closeM();});
   document.querySelector('.c-x').addEventListener('click',closeM);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
+})();
+(function(){
+  document.addEventListener('click',function(e){
+    var f=e.target.closest('.frame[data-yt]');
+    if(!f||f.classList.contains('on'))return;
+    var ifr=document.createElement('iframe');
+    ifr.src='https://www.youtube-nocookie.com/embed/'+f.getAttribute('data-yt')+'?autoplay=1&rel=0&playsinline=1';
+    ifr.title=f.getAttribute('data-title')||'와와 영상';
+    ifr.setAttribute('allow','accelerometer; autoplay; encrypted-media; picture-in-picture');
+    ifr.setAttribute('allowfullscreen','');
+    f.classList.add('on');f.innerHTML='';f.appendChild(ifr);
+  });
 })();
 </script>
 <!-- WAWA_AUTO_PROTECT_START -->

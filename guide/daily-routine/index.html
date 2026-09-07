@@ -46,7 +46,7 @@
 <h2>무너졌을 때가 진짜</h2>
 <p>루틴은 반드시 무너지는 날이 옵니다. 중요한 것은 그 다음 날입니다. 이틀 연속으로 비우지 않는 것을 단 하나의 규칙으로 삼으세요. 하루 빠진 것은 복구가 되지만, 사흘이 되면 루틴이 아니라 다시 결심이 필요한 일이 됩니다.</p>
 <p>학원의 역할도 사실 여기에 있습니다. 정해진 요일, 정해진 시간에 가야 하는 곳이 있다는 것 자체가 일주일의 뼈대가 됩니다. 그 뼈대에 집에서의 최소 루틴을 붙이면, 성적은 계획표가 아니라 생활에서 만들어집니다.</p>
-<h2>관련 영상</h2><div class="video-box"><div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/DuuXgB7iT8s" title="새학기를 알차게 준비하자" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="cap">▶ 새학기를 알차게 준비하자 (와와 공식 유튜브)</div></div>
+<h2>관련 영상</h2><div class="video-box"><div class="frame" data-yt="DuuXgB7iT8s" data-title="새학기를 알차게 준비하자"><img loading="lazy" src="https://i.ytimg.com/vi/DuuXgB7iT8s/hq720.jpg" data-fb="sddefault,hqdefault" alt="새학기를 알차게 준비하자" width="1280" height="720" onload="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')" onerror="var f=(this.dataset.fb||'').split(',').filter(Boolean);if(this.naturalWidth>120||!f.length)return;this.dataset.fb=f.slice(1).join(',');this.src=this.src.replace(/[^/]+.jpg$/,f[0]+'.jpg')"><button type="button" class="yt-play" aria-label="새학기를 알차게 준비하자 재생"><span></span></button></div><div class="cap">▶ 새학기를 알차게 준비하자 (와와 공식 유튜브)</div></div>
 <h2>이 카테고리의 다른 글</h2>
 <div class="chips"><a href="../study-planner/">공부 플래너, 계획이 아니라 기록부터</a><a href="../focus/">집중력을 올리는 현실적인 방법</a><a href="../spare-time/">자투리 시간 공부, 되는 것과 안 되는 것</a><a href="../smartphone/">시험 기간 스마트폰 관리법</a><a href="../susi-jungsi/">수시와 정시, 기초 개념 정리</a></div>
 </article>
@@ -82,6 +82,18 @@
   ov.addEventListener('click',function(e){if(e.target===ov)closeM();});
   document.querySelector('.c-x').addEventListener('click',closeM);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
+})();
+(function(){
+  document.addEventListener('click',function(e){
+    var f=e.target.closest('.frame[data-yt]');
+    if(!f||f.classList.contains('on'))return;
+    var ifr=document.createElement('iframe');
+    ifr.src='https://www.youtube-nocookie.com/embed/'+f.getAttribute('data-yt')+'?autoplay=1&rel=0&playsinline=1';
+    ifr.title=f.getAttribute('data-title')||'와와 영상';
+    ifr.setAttribute('allow','accelerometer; autoplay; encrypted-media; picture-in-picture');
+    ifr.setAttribute('allowfullscreen','');
+    f.classList.add('on');f.innerHTML='';f.appendChild(ifr);
+  });
 })();
 </script>
 <!-- WAWA_AUTO_PROTECT_START -->
