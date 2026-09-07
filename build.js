@@ -5,6 +5,8 @@ const path = require('path');
 const BRANCHES = require('./data/branches.json');
 const VIDEOS = require('./data/videos.json');
 const COPY = require('./lib/copy.js');
+// style.css 내용 해시를 ?v=로 붙여 CSS 변경 시 브라우저·CDN 캐시(max-age 600)를 자동으로 깬다 (2026-09-07)
+const CSS_V = require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, 'assets/style.css'))).digest('hex').slice(0, 8);
 const GUIDES = [...require('./lib/guides-habit.js'), ...require('./lib/guides-subject.js'), ...require('./lib/guides-grade.js')];
 const SCHOOL_INFO = fs.existsSync(path.join(__dirname, 'data', 'school-info.json')) ? require('./data/school-info.json') : {};
 const REVIEWS = fs.existsSync(path.join(__dirname, 'data', 'reviews.json')) ? require('./data/reviews.json') : [];
@@ -208,7 +210,7 @@ function shell({ title, desc, canonical, body, depth, ld, ogTitle, footExtra, br
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="${base}assets/style.css">
+<link rel="stylesheet" href="${base}assets/style.css?v=${CSS_V}">
 ${ldJson ? `<script type="application/ld+json">${ldJson}</script>` : ''}
 </head>
 <body>
