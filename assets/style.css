@@ -120,6 +120,11 @@ article.body li { margin-bottom: 7px; }
 .info-table th, .info-table td { border: 1px solid var(--line); padding: 11px 14px; text-align: left; vertical-align: top; }
 .info-table th { background: #f2eee6; color: var(--navy); font-weight: 700; width: 130px; white-space: nowrap; }
 .tbl-scroll { overflow-x: auto; }
+.info-table .sp-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.info-table .sp { display: inline-block; border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; font-size: 14px; font-weight: 600; color: var(--navy); background: var(--paper); }
+.info-table .sp em { font-style: normal; font-weight: 500; color: var(--ink-soft); font-size: 13px; margin-left: 5px; }
+.info-table .td-sub { display: inline-block; margin-top: 4px; font-size: 13.5px; color: var(--ink-soft); }
+.info-table .td-sub a { color: var(--brick); font-weight: 600; }
 .fee-table thead th { width: auto; text-align: center; }
 .fee-table tbody th { width: 80px; }
 .fee-table td { text-align: right; font-variant-numeric: tabular-nums; }
