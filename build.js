@@ -225,7 +225,7 @@ ${bodyOut}
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
 <a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/${cq}">상담 신청</a> · <a href="${base}review/">수강후기</a><br>
 학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
-${body.includes('class="upd"') ? '' : `<div style="margin-top:8px;font-size:12px;opacity:.8">정보 업데이트 ${dateModified.replace(/-/g, '.')}</div>`}
+<div style="margin-top:8px;font-size:12px;opacity:.8"><time datetime="${dateModified}">정보 업데이트 ${dateModified.replace(/-/g, '.')}</time></div>
 ${/assets\/(illust\/|wawa-class)/.test(body) ? '<div style="margin-top:8px;font-size:11px;opacity:.75">사진 출처: 와와학습코칭센터, AI로 이미지 생성</div>' : ''}
 ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
 </div></footer>
@@ -290,7 +290,7 @@ function crumb(depth, items) {
   }
   CRUMB_LD = { '@type': 'BreadcrumbList', itemListElement: ldItems };
   // 날짜 토큰은 shell()이 페이지 dateModified로 치환 (crumb는 경로를 모르므로)
-  return html + '<time class="upd" datetime="__UPD_ISO__">정보 업데이트 __UPD_DOT__</time></div>';
+  return html + '</div>'; // 정보 업데이트 날짜는 푸터에 표시 (2026-09-07: 브레드크럼 옆 표기 제거)
 }
 // 유튜브: 썸네일+재생 버튼 파사드(제목바·로고 없이 노출, 누르면 iframe 자동재생). 쇼츠는 세로 크롭(wcoachingcenter와 동일)
 // 유튜브 썸네일 대체: 없는 해상도는 404여도 120x90 자리표시 이미지가 오므로(onerror 안 뜸) 크기로 판단해 다음 후보로 교체
@@ -455,16 +455,43 @@ function classPhoto(depth, key = '') {
   return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/${f}" alt="와와 교실 공간 일러스트" width="900" height="664"><div class="cap">와와 교실 공간 일러스트 (지점별 시설과 배치는 다를 수 있습니다)</div></div>`;
 }
 // 수업 방식 강조 블록 — 큰 글씨 선언 + 원칙 3개 (2026-09-07 지시: 자기주도·개별진도·강의식 없음·학습코칭 강조)
-function wayBlock(compact = false) {
+// 같은 문장이 2,300페이지에 반복되면 페이지 간 유사도가 오르므로 슬롯별 변형을 페이지 키 해시로 고른다.
+const WAY_L1 = [
+  '강의식 수업이 아닙니다.<br>학생마다 자기 진도로 공부합니다.',
+  '칠판 앞에서 설명하는 수업이 없습니다.<br>각자 자기 교재를 풉니다.',
+  '받아 적는 수업이 아니라<br>직접 푸는 수업입니다.',
+];
+const WAY_L2 = [
+  '선생님이 칠판 앞에서 진도를 나가고 받아 적는 방식이 아니라, 학생이 <em>자기 교재를 직접 풀고</em> 선생님이 <em>옆에서 봐 주는</em> 방식입니다. <em>공부 방법과 습관</em>도 같이 잡아 줍니다.',
+  '진단으로 정한 <em>자기 진도</em>를 각자 나가고, 막히는 곳은 선생님이 <em>그 자리에서</em> 설명해 줍니다. 계획 짜기와 오답 정리 같은 <em>공부 습관</em>도 수업 안에서 챙깁니다.',
+  '같은 교실에 있어도 학생마다 <em>교재와 단원이 다릅니다</em>. 선생님은 앞에 서는 대신 <em>학생 옆에서</em> 확인하고, <em>공부하는 방법</em>까지 같이 잡아 줍니다.',
+];
+const WAY_CARDS = [
+  { t: ['개별 진도', '학생마다 다른 진도', '자기 진도'], d: [
+    '처음에 진단을 해서 어디서부터 할지 정합니다. 교재, 단원, 주당 횟수가 학생마다 다르고, 학기 중간에 와도 그 자리에서 시작하면 됩니다.',
+    '등록하면 먼저 진단부터 합니다. 그 결과로 교재와 시작 단원을 정하기 때문에 옆자리 학생과 진도가 다르고, 개강일을 기다릴 필요도 없습니다.',
+    '정해진 반 진도가 없습니다. 학생의 현재 위치에서 시작해 자기 속도로 나가고, 주당 횟수와 교재도 상담에서 학생에 맞춰 정합니다.',
+  ] },
+  { t: ['칠판·판서 수업 없음', '강의식 수업 없음', '받아 적는 수업 없음'], d: [
+    '앞에서 설명하고 받아 적는 시간이 없습니다. 학생이 푸는 동안 선생님이 돌면서 보고, 막히면 그 자리에서 설명해 줍니다.',
+    '선생님이 칠판에 쓰고 학생이 옮겨 적는 수업을 하지 않습니다. 수업 시간 대부분은 학생이 직접 푸는 시간이고, 선생님은 옆에서 확인합니다.',
+    '듣기만 하는 수업은 알 것 같다가도 혼자 풀면 막히는 경우가 많습니다. 그래서 설명은 막힌 학생에게 개별로 하고, 나머지 시간은 직접 풀게 합니다.',
+  ] },
+  { t: ['학습코칭', '공부 방법과 습관', '습관까지 같이'], d: [
+    '계획 짜기, 오답 정리, 그날 분량 확인까지 선생님이 챙깁니다. 혼자 앉혀 놓는 자습이 아니라, 스스로 공부하는 습관을 들이는 과정입니다.',
+    '과목 수업에 공부 방법 지도가 같이 붙습니다. 오늘 할 분량을 정하고, 틀린 문제를 정리하고, 다음 수업 전까지 할 일을 확인하는 것을 매번 반복합니다.',
+    '성적은 공부 습관에서 갈립니다. 계획을 세우고 지키는 것, 오답을 다시 보는 것을 선생님이 매 수업 확인하면서 습관으로 만듭니다.',
+  ] },
+];
+function wayBlock(compact = false, key = 'home') {
+  const cards = WAY_CARDS.map((c, i) => `<div class="w"><div class="n">0${i + 1}</div><div class="t">${pick(c.t, key + 'wt' + i)}</div><div class="d">${pick(c.d, key + 'wd' + i)}</div></div>`).join('\n');
   return `<div class="say${compact ? ' compact' : ''}">
 <div class="k">수업 방식</div>
-<div class="l1">강의식 수업이 아닙니다.<br>학생마다 자기 진도로 공부합니다.</div>
-<div class="l2">선생님이 칠판 앞에서 진도를 나가고 받아 적는 방식이 아니라, 학생이 <em>자기 교재를 직접 풀고</em> 선생님이 <em>옆에서 봐 주는</em> 방식입니다. <em>공부 방법과 습관</em>도 같이 잡아 줍니다.</div>
+<div class="l1">${pick(WAY_L1, key + 'l1')}</div>
+<div class="l2">${pick(WAY_L2, key + 'l2')}</div>
 </div>
 <div class="way">
-<div class="w"><div class="n">01</div><div class="t">개별 진도</div><div class="d">처음에 진단을 해서 어디서부터 할지 정합니다. 교재, 단원, 주당 횟수가 학생마다 다르고, 학기 중간에 와도 그 자리에서 시작하면 됩니다.</div></div>
-<div class="w"><div class="n">02</div><div class="t">칠판·판서 수업 없음</div><div class="d">앞에서 설명하고 받아 적는 시간이 없습니다. 학생이 푸는 동안 선생님이 돌면서 보고, 막히면 그 자리에서 설명해 줍니다.</div></div>
-<div class="w"><div class="n">03</div><div class="t">학습코칭</div><div class="d">계획 짜기, 오답 정리, 그날 분량 확인까지 선생님이 챙깁니다. 혼자 앉혀 놓는 자습이 아니라, 스스로 공부하는 습관을 들이는 과정입니다.</div></div>
+${cards}
 </div>`;
 }
 const LEVEL_GUIDES = {
@@ -720,7 +747,7 @@ ${crumb(3, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { na
 <div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b.name)}<h1>${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
 ${classPhoto(3, b.branch_slug)}
-${wayBlock()}
+${wayBlock(false, b.branch_slug)}
 <h2>지점 안내</h2>
 <div class="tbl-scroll"><table class="info-table">
 <tr><th>주소</th><td>${esc(b.address)}${b.location_guide ? `<br><span style="color:var(--ink-soft);font-size:13.5px">${esc(b.location_guide).replace(/\n/g, '<br>')}</span>` : ''}</td></tr>
@@ -776,7 +803,7 @@ ${crumb(4, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { na
 <h2>${esc(subj)} 수업은 이렇게 진행합니다</h2>
 ${methodHtml}
 ${grades ? `<div class="note">${esc(b.name)} ${esc(subj)} 수업 대상: ${esc(gradeRange(grades))}</div>` : ''}
-${wayBlock(true)}
+${wayBlock(true, key)}
 ${gradeBlocks}
 ${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : ''}
 <h2>지점 정보</h2>
@@ -867,7 +894,7 @@ ${(() => {
   return branchesMap(mpts, [], scOk ? { n: s.name, la: geo.lat, lo: geo.lng } : null);
 })()}
 ${(b0.subjects || []).length ? `<h2>${esc(s.name)} 재학생 수업 과목</h2><p>${esc(b0.name)}에서 ${esc(s.name)} 학생이 들을 수 있는 과목은 ${esc((b0.subjects || []).join(', '))}입니다. ${s.level === '초' ? '초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.' : s.level === '중' ? '평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 ' + esc(s.name) + ' 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.' : '수업은 학교 진도와 동기화되며, 내신 4주 전부터 ' + esc(s.name) + ' 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.'}</p><div class="chips">${(b0.subjects || []).filter((su) => SUBJ_SLUG[su]).map((su) => `<a href="../../${b0.branch_slug}/${SUBJ_SLUG[su]}/">${esc(b0.dong)} ${esc(su)}학원</a>`).join('')}</div>` : ''}
-${wayBlock(true)}
+${wayBlock(true, key)}
 ${bv ? '<h2>영상으로 보는 ' + esc(b0.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, key + 'promo'), '와와 소개 영상')}
 ${faq.html}
 </article>
