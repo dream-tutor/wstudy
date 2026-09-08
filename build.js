@@ -516,7 +516,7 @@ function branchVideo(b) {
 // 초·중·고 안내 블록 기준 = 과목별 수업 학년(grades_by_subject). 학교 목록은 보조.
 // (2026-09-08 수정: 학교 목록만 보면 동춘점처럼 고등학교만 등록된 42곳이 고등부만 나왔다)
 // 지점 페이지 본문을 h2 단위 섹션(.blk)으로 나눈다. 모바일에서는 openTitles 외 섹션을 접어 두고 제목을 누르면 펼친다(스크립트는 shell에).
-const BAND_TITLES = ['지점 안내', '오시는 길', '과목별 수업 안내', '자주 묻는 질문'];
+const BAND_TITLES = ['지점 안내', '오시는 길', '수업은 이렇게 다릅니다', '와와의 수업 방식', '수업 운영 원칙', '수업 방식', '어떻게 수업하나요', '관리 학교'];
 function sectionize(html, closedTitles = []) {
   const parts = html.split(/(?=<h2\b)/);
   return parts.map((p) => {
@@ -779,7 +779,6 @@ ${crumb(3, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { na
 <div class="bh"><div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b.name)}<h1>${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
 ${classPhoto(3, b.branch_slug)}</div>
 <article class="body">
-${wayBlock(false, b.branch_slug)}
 ${sectionize(`<h2>지점 안내</h2>
 <div class="tbl-scroll"><table class="info-table">
 <tr><th>주소</th><td>${esc(b.address)}${b.location_guide ? `<br><span style="color:var(--ink-soft);font-size:13.5px">${esc(b.location_guide).replace(/\n/g, '<br>')}</span>` : ''}</td></tr>
@@ -787,8 +786,10 @@ ${nearbyRow(b)}
 <tr><th>수업 과목</th><td><div class="sp-row">${subjPills}</div></td></tr>
 <tr><th>수업 시간</th><td>${esc(b.open_time || '상담 시 안내')}${b.weekend ? ` · ${esc(b.weekend)}` : ''}<br><span class="td-sub">${pick(['상담 예약제 · 셔틀버스 없음 · 수업비는 아래 <a href="#fee">수강료 안내</a> 참고', '방문 상담은 예약 후 · 셔틀 운행 없음 · 수업비는 <a href="#fee">수강료 안내</a>에서 확인', '상담은 미리 예약 · 셔틀버스 운영 안 함 · 금액은 아래 <a href="#fee">수강료 표</a> 참고'], key + 'ops')}</span></td></tr>
 </table></div>
-${osmMap(b)}
-${pick(COPY.wawaWay, b.branch_slug + 'way')(b.subjects)}
+${osmMap(b)}`, [])}
+${wayBlock(false, b.branch_slug)}
+${bv ? video(bv) : video(pick(VIDEOS.pools.brand, b.branch_slug + 'promo'), pick(['와와 소개 영상', '와와학습학원 소개 영상', '와와 공식 채널의 소개 영상'], b.branch_slug + 'vcap'))}
+${sectionize(`${pick(COPY.wawaWay, b.branch_slug + 'way')(b.subjects)}
 ${gradeBlocks}
 <h2>과목별 수업 안내</h2>
 <p>${pick([`과목을 선택하면 ${esc(b.dong)} 기준의 수업 방식과 내신 대비 흐름을 자세히 볼 수 있습니다.`, `${esc(b.dong)}에서 듣는 과목별 수업 내용과 시험 대비 방식은 과목 이름을 누르면 볼 수 있습니다.`, `아래 과목을 누르면 ${esc(b.name)}의 과목별 수업 순서와 내신 준비 방법을 확인할 수 있습니다.`], key + 'subp')}</p>
@@ -796,8 +797,7 @@ ${gradeBlocks}
 <h2>관리 학교</h2>
 <p>${pick([`${esc(b.name)}에 다니는 학생들의 소속 학교입니다. 학교별 시험 대비 안내는 학교 이름을 눌러 확인하세요. <strong>목록에 없는 인근 학교 학생도 수업이 가능하니</strong> 상담에서 확인해 주세요.`, `${esc(b.name)} 학생들이 다니는 학교입니다. 학교 이름을 누르면 그 학교 기준의 시험 대비 안내가 나옵니다. <strong>목록에 없는 학교도 인근이면 수업할 수 있으니</strong> 상담 때 말씀해 주세요.`, `현재 ${esc(b.name)}에 다니는 학생들의 학교 목록입니다. 학교별 시험 준비 방법은 이름을 눌러 보세요. <strong>여기 없는 학교 학생도 상담 후 수업이 가능합니다.</strong>`], key + 'schp')}</p>
 <div class="chips">${schoolChips}</div>
-${bv ? video(bv) : video(pick(VIDEOS.pools.brand, b.branch_slug + 'promo'), pick(['와와 소개 영상', '와와학습학원 소개 영상', '와와 공식 채널의 소개 영상'], b.branch_slug + 'vcap'))}
-${faq.html}`, ['와와의 수업 방식', '수업 운영 원칙', '자주 묻는 질문', /학생|내신|재학생|공부 습관/])}
+${faq.html}`, ['수업은 이렇게 다릅니다', '와와의 수업 방식', '수업 운영 원칙', '수업 방식', '어떻게 수업하나요', '자주 묻는 질문', /학생|내신|재학생|공부 습관/])}
 </article>
 ${ctaBand(b, 3)}
 <article class="body">${sectionize(feeSection(b), [])}</article></div>`;

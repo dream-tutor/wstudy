@@ -647,7 +647,9 @@ article.body .blk.band { background: var(--soft); margin-left: calc(50% - 50vw);
 article.body .blk.band + .blk.band { padding-top: 0; margin-top: -8px; }
 article.body .blk.band .blk-h { margin-top: 14px; }
 article.body .blk.band .info-table, article.body .blk.band .lmap, article.body .blk.band .bmap { background: var(--white); }
-article.body .way + .blk.band { margin-top: 36px; }
+article.body .way + .blk.band, article.body .video-box + .blk.band { margin-top: 36px; }
+article.body .blk.band + .way { margin-top: 44px; }
+article.body .video-box { margin-top: 28px; }
 @media (max-width: 767px) {
   article.body .blk.band { padding: 0 calc(50vw - 50%) 4px; border-top: 0; margin-top: 0; }
   article.body .blk.band + .blk.band { margin-top: -4px; }
