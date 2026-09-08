@@ -122,7 +122,7 @@ function feeSection(b) {
     ? `<div class="fee-legal"><span>${esc(b.office)} (${esc(b.reg)})</span>${b.fee_link ? `<a class="fee-doc" href="${esc(b.fee_link)}" target="_blank" rel="noopener">교습비 공시 자료</a>` : ''}</div>`
     : '';
   return `<h2 id="fee">수강료 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">교육청 등록 기준 공시 금액(월, 원)입니다. 자세한 시간, 횟수는 상담 시 조율합니다.</p>
-<div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th>${hasMin ? '<th>1회 수업</th>' : ''}<th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>${legal}`;
+<div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th>${hasMin ? '<th class="tm">1회 수업</th>' : ''}<th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>${legal}`;
 }
 // 학교 페이지용: 해당 학교 학년(초/중/고)에 맞춘 지점별 수업비
 function schoolFeeSection(s) {
@@ -269,7 +269,7 @@ ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
   });
 })();
 </script>
-<script>document.documentElement.classList.add('js');(function(){var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('rv-in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'}):null;document.querySelectorAll('.rv,.st').forEach(function(el){io?io.observe(el):el.classList.add('rv-in')});var hd=document.querySelector('header.site');if(hd){var t=false;window.addEventListener('scroll',function(){var s=window.scrollY>8;if(s!==t){t=s;hd.classList.toggle('hd-s',s)}},{passive:true})}var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;document.querySelectorAll('.hero .stats .n').forEach(function(el){var m=el.textContent.match(/^([d,]+)(.*)$/);if(!m||rm)return;var to=parseInt(m[1].replace(/,/g,''),10),suf=m[2],t0=null,dur=1400;function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/dur);p=1-Math.pow(1-p,3);el.textContent=Math.round(to*p).toLocaleString()+suf;if(p<1)requestAnimationFrame(step)}el.textContent='0'+suf;setTimeout(function(){requestAnimationFrame(step)},650)})})();</script>
+<script>document.documentElement.classList.add('js');(function(){var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('rv-in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'}):null;document.querySelectorAll('.rv,.st').forEach(function(el){io?io.observe(el):el.classList.add('rv-in')});var hd=document.querySelector('header.site');if(hd){var t=false;window.addEventListener('scroll',function(){var s=window.scrollY>8;if(s!==t){t=s;hd.classList.toggle('hd-s',s)}},{passive:true})}var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;document.querySelectorAll('.blk-h').forEach(function(h){h.addEventListener('click',function(){if(window.innerWidth>=768)return;h.parentNode.classList.toggle('blk-open')})});document.querySelectorAll('.hero .stats .n').forEach(function(el){var m=el.textContent.match(/^([d,]+)(.*)$/);if(!m||rm)return;var to=parseInt(m[1].replace(/,/g,''),10),suf=m[2],t0=null,dur=1400;function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/dur);p=1-Math.pow(1-p,3);el.textContent=Math.round(to*p).toLocaleString()+suf;if(p<1)requestAnimationFrame(step)}el.textContent='0'+suf;setTimeout(function(){requestAnimationFrame(step)},650)})})();</script>
 ${PROTECT}
 ${TRACKER}
 </body>
@@ -515,6 +515,17 @@ function branchVideo(b) {
 }
 // 초·중·고 안내 블록 기준 = 과목별 수업 학년(grades_by_subject). 학교 목록은 보조.
 // (2026-09-08 수정: 학교 목록만 보면 동춘점처럼 고등학교만 등록된 42곳이 고등부만 나왔다)
+// 지점 페이지 본문을 h2 단위 섹션(.blk)으로 나눈다. 모바일에서는 openTitles 외 섹션을 접어 두고 제목을 누르면 펼친다(스크립트는 shell에).
+function sectionize(html, closedTitles = []) {
+  const parts = html.split(/(?=<h2\b)/);
+  return parts.map((p) => {
+    const m = p.match(/^<h2([^>]*)>([\s\S]*?)<\/h2>([\s\S]*)$/);
+    if (!m) return p;
+    const title = m[2].replace(/<[^>]+>/g, '').trim();
+    const open = !closedTitles.some((t) => t instanceof RegExp ? t.test(title) : title.startsWith(t));
+    return `<section class="blk${open ? ' blk-open' : ''}"><h2 class="blk-h"${m[1]}>${m[2]}</h2><div class="blk-b">${m[3]}</div></section>`;
+  }).join('');
+}
 function levelsOf(b) {
   const g = new Set();
   for (const v of Object.values(b.grades_by_subject || {})) for (const x of String(v).split(',')) { const c = x.trim()[0]; if (c === '초' || c === '중' || c === '고') g.add(c); }
@@ -764,11 +775,11 @@ function buildBranch(r, d, b) {
   const gradeBlocks = levels.map((lv) => pick(COPY.gradeBlock[lv], key + lv)()).join('');
   const body = `<div class="wrap">
 ${crumb(3, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { name: b.name }])}
-<div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b.name)}<h1>${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
+<div class="bh"><div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b.name)}<h1>${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
+${classPhoto(3, b.branch_slug)}</div>
 <article class="body">
-${classPhoto(3, b.branch_slug)}
 ${wayBlock(false, b.branch_slug)}
-<h2>지점 안내</h2>
+${sectionize(`<h2>지점 안내</h2>
 <div class="tbl-scroll"><table class="info-table">
 <tr><th>주소</th><td>${esc(b.address)}${b.location_guide ? `<br><span style="color:var(--ink-soft);font-size:13.5px">${esc(b.location_guide).replace(/\n/g, '<br>')}</span>` : ''}</td></tr>
 ${nearbyRow(b)}
@@ -785,10 +796,10 @@ ${gradeBlocks}
 <p>${pick([`${esc(b.name)}에 다니는 학생들의 소속 학교입니다. 학교별 시험 대비 안내는 학교 이름을 눌러 확인하세요. <strong>목록에 없는 인근 학교 학생도 수업이 가능하니</strong> 상담에서 확인해 주세요.`, `${esc(b.name)} 학생들이 다니는 학교입니다. 학교 이름을 누르면 그 학교 기준의 시험 대비 안내가 나옵니다. <strong>목록에 없는 학교도 인근이면 수업할 수 있으니</strong> 상담 때 말씀해 주세요.`, `현재 ${esc(b.name)}에 다니는 학생들의 학교 목록입니다. 학교별 시험 준비 방법은 이름을 눌러 보세요. <strong>여기 없는 학교 학생도 상담 후 수업이 가능합니다.</strong>`], key + 'schp')}</p>
 <div class="chips">${schoolChips}</div>
 ${bv ? '<h2>영상으로 보는 ' + esc(b.name) + '</h2>' + video(bv) : '<h2>영상으로 보는 와와</h2>' + video(pick(VIDEOS.pools.brand, b.branch_slug + 'promo'), pick(['와와 소개 영상', '와와학습학원 소개 영상', '와와 공식 채널의 소개 영상'], b.branch_slug + 'vcap'))}
-${faq.html}
+${faq.html}`, ['와와의 수업 방식', '수업 운영 원칙', '자주 묻는 질문', /학생|내신|재학생|공부 습관/])}
 </article>
 ${ctaBand(b, 3)}
-<article class="body">${feeSection(b)}</article></div>`;
+<article class="body">${sectionize(feeSection(b), [])}</article></div>`;
   write(`${r.slug}/${d.slug}/${b.branch_slug}/index.html`, shell({
     branch: b.name,
     title: `${BRAND} ${b.name} | ${b.dong} 초중고 학원`,
