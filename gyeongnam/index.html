@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=c6afff52">
+<link rel="stylesheet" href="../assets/style.css?v=84784a02">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://wstudycenter.com/"},{"@type":"ListItem","position":2,"name":"경남"}]},{"@type":"WebPage","name":"경남 초중고 학원 | 와와학습학원 3개 지점","description":"경남의 와와학습학원 3개 지점 안내. 시·군·구별 지점 위치, 수업 과목, 관리 학교 목록.","url":"https://wstudycenter.com/gyeongnam/","datePublished":"2026-07-16","dateModified":"2026-09-05","inLanguage":"ko-KR"}]}</script>
 </head>
 <body>
@@ -34,68 +34,48 @@
 </div></header>
 <div class="wrap">
 <div class="crumb"><a href="../">홈</a><span>›</span>경남</div>
-<div class="page-head"><span class="tag">지역 안내</span><h1>경남 와와학습학원 지점</h1><div class="sub">경남에는 3개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
-<article class="body"><h2>지점 위치</h2>
-<div class="sec-sub" style="margin:10px 0 6px">지역을 차례로 선택하면 지도가 그 지역으로 좁혀집니다.</div>
-<div class="map-sels"><select id="ms_city"><option value="">시/군/구 전체</option></select><select id="ms_gu"><option value="">구 전체</option></select><select id="ms_dong"><option value="">읍/면/동 전체</option></select></div>
-<div id="lmap" class="lmap"></div>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<div class="page-head"><span class="tag">지역 안내</span><h1>경남 와와학습학원 지점</h1><div class="sub">경남에는 3개 지점이 있습니다. 검색하거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
+<article class="body">
+<h2 id="regions">경남 지역별 지점 찾기</h2>
+<p class="sec-sub">지점명, 동네, 학교 이름으로 검색하거나 시·군·구를 선택하세요.</p>
+<div class="sbox"><input id="q" type="search" placeholder="경남 지점·동네·학교 검색" autocomplete="off" aria-label="지점 검색"><div id="sres" class="sres"></div></div>
+<div class="dmap st"><a href="./changwon/">창원시<span class="cnt2">2곳</span></a><a href="./geoje/">거제시<span class="cnt2">1곳</span></a></div>
+<h2>시·군·구별 지점</h2><div class="list-grid st"><a href="./changwon/">창원시<span class="cnt">지점 2곳 · 석동점, 상남점</span></a><a href="./geoje/">거제시<span class="cnt">지점 1곳 · 거제수월점</span></a></div></article>
+<div class="cta-band"><div class="t">상담 안내</div><div class="d">학교와 학년, 궁금한 과목을 남겨 주시면 지점에서 연락드려 수업 방법과 시간을 안내합니다.</div><div class="btns"><a class="tel" href="tel:010-4864-5345">전화 상담</a><a class="form" href="../inquiry/">상담 신청서 작성</a></div></div></div>
 <script>
 (function(){
-  var pts=[{"n":"석동점","city":"창원시","gu":"진해구","dong":"석동","la":35.1554802,"lo":128.7044369,"u":"/gyeongnam/changwon/seogdong/"},{"n":"상남점","city":"창원시","gu":"성산구","dong":"상남동","la":35.2211742,"lo":128.6858088,"u":"/gyeongnam/changwon/sangnam/"},{"n":"거제수월점","city":"거제시","gu":"","dong":"수월동","la":34.8924222,"lo":128.640404,"u":"/gyeongnam/geoje/geojesuwol/"}];
-  var LV=["city","gu","dong"];
-  var LB={"city":"시/군/구","gu":"구","dong":"읍/면/동"};
-  var map=L.map('lmap',{scrollWheelZoom:false});
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
-  pts.forEach(function(p){p._m=L.marker([p.la,p.lo]).addTo(map).bindPopup('<b>'+p.n+'</b><br><a href="'+p.u+'">지점 안내 보기 →</a>');});
-  var sc=null;
-  if(sc){L.circleMarker([sc.la,sc.lo],{radius:9,color:'#b9552f',weight:3,fillColor:'#fff',fillOpacity:1}).addTo(map).bindPopup('<b>'+sc.n+'</b>').bindTooltip(sc.n,{permanent:true,direction:'top',offset:[0,-10],className:'sc-tip'});}
-  function fit(list){
-    if(list.length===1){map.setView([list[0].la,list[0].lo],15);}
-    else{map.fitBounds(L.latLngBounds(list.map(function(p){return [p.la,p.lo]})).pad(0.15));}
+  var PREFIX='/gyeongnam/';
+  var q=document.getElementById('q'),res=document.getElementById('sres'),idx=null,loading=false;
+  if(!q)return;
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function load(cb){
+    if(idx){cb();return;}
+    if(loading)return;
+    loading=true;
+    fetch('../assets/search-index.json').then(function(r){return r.json()}).then(function(d){idx=d;loading=false;cb();}).catch(function(){loading=false;});
   }
-  fit(sc?pts.concat([sc]):pts);
-  var sels={};LV.forEach(function(l){sels[l]=document.getElementById('ms_'+l);});
-  function matchBefore(p,idx){
-    for(var i=0;i<idx;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v)return false;}
-    return true;
+  function run(){
+    var v=q.value.trim();
+    if(!v){res.innerHTML='';res.classList.remove('on');return;}
+    if(!idx){load(run);return;}
+    var starts=[],inc=[];
+    for(var i=0;i<idx.length&&starts.length<10;i++){
+      var e=idx[i];
+      if(PREFIX&&e.u.indexOf(PREFIX)!==0)continue;
+      if(e.n.indexOf(v)===0)starts.push(e);
+      else if(inc.length<10&&(e.n.indexOf(v)>-1||e.s.indexOf(v)>-1))inc.push(e);
+    }
+    var list=starts.concat(inc).slice(0,10);
+    res.classList.add('on');
+    res.innerHTML=list.length?list.map(function(e){
+      return '<a href="'+e.u+'"><span class="tp'+(e.t==='학교'?' school':'')+'">'+e.t+'</span><span class="nm">'+esc(e.n)+'</span><span class="sb">'+esc(e.s)+'</span></a>';
+    }).join(''):'<div class="sr-empty">검색 결과가 없습니다. 다른 이름으로 찾아보세요.</div>';
   }
-  function rebuild(){
-    var chainOk=true;
-    LV.forEach(function(l,i){
-      var el=sels[l];
-      if(!chainOk){el.innerHTML='<option value="">'+LB[l]+' 전체</option>';el.value='';el.disabled=true;return;}
-      var vals=[];
-      pts.forEach(function(p){if(matchBefore(p,i)&&p[l]&&vals.indexOf(p[l])<0)vals.push(p[l]);});
-      var cur=el.value;
-      el.innerHTML='<option value="">'+LB[l]+' 전체</option>'+vals.map(function(v){return '<option'+(v===cur?' selected':'')+'>'+v+'</option>'}).join('');
-      if(vals.indexOf(cur)<0)el.value='';
-      if(vals.length===0){el.disabled=true;return;}
-      el.disabled=false;
-      if(el.value==='')chainOk=false;
-    });
-  }
-  function apply(){
-    var vis=[];
-    pts.forEach(function(p){
-      var ok=true;
-      for(var i=0;i<LV.length;i++){var v=sels[LV[i]].value;if(v&&p[LV[i]]!==v){ok=false;break;}}
-      if(ok){p._m.addTo(map);vis.push(p);}else{map.removeLayer(p._m);}
-    });
-    fit(vis.length?vis:pts);
-  }
-  LV.forEach(function(l,idx){
-    sels[l].addEventListener('change',function(){
-      for(var j=idx+1;j<LV.length;j++)sels[LV[j]].value='';
-      rebuild();apply();
-    });
-  });
-  rebuild();
-  map.on('click',function(){map.scrollWheelZoom.enable()});
+  q.addEventListener('input',run);
+  q.addEventListener('focus',function(){load(function(){})});
+  document.addEventListener('click',function(e){if(!res.contains(e.target)&&e.target!==q){res.classList.remove('on');}});
 })();
-</script><h2>시·군·구별 지점</h2><div class="list-grid"><a href="./changwon/">창원시<span class="cnt">지점 2곳 · 석동점, 상남점</span></a><a href="./geoje/">거제시<span class="cnt">지점 1곳 · 거제수월점</span></a></div></article>
-<div class="cta-band"><div class="t">상담 안내</div><div class="d">학교와 학년, 궁금한 과목을 남겨 주시면 지점에서 연락드려 수업 방법과 시간을 안내합니다.</div><div class="btns"><a class="tel" href="tel:010-4864-5345">전화 상담</a><a class="form" href="../inquiry/">상담 신청서 작성</a></div></div></div>
+</script>
 <footer class="site"><div class="in">
 <div class="brand">와와학습학원</div>
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>

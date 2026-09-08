@@ -302,7 +302,7 @@ function video(v, cap) {
   if (!v) return '';
   const vert = !!v.shorts;
   const thumbs = vert ? ['oardefault', 'hqdefault'] : ['hq720', 'sddefault', 'hqdefault'];
-  return `<div class="video-box"><div class="frame${vert ? ' vertical' : ''}" data-yt="${v.id}" data-title="${esc(v.title)}"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/${thumbs[0]}.jpg" data-fb="${thumbs.slice(1).join(',')}" alt="${esc(v.title)}" width="${vert ? 300 : 1280}" height="${vert ? 533 : 720}"><button type="button" class="yt-play" aria-label="${esc(v.title)} 재생"><span></span></button></div></div>`;
+  return `<div class="video-box rv"><div class="frame${vert ? ' vertical' : ''}" data-yt="${v.id}" data-title="${esc(v.title)}"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/${thumbs[0]}.jpg" data-fb="${thumbs.slice(1).join(',')}" alt="${esc(v.title)}" width="${vert ? 300 : 1280}" height="${vert ? 533 : 720}"><button type="button" class="yt-play" aria-label="${esc(v.title)} 재생"><span></span></button></div></div>`;
 }
 function ctaBand(b, depth) {
   const base = '../'.repeat(depth);
@@ -334,7 +334,7 @@ function guideLinks(slugs, depth, title) {
   const base = '../'.repeat(depth);
   const items = slugs.map((s) => GUIDES.find((g) => g.slug === s)).filter(Boolean);
   if (!items.length) return '';
-  return `<h2>${title || '함께 읽을 공부법 칼럼'}</h2><div class="chips">${items.map((g) => `<a href="${base}guide/${g.slug}/">${esc(g.title)}</a>`).join('')}</div>`;
+  return `<h2>${title || '함께 읽을 공부법 칼럼'}</h2><div class="chips st">${items.map((g) => `<a href="${base}guide/${g.slug}/">${esc(g.title)}</a>`).join('')}</div>`;
 }
 const SUBJ_GUIDES = {
   영어: ['english-voca', 'english-grammar', 'exam-4weeks'],
@@ -494,12 +494,12 @@ const WAY_CARDS = [
 ];
 function wayBlock(compact = false, key = 'home') {
   const cards = WAY_CARDS.map((c, i) => `<div class="w"><div class="n">0${i + 1}</div><div class="t">${pick(c.t, key + 'wt' + i)}</div><div class="d">${pick(c.d, key + 'wd' + i)}</div></div>`).join('\n');
-  return `<div class="say${compact ? ' compact' : ''}">
+  return `<div class="say rv${compact ? ' compact' : ''}">
 <div class="k">수업 방식</div>
 <div class="l1">${pick(WAY_L1, key + 'l1')}</div>
 <div class="l2">${pick(WAY_L2, key + 'l2')}</div>
 </div>
-<div class="way">
+<div class="way st">
 ${cards}
 </div>`;
 }
@@ -525,7 +525,7 @@ function sectionize(html, closedTitles = []) {
     const title = m[2].replace(/<[^>]+>/g, '').trim();
     const open = !closedTitles.some((t) => t instanceof RegExp ? t.test(title) : title.startsWith(t));
     const band = BAND_TITLES.some((t) => title.startsWith(t));
-    return `<section class="blk${open ? ' blk-open' : ''}${band ? ' band' : ''}"><h2 class="blk-h"${m[1]}>${m[2]}</h2><div class="blk-b">${m[3]}</div></section>`;
+    return `<section class="blk${open ? ' blk-open' : ''}${band ? ' band' : ''}"><h2 class="blk-h rv"${m[1]}>${m[2]}</h2><div class="blk-b st">${m[3]}</div></section>`;
   }).join('');
 }
 function levelsOf(b) {
@@ -546,6 +546,43 @@ function schoolShort(b) {
 }
 
 // ── 홈 ──
+// 지점·동네·학교 검색 (홈: 전체, 시도 페이지: prefix로 해당 시도만)
+function searchScript(base, prefix) {
+  return `<script>
+(function(){
+  var PREFIX='${prefix}';
+  var q=document.getElementById('q'),res=document.getElementById('sres'),idx=null,loading=false;
+  if(!q)return;
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  function load(cb){
+    if(idx){cb();return;}
+    if(loading)return;
+    loading=true;
+    fetch('${base}assets/search-index.json').then(function(r){return r.json()}).then(function(d){idx=d;loading=false;cb();}).catch(function(){loading=false;});
+  }
+  function run(){
+    var v=q.value.trim();
+    if(!v){res.innerHTML='';res.classList.remove('on');return;}
+    if(!idx){load(run);return;}
+    var starts=[],inc=[];
+    for(var i=0;i<idx.length&&starts.length<10;i++){
+      var e=idx[i];
+      if(PREFIX&&e.u.indexOf(PREFIX)!==0)continue;
+      if(e.n.indexOf(v)===0)starts.push(e);
+      else if(inc.length<10&&(e.n.indexOf(v)>-1||e.s.indexOf(v)>-1))inc.push(e);
+    }
+    var list=starts.concat(inc).slice(0,10);
+    res.classList.add('on');
+    res.innerHTML=list.length?list.map(function(e){
+      return '<a href="'+e.u+'"><span class="tp'+(e.t==='학교'?' school':'')+'">'+e.t+'</span><span class="nm">'+esc(e.n)+'</span><span class="sb">'+esc(e.s)+'</span></a>';
+    }).join(''):'<div class="sr-empty">검색 결과가 없습니다. 다른 이름으로 찾아보세요.</div>';
+  }
+  q.addEventListener('input',run);
+  q.addEventListener('focus',function(){load(function(){})});
+  document.addEventListener('click',function(e){if(!res.contains(e.target)&&e.target!==q){res.classList.remove('on');}});
+})();
+</script>`;
+}
 function buildHome() {
   const total = Object.keys(BRANCHES).length;
   // 시도 타일 지도 (열, 행) — 대략적 한반도 배치
@@ -647,44 +684,12 @@ ${wayBlock().replace('class="say"','class="say rv"').replace('class="way"','clas
 <section class="w-sec"><div class="in">
 ${video(VIDEOS.pools.brand[0])}
 ${video(VIDEOS.pools.interview[0], '합격 인터뷰: 평택 와와에서 서울대 합격생이 나온 이유')}
-<p style="font-size:14px;color:var(--ink-soft)">더 많은 영상은 <a href="https://www.youtube.com/@wawacoachingcenter" target="_blank" rel="noopener" style="color:var(--brick);font-weight:600">유튜브 채널</a>에서 볼 수 있습니다.</p>
 <div class="w-head rv" style="margin-top:72px"><div class="k">FAQ</div><h2>자주 묻는 질문</h2></div>
 <div class="faq st">${HOME_FAQ.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>
 </div></section>
 
 <section class="w-cta"><div class="in"><h2 class="rv">학생의 학교와 학년만 알려 주시면<br>어느 단원부터 시작할지 답해 드립니다</h2><p class="rv">가까운 지점에서 진단 상담 일정을 잡아 연락드립니다. 전화나 상담 신청 어느 쪽이든 괜찮습니다.</p><div class="btns rv"><a class="b1" href="./inquiry/">상담 신청</a><a class="b2" href="tel:${TEL}">전화 상담</a></div></div></section>
-<script>
-(function(){
-  var q=document.getElementById('q'),res=document.getElementById('sres'),idx=null,loading=false;
-  if(!q)return;
-  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-  function load(cb){
-    if(idx){cb();return;}
-    if(loading)return;
-    loading=true;
-    fetch('./assets/search-index.json').then(function(r){return r.json()}).then(function(d){idx=d;loading=false;cb();}).catch(function(){loading=false;});
-  }
-  function run(){
-    var v=q.value.trim();
-    if(!v){res.innerHTML='';res.classList.remove('on');return;}
-    if(!idx){load(run);return;}
-    var starts=[],inc=[];
-    for(var i=0;i<idx.length&&starts.length<10;i++){
-      var e=idx[i];
-      if(e.n.indexOf(v)===0)starts.push(e);
-      else if(inc.length<10&&(e.n.indexOf(v)>-1||e.s.indexOf(v)>-1))inc.push(e);
-    }
-    var list=starts.concat(inc).slice(0,10);
-    res.classList.add('on');
-    res.innerHTML=list.length?list.map(function(e){
-      return '<a href="'+e.u+'"><span class="tp'+(e.t==='학교'?' school':'')+'">'+e.t+'</span><span class="nm">'+esc(e.n)+'</span><span class="sb">'+esc(e.s)+'</span></a>';
-    }).join(''):'<div class="sr-empty">검색 결과가 없습니다. 다른 이름으로 찾아보세요.</div>';
-  }
-  q.addEventListener('input',run);
-  q.addEventListener('focus',function(){load(function(){})});
-  document.addEventListener('click',function(e){if(!res.contains(e.target)&&e.target!==q){res.classList.remove('on');}});
-})();
-</script>`;
+${searchScript('./', '')}`;
   write('index.html', shell({
     title: `${BRAND} | 전국 ${total}개 지점, 학교별 내신 전문 초중고 학원`,
     desc: `초·중·고 내신은 학교를 아는 학원에서. 전국 ${total}개 지점, ${totalSchools}개 학교의 진도·기출 기준 수업. 진단 후 개별 진도, 수행평가 관리, 수강료 공시. 2025 올해의 대상(교육 부문) 수상.`,
@@ -704,15 +709,22 @@ function buildRegion(r) {
   const dists = Object.values(r.districts).sort((a, b) => b.branches.length - a.branches.length);
   const cards = dists.map((d) => `<a href="./${d.slug}/">${esc(d.name)}<span class="cnt">지점 ${d.branches.length}곳 · ${d.branches.map((b) => b.name).slice(0, 3).join(', ')}${d.branches.length > 3 ? ' 외' : ''}</span></a>`).join('');
   const n = dists.reduce((s, d) => s + d.branches.length, 0);
+  const tiles = dists.map((d) => { const k = d.branches.length; const lv = k > 12 ? ' class="lv3"' : k > 5 ? ' class="lv2"' : ''; return `<a href="./${d.slug}/"${lv}>${esc(d.name)}<span class="cnt2">${k}곳</span></a>`; }).join('');
   const pts = [];
   for (const d of Object.values(r.districts)) for (const b of d.branches) {
     pts.push({ n: b.name, city: d.name, gu: guOf(b) || '', dong: b.dong || '', la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` });
   }
   const body = `<div class="wrap">
 ${crumb(1, [{ name: r.name }])}
-<div class="page-head"><span class="tag">지역 안내</span><h1>${esc(r.name)} ${BRAND} 지점</h1><div class="sub">${esc(r.name)}에는 ${n}개 지점이 있습니다. 지도의 마커를 누르거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
-<article class="body">${branchesMap(pts, ['city', 'gu', 'dong'])}<h2>시·군·구별 지점</h2><div class="list-grid">${cards}</div></article>
-${ctaBand(null, 1)}</div>`;
+<div class="page-head"><span class="tag">지역 안내</span><h1>${esc(r.name)} ${BRAND} 지점</h1><div class="sub">${esc(r.name)}에는 ${n}개 지점이 있습니다. 검색하거나 시·군·구를 선택하면 지점별 과목과 관리 학교를 볼 수 있습니다.</div></div>
+<article class="body">
+<h2 id="regions">${esc(r.name)} 지역별 지점 찾기</h2>
+<p class="sec-sub">지점명, 동네, 학교 이름으로 검색하거나 시·군·구를 선택하세요.</p>
+<div class="sbox"><input id="q" type="search" placeholder="${esc(r.name)} 지점·동네·학교 검색" autocomplete="off" aria-label="지점 검색"><div id="sres" class="sres"></div></div>
+<div class="dmap st">${tiles}</div>
+<h2>시·군·구별 지점</h2><div class="list-grid st">${cards}</div></article>
+${ctaBand(null, 1)}</div>
+${searchScript('../', '/' + r.slug + '/')}`;
   write(`${r.slug}/index.html`, shell({
     title: `${r.name} 초중고 학원 | ${BRAND} ${n}개 지점`,
     desc: `${r.name}의 ${BRAND} ${n}개 지점 안내. 시·군·구별 지점 위치, 수업 과목, 관리 학교 목록.`,
@@ -732,7 +744,7 @@ function buildDistrict(r, d) {
   let schoolHtml = '';
   for (const [lv, arr] of Object.entries(byLevel)) {
     if (!arr.length) continue;
-    schoolHtml += `<h3>${lv === '초' ? '초등학교' : lv === '중' ? '중학교' : '고등학교'}</h3><div class="chips">${arr.sort((a, b) => a.name.localeCompare(b.name, 'ko')).map((s) => `<a href="./school/${encodeURIComponent(s.name)}/">${esc(s.name)}</a>`).join('')}</div>`;
+    schoolHtml += `<h3>${lv === '초' ? '초등학교' : lv === '중' ? '중학교' : '고등학교'}</h3><div class="chips st">${arr.sort((a, b) => a.name.localeCompare(b.name, 'ko')).map((s) => `<a href="./school/${encodeURIComponent(s.name)}/">${esc(s.name)}</a>`).join('')}</div>`;
   }
   const body = `<div class="wrap">
 ${crumb(2, [{ name: r.name, slug: r.slug }, { name: d.name }])}
@@ -793,10 +805,10 @@ ${sectionize(`${pick(COPY.wawaWay, b.branch_slug + 'way')(b.subjects)}
 ${gradeBlocks}
 <h2>과목별 수업 안내</h2>
 <p>${pick([`과목을 선택하면 ${esc(b.dong)} 기준의 수업 방식과 내신 대비 흐름을 자세히 볼 수 있습니다.`, `${esc(b.dong)}에서 듣는 과목별 수업 내용과 시험 대비 방식은 과목 이름을 누르면 볼 수 있습니다.`, `아래 과목을 누르면 ${esc(b.name)}의 과목별 수업 순서와 내신 준비 방법을 확인할 수 있습니다.`], key + 'subp')}</p>
-<div class="chips">${subjectLinks}</div>
+<div class="chips st">${subjectLinks}</div>
 <h2>관리 학교</h2>
 <p>${pick([`${esc(b.name)}에 다니는 학생들의 소속 학교입니다. 학교별 시험 대비 안내는 학교 이름을 눌러 확인하세요. <strong>목록에 없는 인근 학교 학생도 수업이 가능하니</strong> 상담에서 확인해 주세요.`, `${esc(b.name)} 학생들이 다니는 학교입니다. 학교 이름을 누르면 그 학교 기준의 시험 대비 안내가 나옵니다. <strong>목록에 없는 학교도 인근이면 수업할 수 있으니</strong> 상담 때 말씀해 주세요.`, `현재 ${esc(b.name)}에 다니는 학생들의 학교 목록입니다. 학교별 시험 준비 방법은 이름을 눌러 보세요. <strong>여기 없는 학교 학생도 상담 후 수업이 가능합니다.</strong>`], key + 'schp')}</p>
-<div class="chips">${schoolChips}</div>
+<div class="chips st">${schoolChips}</div>
 ${faq.html}`, ['수업은 이렇게 다릅니다', '와와의 수업 방식', '수업 운영 원칙', '수업 방식', '어떻게 수업하나요', '자주 묻는 질문', /학생|내신|재학생|공부 습관/])}
 </article>
 ${ctaBand(b, 3)}
@@ -844,7 +856,7 @@ ${bv ? video(bv) : ''}
 <tr><th>주소</th><td>${esc(b.address)}</td></tr>
 <tr><th>수업 시간</th><td>${esc(b.open_time || '상담 시 안내')}${b.weekend ? ` · ${esc(b.weekend)}` : ''}</td></tr>
 </table></div>
-${otherSubjects ? `<h2>${esc(b.dong)}의 다른 과목 수업</h2><div class="chips">${otherSubjects}</div>` : ''}
+${otherSubjects ? `<h2>${esc(b.dong)}의 다른 과목 수업</h2><div class="chips st">${otherSubjects}</div>` : ''}
 ${guideLinks(SUBJ_GUIDES[subj], 4, subj + ' 공부법 칼럼')}
 ${faq.html}
 </article>
@@ -925,7 +937,7 @@ ${(() => {
   const scOk = geo && s.branches.some((b) => b.lat && b.lng && distM(geo.lat, geo.lng, b.lat, b.lng) <= 8000);
   return branchesMap(mpts, [], scOk ? { n: s.name, la: geo.lat, lo: geo.lng } : null);
 })()}
-${(b0.subjects || []).length ? `<h2>${esc(s.name)} 재학생 수업 과목</h2><p>${esc(b0.name)}에서 ${esc(s.name)} 학생이 들을 수 있는 과목은 ${esc((b0.subjects || []).join(', '))}입니다. ${s.level === '초' ? '초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.' : s.level === '중' ? '평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 ' + esc(s.name) + ' 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.' : '수업은 학교 진도와 동기화되며, 내신 4주 전부터 ' + esc(s.name) + ' 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.'}</p><div class="chips">${(b0.subjects || []).filter((su) => SUBJ_SLUG[su]).map((su) => `<a href="../../${b0.branch_slug}/${SUBJ_SLUG[su]}/">${esc(b0.dong)} ${esc(su)}학원</a>`).join('')}</div>` : ''}
+${(b0.subjects || []).length ? `<h2>${esc(s.name)} 재학생 수업 과목</h2><p>${esc(b0.name)}에서 ${esc(s.name)} 학생이 들을 수 있는 과목은 ${esc((b0.subjects || []).join(', '))}입니다. ${s.level === '초' ? '초등부는 교과 진도를 따라가면서 공부 습관과 기본기를 함께 관리합니다.' : s.level === '중' ? '평소에는 학교 진도 기준으로 수업하고, 시험 기간에는 ' + esc(s.name) + ' 범위에 맞춘 내신 대비로 전환됩니다. 수행평가 일정도 수업 계획에 반영합니다.' : '수업은 학교 진도와 동기화되며, 내신 4주 전부터 ' + esc(s.name) + ' 기출 유형 중심의 실전 대비로 바뀝니다. 과목별 수업 방식은 아래에서 확인할 수 있습니다.'}</p><div class="chips st">${(b0.subjects || []).filter((su) => SUBJ_SLUG[su]).map((su) => `<a href="../../${b0.branch_slug}/${SUBJ_SLUG[su]}/">${esc(b0.dong)} ${esc(su)}학원</a>`).join('')}</div>` : ''}
 ${wayBlock(true, key)}
 ${bv ? video(bv) : video(pick(VIDEOS.pools.brand, key + 'promo'), pick(['와와 소개 영상', '와와학습학원 소개 영상', '와와 공식 채널의 소개 영상'], key + 'vcap'))}
 ${faq.html}
@@ -971,7 +983,7 @@ ${crumb(2, [{ name: '공부법 칼럼', slug: 'guide' }, { name: g.title }])}
 ${g.body}
 ${g.video ? `<h2>관련 영상</h2>${video(g.video)}` : ''}
 <h2>이 카테고리의 다른 글</h2>
-<div class="chips">${related.map((r) => `<a href="../${r.slug}/">${esc(r.title)}</a>`).join('')}${others ? `<a href="../${others.slug}/">${esc(others.title)}</a>` : ''}</div>
+<div class="chips st">${related.map((r) => `<a href="../${r.slug}/">${esc(r.title)}</a>`).join('')}${others ? `<a href="../${others.slug}/">${esc(others.title)}</a>` : ''}</div>
 </article>
 ${ctaBand(null, 2)}</div>`;
   write(`guide/${g.slug}/index.html`, shell({
@@ -1008,13 +1020,13 @@ ${crumb(1, [{ name: '상담 신청' }])}
 <div class="form-card">
 <form id="f">
 <label>지점 선택 <span style="font-weight:400;color:var(--ink-soft)">(모르시면 비워 두셔도 됩니다)</span></label>
-<div class="sel-row">
+<div class="sel-row three">
 <select id="fSido"><option value="">시/도</option>${Object.values(regions).map((r) => `<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('')}</select>
 <select id="fGu" disabled><option value="">시/군/구</option></select>
+<select name="지점" id="fBranch" disabled><option value="">지점</option></select>
 </div>
-<select name="지점" id="fBranch" disabled style="margin-top:6px"><option value="">지점 (시/군/구를 먼저 선택하세요)</option></select>
-<label>학생 이름</label><input name="이름" required placeholder="이름">
-<label>연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div>
+<div class="two"><div><label>학생 이름</label><input name="이름" required placeholder="이름"></div>
+<div><label>연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div></div></div>
 <label>주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label>
 <div class="sel-row" style="align-items:stretch">
 <input name="거주주소" id="fAddr" required readonly onclick="document.getElementById(&quot;addrBtn&quot;).click()" placeholder="주소 검색을 눌러 선택하세요" style="flex:1;min-width:0;cursor:pointer;background:#fff">

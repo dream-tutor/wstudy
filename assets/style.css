@@ -644,7 +644,8 @@ header.site.hd-s { box-shadow: 0 6px 24px rgba(25,31,40,.08); }
 /* ── 지점 페이지 하단 섹션 색 구분: 짝수 섹션은 종이색 띠(화면 폭 가득) ── */
 article.body .blk { padding: 6px 0 22px; }
 article.body .blk.band { background: var(--soft); margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); padding: 28px calc(50vw - 50%) 40px; }
-article.body .blk.band + .blk.band { padding-top: 0; margin-top: -8px; }
+article.body .blk.band + .blk.band { padding-top: 4px; margin-top: 0; }
+article.body .blk.band + .blk.band .blk-h { margin-top: 10px; }
 article.body .blk.band .blk-h { margin-top: 14px; }
 article.body .blk.band .info-table, article.body .blk.band .lmap, article.body .blk.band .bmap { background: var(--white); }
 article.body .way + .blk.band, article.body .video-box + .blk.band { margin-top: 36px; }
@@ -657,3 +658,31 @@ article.body .video-box { margin-top: 28px; }
   article.body .blk.band .blk-b { padding-bottom: 18px; }
   article.body .blk { padding: 0; }
 }
+
+/* ── 문의 폼: 지점 선택 3개 한 줄, 학생 이름+연락처 한 줄 (2026-09-08) ── */
+.sel-row.three { flex-wrap: wrap; }
+.sel-row.three select { flex: 1 1 0; }
+@media (max-width: 480px) { .sel-row.three select { font-size: 14px; padding-left: 8px; padding-right: 20px; } }
+.form-card .two { display: grid; grid-template-columns: 1fr 1.25fr; gap: 0 10px; }
+.form-card .two > div { min-width: 0; }
+@media (max-width: 380px) { .form-card .two { grid-template-columns: 1fr; } }
+
+/* ── 지점·하위 페이지 모션: 제목·사진 등장, 섹션 제목 등장, 섹션 본문 순차 등장, 칩 순차, 영상 확대 진입 ── */
+html.js .bh .page-head { animation: rise .7s .05s cubic-bezier(.2,.7,.2,1) both; }
+html.js .bh .photo { animation: rise .8s .2s cubic-bezier(.2,.7,.2,1) both; }
+html.js .video-box.rv .frame img { transform: scale(1.05); transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
+html.js .video-box.rv.rv-in .frame img { transform: none; }
+.blk-b.st > * { transition-duration: .55s; }
+.chips.st > * { transition-duration: .45s; }
+@media (prefers-reduced-motion: reduce) { html.js .bh .page-head, html.js .bh .photo { animation: none; } html.js .video-box.rv .frame img { transform: none; } }
+
+/* ── 시도 페이지: 시군구 타일 (홈의 시도 타일과 같은 톤) ── */
+.sec-sub { color: var(--ink-soft); font-size: 14.5px; margin: -6px 0 14px; }
+.dmap { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; margin: 6px 0 34px; }
+.dmap a { background: #5a6c8f; color: #fff; border-radius: 10px; padding: 16px 8px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 14.5px; font-weight: 700; text-align: center; transition: transform .12s, background .12s; }
+.dmap a.lv2 { background: #3c5077; }
+.dmap a.lv3 { background: var(--navy-deep); }
+.dmap a:hover { transform: scale(1.05); background: var(--brick); }
+.dmap .cnt2 { font-size: 11.5px; font-weight: 500; color: #cdd5e5; }
+.dmap a:hover .cnt2 { color: #f6dccd; }
+@media (max-width: 640px) { .dmap { grid-template-columns: repeat(3, 1fr); gap: 6px; } .dmap a { padding: 13px 6px; font-size: 13.5px; } }

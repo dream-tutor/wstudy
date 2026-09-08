@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=c6afff52">
+<link rel="stylesheet" href="../assets/style.css?v=84784a02">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://wstudycenter.com/"},{"@type":"ListItem","position":2,"name":"상담 신청"}]},{"@type":"WebPage","name":"상담 신청 | 와와학습학원","description":"와와학습학원 상담 신청. 학생의 학교·학년·희망 과목을 남겨 주시면 지점에서 연락드립니다.","url":"https://wstudycenter.com/inquiry/","datePublished":"2026-07-24","dateModified":"2026-08-27","inLanguage":"ko-KR"}]}</script>
 </head>
 <body>
@@ -38,13 +38,13 @@
 <div class="form-card">
 <form id="f">
 <label>지점 선택 <span style="font-weight:400;color:var(--ink-soft)">(모르시면 비워 두셔도 됩니다)</span></label>
-<div class="sel-row">
+<div class="sel-row three">
 <select id="fSido"><option value="">시/도</option><option value="경기">경기</option><option value="경북">경북</option><option value="서울">서울</option><option value="대구">대구</option><option value="광주">광주</option><option value="대전">대전</option><option value="전북">전북</option><option value="울산">울산</option><option value="경남">경남</option><option value="인천">인천</option><option value="충북">충북</option><option value="강원">강원</option><option value="제주">제주</option><option value="부산">부산</option><option value="충남">충남</option><option value="세종">세종</option></select>
 <select id="fGu" disabled><option value="">시/군/구</option></select>
+<select name="지점" id="fBranch" disabled><option value="">지점</option></select>
 </div>
-<select name="지점" id="fBranch" disabled style="margin-top:6px"><option value="">지점 (시/군/구를 먼저 선택하세요)</option></select>
-<label>학생 이름</label><input name="이름" required placeholder="이름">
-<label>연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div>
+<div class="two"><div><label>학생 이름</label><input name="이름" required placeholder="이름"></div>
+<div><label>연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div></div></div>
 <label>주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label>
 <div class="sel-row" style="align-items:stretch">
 <input name="거주주소" id="fAddr" required readonly onclick="document.getElementById(&quot;addrBtn&quot;).click()" placeholder="주소 검색을 눌러 선택하세요" style="flex:1;min-width:0;cursor:pointer;background:#fff">
