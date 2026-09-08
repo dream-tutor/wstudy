@@ -513,7 +513,13 @@ const LEVEL_GUIDES = {
 function branchVideo(b) {
   return VIDEOS.branch[b.name] || null;
 }
+// 초·중·고 안내 블록 기준 = 과목별 수업 학년(grades_by_subject). 학교 목록은 보조.
+// (2026-09-08 수정: 학교 목록만 보면 동춘점처럼 고등학교만 등록된 42곳이 고등부만 나왔다)
 function levelsOf(b) {
+  const g = new Set();
+  for (const v of Object.values(b.grades_by_subject || {})) for (const x of String(v).split(',')) { const c = x.trim()[0]; if (c === '초' || c === '중' || c === '고') g.add(c); }
+  const byGrade = ['초', '중', '고'].filter((c) => g.has(c));
+  if (byGrade.length) return byGrade;
   const l = [];
   if ((b.schools_elem || []).length) l.push('초');
   if ((b.schools_mid || []).length) l.push('중');
