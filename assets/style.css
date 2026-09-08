@@ -640,3 +640,15 @@ header.site.hd-s { box-shadow: 0 6px 24px rgba(25,31,40,.08); }
   .fee-table tbody th { width: 46px; }
   .fee-table td { font-size: 13.5px; }
 }
+
+/* ── 지점 페이지 하단 섹션 색 구분: 짝수 섹션은 종이색 띠(화면 폭 가득) ── */
+article.body .blk { padding: 6px 0 22px; }
+article.body .blk:nth-of-type(even) { background: var(--soft); margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); padding: 28px calc(50vw - 50%) 40px; }
+article.body .blk:nth-of-type(even) .blk-h { margin-top: 14px; }
+article.body .blk:nth-of-type(even) .info-table, article.body .blk:nth-of-type(even) .lmap, article.body .blk:nth-of-type(even) .bmap { background: var(--white); }
+@media (max-width: 767px) {
+  article.body .blk:nth-of-type(even) { padding: 0 calc(50vw - 50%) 4px; border-top: 0; }
+  article.body .blk:nth-of-type(even) .blk-h { margin: 0; }
+  article.body .blk:nth-of-type(even) .blk-b { padding-bottom: 18px; }
+  article.body .blk { padding: 0; }
+}
