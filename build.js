@@ -226,7 +226,7 @@ ${bodyOut}
 <a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/${cq}">상담 신청</a> · <a href="${base}review/">수강후기</a><br>
 학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
 <div style="margin-top:8px;font-size:12px;opacity:.8"><time datetime="${dateModified}">정보 업데이트 ${dateModified.replace(/-/g, '.')}</time></div>
-${/assets\/(illust\/|wawa-class)/.test(body) ? '<div style="margin-top:8px;font-size:11px;opacity:.75">사진 출처: 와와학습코칭센터, AI로 이미지 생성</div>' : ''}
+${(() => { const s = []; if (/assets\/(illust\/|wawa-class)/.test(body)) s.push('사진 출처: 와와학습코칭센터, AI로 이미지 생성'); if (/class="video-box"/.test(body)) s.push('영상 출처: 유튜브 와와학습코칭센터'); return s.length ? '<div style="margin-top:8px;font-size:11px;opacity:.75">' + s.join(' · ') + '</div>' : ''; })()}
 ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
 </div></footer>
 <div class="float-cta"><a class="f-form" href="${base}inquiry/${cq}">상담 문의</a><a class="f-tel" href="tel:${TEL}">전화 상담</a></div>
@@ -302,7 +302,7 @@ function video(v, cap) {
   if (!v) return '';
   const vert = !!v.shorts;
   const thumbs = vert ? ['oardefault', 'hqdefault'] : ['hq720', 'sddefault', 'hqdefault'];
-  return `<div class="video-box"><div class="frame${vert ? ' vertical' : ''}" data-yt="${v.id}" data-title="${esc(v.title)}"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/${thumbs[0]}.jpg" data-fb="${thumbs.slice(1).join(',')}" alt="${esc(v.title)}" width="${vert ? 300 : 1280}" height="${vert ? 533 : 720}"><button type="button" class="yt-play" aria-label="${esc(v.title)} 재생"><span></span></button></div><div class="cap">▶ ${esc(cap || v.title)} (와와 공식 유튜브)</div></div>`;
+  return `<div class="video-box"><div class="frame${vert ? ' vertical' : ''}" data-yt="${v.id}" data-title="${esc(v.title)}"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/${thumbs[0]}.jpg" data-fb="${thumbs.slice(1).join(',')}" alt="${esc(v.title)}" width="${vert ? 300 : 1280}" height="${vert ? 533 : 720}"><button type="button" class="yt-play" aria-label="${esc(v.title)} 재생"><span></span></button></div></div>`;
 }
 function ctaBand(b, depth) {
   const base = '../'.repeat(depth);
@@ -456,7 +456,7 @@ const CLASS_ILLUST = ['illust/c05.jpg', 'illust/c10.jpg', 'illust/c12.jpg', 'ill
 const PHOTO_CAPS = ['와와 교실 공간 일러스트 (지점별 시설과 배치는 다를 수 있습니다)', '교실 일러스트입니다. 실제 지점의 시설과 배치는 다를 수 있습니다.', '와와 교실 모습을 그린 그림입니다. 지점마다 시설은 조금씩 다릅니다.'];
 function classPhoto(depth, key = '') {
   const f = key ? pick(CLASS_ILLUST, key + 'photo') : 'wawa-class.jpg';
-  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/${f}" alt="와와 교실 공간 일러스트" width="900" height="664"><div class="cap">${pick(PHOTO_CAPS, key + 'cap')}</div></div>`;
+  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/${f}" alt="와와 교실 공간 일러스트" width="900" height="664"></div>`;
 }
 // 수업 방식 강조 블록 — 큰 글씨 선언 + 원칙 3개 (2026-09-07 지시: 자기주도·개별진도·강의식 없음·학습코칭 강조)
 // 같은 문장이 2,300페이지에 반복되면 페이지 간 유사도가 오르므로 슬롯별 변형을 페이지 키 해시로 고른다.
@@ -516,6 +516,7 @@ function branchVideo(b) {
 // 초·중·고 안내 블록 기준 = 과목별 수업 학년(grades_by_subject). 학교 목록은 보조.
 // (2026-09-08 수정: 학교 목록만 보면 동춘점처럼 고등학교만 등록된 42곳이 고등부만 나왔다)
 // 지점 페이지 본문을 h2 단위 섹션(.blk)으로 나눈다. 모바일에서는 openTitles 외 섹션을 접어 두고 제목을 누르면 펼친다(스크립트는 shell에).
+const BAND_TITLES = ['지점 안내', '오시는 길', '과목별 수업 안내', '자주 묻는 질문'];
 function sectionize(html, closedTitles = []) {
   const parts = html.split(/(?=<h2\b)/);
   return parts.map((p) => {
@@ -523,7 +524,8 @@ function sectionize(html, closedTitles = []) {
     if (!m) return p;
     const title = m[2].replace(/<[^>]+>/g, '').trim();
     const open = !closedTitles.some((t) => t instanceof RegExp ? t.test(title) : title.startsWith(t));
-    return `<section class="blk${open ? ' blk-open' : ''}"><h2 class="blk-h"${m[1]}>${m[2]}</h2><div class="blk-b">${m[3]}</div></section>`;
+    const band = BAND_TITLES.some((t) => title.startsWith(t));
+    return `<section class="blk${open ? ' blk-open' : ''}${band ? ' band' : ''}"><h2 class="blk-h"${m[1]}>${m[2]}</h2><div class="blk-b">${m[3]}</div></section>`;
   }).join('');
 }
 function levelsOf(b) {
