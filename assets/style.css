@@ -140,7 +140,10 @@ article.body li { margin-bottom: 7px; }
 .fee-table thead th { width: auto; text-align: right; }
 .fee-table thead th:first-child { text-align: left; }
 .fee-table th.tm, .fee-table td.tm { text-align: center; }
-.fee-table td, .fee-table thead th { padding-right: 12px; }
+.fee-table td, .fee-table thead th { padding-right: 16px; }
+.fee-table tbody th { width: 72px; }
+.fee-table th.tm, .fee-table td.tm { width: 110px; }
+.fee-table td:not(.tm) { width: auto; }
 .fee-table tbody th { width: 80px; }
 .fee-table td { text-align: right; font-variant-numeric: tabular-nums; }
 
@@ -564,7 +567,8 @@ html.js .rv.rv-in { opacity: 1; transform: none; }
 .way .d { font-size: 15.5px; max-width: 640px; }
 .list-grid a { padding: 14px 16px; }
 .info-table { border-top: 1px solid var(--line); }
-.info-table th, .info-table td { border-left: 0; border-right: 0; border-top: 0; padding: 14px 12px 14px 0; }
+.info-table th, .info-table td { border-left: 0; border-right: 0; border-top: 0; padding: 14px 14px; }
+.info-table th:first-child, .info-table td:first-child { padding-left: 16px; }
 .info-table th { background: none; }
 .note { border-top: 1px solid var(--line); border-radius: 0; background: none; padding: 16px 0 0; }
 .evs { background: none; border-radius: 0; padding: 0; border-top: 1px solid var(--line); }
@@ -624,4 +628,15 @@ header.site.hd-s { box-shadow: 0 6px 24px rgba(25,31,40,.08); }
   .blk-open .blk-h::after { content: '–'; }
   .blk-b { display: none; padding-bottom: 20px; }
   .blk-open .blk-b { display: block; }
+}
+
+/* 수강료 표 모바일: 숫자 줄바꿈 방지, 여백 축소 */
+.fee-table td { white-space: nowrap; }
+@media (max-width: 640px) {
+  .info-table th, .info-table td { padding: 11px 8px; }
+  .info-table th:first-child, .info-table td:first-child { padding-left: 10px; }
+  .fee-table th.tm, .fee-table td.tm { width: auto; }
+  .fee-table td, .fee-table thead th { padding-right: 8px; }
+  .fee-table tbody th { width: 46px; }
+  .fee-table td { font-size: 13.5px; }
 }
