@@ -567,3 +567,36 @@ html.js .rv.rv-in { opacity: 1; transform: none; }
 .evs { background: none; border-radius: 0; padding: 0; border-top: 1px solid var(--line); }
 .cta-band { border-radius: 24px; }
 @media (max-width: 640px) { .step { grid-template-columns: 1fr; } .step .no { grid-row: auto; } .way .w { grid-template-columns: 1fr; } .way .n { grid-row: auto; } }
+
+/* ── 모션 (2026-09-08): 첫 화면 순차 등장, 항목 순차 등장(.st), 사진 확대 진입, 헤더 그림자, 버튼·행 호버 ── */
+@keyframes rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+html.js .hero.w .award { animation: rise .7s .1s cubic-bezier(.2,.7,.2,1) both; }
+html.js .hero.w h1 { animation: rise .9s .25s cubic-bezier(.2,.7,.2,1) both; }
+html.js .hero.w p { animation: rise .9s .42s cubic-bezier(.2,.7,.2,1) both; }
+html.js .hero.w .btns { animation: rise .9s .58s cubic-bezier(.2,.7,.2,1) both; }
+html.js .hero.w .stats { animation: rise .9s .74s cubic-bezier(.2,.7,.2,1) both; }
+.hero.w h1 em { background: linear-gradient(90deg, #8fb8ff, #c7dcff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+html.js .st > * { opacity: 0; transform: translateY(20px); transition: opacity .65s cubic-bezier(.2,.7,.2,1), transform .65s cubic-bezier(.2,.7,.2,1); }
+html.js .st.rv-in > * { opacity: 1; transform: none; }
+.st.rv-in > *:nth-child(2) { transition-delay: .08s; } .st.rv-in > *:nth-child(3) { transition-delay: .16s; } .st.rv-in > *:nth-child(4) { transition-delay: .24s; }
+.st.rv-in > *:nth-child(5) { transition-delay: .32s; } .st.rv-in > *:nth-child(6) { transition-delay: .4s; } .st.rv-in > *:nth-child(7) { transition-delay: .48s; }
+.st.rv-in > *:nth-child(8) { transition-delay: .56s; } .st.rv-in > *:nth-child(n+9) { transition-delay: .64s; }
+.kmap.st > * { transform: scale(.85); }
+html.js .w-photo.rv img { transform: scale(1.05); transition: transform 1.3s cubic-bezier(.2,.7,.2,1); }
+html.js .w-photo.rv.rv-in img { transform: none; }
+.w-photo .photo { overflow: hidden; border-radius: 20px; }
+.w-line em { position: relative; }
+.w-line em::after { content: ''; position: absolute; left: 0; bottom: -4px; width: 0; height: 2px; background: var(--brick); transition: width .6s .3s; }
+.w-line.rv-in em::after { width: 100%; }
+header.site { position: sticky; top: 0; z-index: 50; transition: box-shadow .25s; }
+header.site.hd-s { box-shadow: 0 6px 24px rgba(25,31,40,.08); }
+.hero.w .btns a, .w-cta .btns a, .gnb .cta, .float-cta a { transition: transform .18s, box-shadow .18s, background .18s; }
+.hero.w .btns a:hover, .w-cta .btns a:hover, .gnb .cta:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.18); }
+.w-rows > a { transition: transform .25s cubic-bezier(.2,.7,.2,1); }
+.w-rows > a:hover { transform: translateX(6px); }
+.w-rows > a b { transition: color .2s; }
+.kmap a { transition: transform .18s, background .18s; }
+.faq details { transition: background .2s; }
+.faq summary::after { transition: transform .25s; }
+.faq details[open] summary::after { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { html.js .hero.w .award, html.js .hero.w h1, html.js .hero.w p, html.js .hero.w .btns, html.js .hero.w .stats { animation: none; } html.js .st > * { opacity: 1; transform: none; transition: none; } html.js .w-photo.rv img { transform: none; } }

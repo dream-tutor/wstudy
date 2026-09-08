@@ -269,7 +269,7 @@ ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
   });
 })();
 </script>
-<script>document.documentElement.classList.add('js');(function(){var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('rv-in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'}):null;document.querySelectorAll('.rv').forEach(function(el){io?io.observe(el):el.classList.add('rv-in')})})();</script>
+<script>document.documentElement.classList.add('js');(function(){var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('rv-in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'}):null;document.querySelectorAll('.rv,.st').forEach(function(el){io?io.observe(el):el.classList.add('rv-in')});var hd=document.querySelector('header.site');if(hd){var t=false;window.addEventListener('scroll',function(){var s=window.scrollY>8;if(s!==t){t=s;hd.classList.toggle('hd-s',s)}},{passive:true})}var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;document.querySelectorAll('.hero .stats .n').forEach(function(el){var m=el.textContent.match(/^([d,]+)(.*)$/);if(!m||rm)return;var to=parseInt(m[1].replace(/,/g,''),10),suf=m[2],t0=null,dur=1400;function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/dur);p=1-Math.pow(1-p,3);el.textContent=Math.round(to*p).toLocaleString()+suf;if(p<1)requestAnimationFrame(step)}el.textContent='0'+suf;setTimeout(function(){requestAnimationFrame(step)},650)})})();</script>
 ${PROTECT}
 ${TRACKER}
 </body>
@@ -592,16 +592,16 @@ function buildHome() {
 
 <section class="w-sec"><div class="in">
 <div class="w-head rv"><div class="k">Why</div><h2>이런 고민으로<br>오시는 분들이 많습니다</h2><p>상담에서 실제로 가장 자주 듣는 이야기들입니다.</p></div>
-<div class="w-rows">${WORRIES.map((w) => `<div class="rv"><b>${esc(w.q)}</b><p>${esc(w.a)}</p></div>`).join('')}</div>
+<div class="w-rows st">${WORRIES.map((w) => `<div class="rv"><b>${esc(w.q)}</b><p>${esc(w.a)}</p></div>`).join('')}</div>
 </div></section>
 
-<section class="w-sec dark"><div class="in rv">
-${wayBlock()}
+<section class="w-sec dark"><div class="in">
+${wayBlock().replace('class="say"','class="say rv"').replace('class="way"','class="way st"')}
 </div></section>
 
 <section class="w-sec"><div class="in">
 <div class="w-head rv"><div class="k">How</div><h2>수업은 이렇게 진행됩니다</h2><p>${total}개 지점이 같은 방식으로 운영됩니다.</p></div>
-<div class="w-line rv">${STEPS.map((s, i) => `<div><em>0${i + 1}</em><div><b>${esc(s[0])}</b><p>${esc(s[1])}</p></div></div>`).join('')}</div>
+<div class="w-line st">${STEPS.map((s, i) => `<div><em>0${i + 1}</em><div><b>${esc(s[0])}</b><p>${esc(s[1])}</p></div></div>`).join('')}</div>
 <article class="body" style="margin-top:40px">
 <p>학원의 성과는 학생이 다니는 학교의 시험에서 확인됩니다. 그래서 와와학습학원의 커리큘럼은 학원 편의가 아니라 학교 기준입니다. 지점마다 인근 학교 재학생들이 다니기 때문에 학교별 진도와 시험 정보가 매 학기 쌓이고, 시험 기간이 되면 그 자료가 수업의 중심이 됩니다. 화려한 설명회 대신, 진단과 개별 진도와 매주 반복되는 확인으로 성적을 만드는 곳입니다. 수업 시간에 강의를 듣는 시간보다 직접 푸는 시간이 길고, 공부 방법과 습관은 선생님이 옆에서 잡아 줍니다.</p>
 </article>
@@ -610,9 +610,9 @@ ${wayBlock()}
 
 <section class="w-sec soft"><div class="in">
 <div class="w-head rv"><div class="k">Subject</div><h2>과목별 수업</h2><p>다섯 과목 모두 학교 진도 동기화가 원칙입니다. 과목을 누르면 수업 방식을 자세히 볼 수 있습니다.</p></div>
-<div class="w-rows rv">${SUBJ_HOME.map(([n, d, g]) => `<a href="./guide/${g}/"><b>${n}학원 수업</b><p>${esc(d)}</p></a>`).join('')}</div>
+<div class="w-rows st">${SUBJ_HOME.map(([n, d, g]) => `<a href="./guide/${g}/"><b>${n}학원 수업</b><p>${esc(d)}</p></a>`).join('')}</div>
 <div class="w-head rv" style="margin-top:72px"><div class="k">Grade</div><h2>학년별 안내</h2></div>
-<div class="w-rows rv">
+<div class="w-rows st">
 <a href="./guide/elem-habit/"><b>초등부</b><p>진도 경쟁보다 습관과 기본기입니다. 매 수업 정해진 분량을 스스로 끝내는 연습과 연산·어휘 점검으로 중학교를 준비합니다. <span class="more">초등 고학년, 성적보다 습관 →</span></p></a>
 <a href="./guide/exam-4weeks/"><b>중등부</b><p>지필고사와 수행평가가 성적을 만드는 시기입니다. 시험 4주 전 대비 일정과 수행 제출 관리까지 학원이 챙깁니다. <span class="more">내신 4주 대비 플랜 →</span></p></a>
 <a href="./guide/saenggibu-setek/"><b>고등부</b><p>내신, 수행, 생기부를 한 흐름으로 관리합니다. 수업에서 다룬 내용을 교과 세특 주제로 이어 줍니다. <span class="more">교과 세특 만들기 →</span></p></a>
@@ -621,14 +621,14 @@ ${wayBlock()}
 
 <section class="w-sec"><div class="in">
 <div class="w-head rv"><div class="k">Review</div><h2>다녀 본 학생과<br>학부모의 이야기</h2></div>
-<div class="w-quote">${REVIEWS.slice(0, 3).map((r) => `<div class="rv"><div class="stars">★★★★★</div><p>${esc(r.text.length > 100 ? r.text.slice(0, 100) + '…' : r.text)}</p><div class="who">${esc(r.author)} · ${esc(r.meta)} · ${esc(r.gradeLabel)} ${esc(r.subject)}</div></div>`).join('')}</div>
+<div class="w-quote st">${REVIEWS.slice(0, 3).map((r) => `<div class="rv"><div class="stars">★★★★★</div><p>${esc(r.text.length > 100 ? r.text.slice(0, 100) + '…' : r.text)}</p><div class="who">${esc(r.author)} · ${esc(r.meta)} · ${esc(r.gradeLabel)} ${esc(r.subject)}</div></div>`).join('')}</div>
 <div class="more-link rv"><a href="./review/">수강후기 전체 보기 →</a></div>
 </div></section>
 
 <section class="w-sec soft" id="regions"><div class="in">
 <div class="w-head rv"><div class="k">Where</div><h2>지역별 지점 찾기</h2><p>지점명, 동네, 학교 이름으로 검색하거나 지도에서 지역을 선택하세요.</p></div>
 <div class="sbox"><input id="q" type="search" placeholder="지점·동네·학교 검색 (예: 산본점, 덕풍동, 산본중)" autocomplete="off" aria-label="지점 검색"><div id="sres" class="sres"></div></div>
-<div class="kmap">${kmapHtml}</div>
+<div class="kmap st">${kmapHtml}</div>
 </div></section>
 
 <section class="w-sec"><div class="in">
@@ -637,7 +637,7 @@ ${video(VIDEOS.pools.brand[0])}
 ${video(VIDEOS.pools.interview[0], '합격 인터뷰: 평택 와와에서 서울대 합격생이 나온 이유')}
 <p style="font-size:14px;color:var(--ink-soft)">더 많은 영상은 <a href="https://www.youtube.com/@wawacoachingcenter" target="_blank" rel="noopener" style="color:var(--brick);font-weight:600">유튜브 채널</a>에서 볼 수 있습니다.</p>
 <div class="w-head rv" style="margin-top:72px"><div class="k">FAQ</div><h2>자주 묻는 질문</h2></div>
-<div class="faq rv">${HOME_FAQ.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>
+<div class="faq st">${HOME_FAQ.map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div>
 </div></section>
 
 <section class="w-cta"><div class="in"><h2 class="rv">학생의 학교와 학년만 알려 주시면<br>어느 단원부터 시작할지 답해 드립니다</h2><p class="rv">가까운 지점에서 진단 상담 일정을 잡아 연락드립니다. 전화나 상담 신청 어느 쪽이든 괜찮습니다.</p><div class="btns rv"><a class="b1" href="./inquiry/">상담 신청</a><a class="b2" href="tel:${TEL}">전화 상담</a></div></div></section>
