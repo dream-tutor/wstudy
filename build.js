@@ -880,17 +880,8 @@ function buildSchool(s) {
   const bodyBlock = pick(COPY.schoolBody[s.level], key + 'b')(s.name);
   const bv = branchVideo(b0); // 해당 지점의 매칭 영상이 있을 때만 노출
   const faq = faqHtml([COPY.faqPool.school[0], COPY.faqPool.school[1], COPY.faqPool.common[0]], { tel: TEL, school: s.name });
-  // 나이스 학교기본정보 — 표 대신 본문 첫 문장으로 (설립·공학·유형만, 2026-07-14 지시)
-  const info = SCHOOL_INFO[`${s.region}|${s.district}|${s.name}`];
-  let infoHtml = '';
-  if (info && info.full) {
-    const coedu = info.coedu === '남' ? '남학교' : info.coedu === '여' ? '여학교' : info.coedu ? '남녀공학' : '';
-    const kind = info.hstype || info.kind || '';
-    const parts = [info.found, coedu, kind].filter(Boolean).join(' ');
-    if (parts) infoHtml = `<p>${esc(info.full)}는 ${esc(s.region)} ${esc(s.district)}에 있는 ${esc(parts)}입니다.</p>`;
-  }
+  // 나이스 학교기본정보·학사일정은 2026-09-08 사용자 지시로 비노출(오류 데이터 많음). data/school-info.json·SCHOOL_CODES는 남겨 두되 렌더링하지 않는다.
   // 학사일정 위젯 (나이스 코드 확보된 학교만 — myschool 워커 API 경유, 24h 캐시)
-  const schedCode = SCHOOL_CODES[`${s.region}|${s.district}|${s.name}`] || null;
   // 학교→지점 거리 (지오코딩 성공 + 8km 이내일 때만 — 좌표 오매칭 방지)
   const geo = SCHOOL_GEO[`${s.region}|${s.district}|${s.name}`];
   const bRows = s.branches.map((b) => {
@@ -910,24 +901,6 @@ function buildSchool(s) {
 ${crumb(4, [{ name: s.region, slug: s.region_slug }, { name: s.district, slug: s.district_slug }, { name: s.name + ' 내신 학원' }])}
 <div class="page-head"><span class="tag">${esc(s.district)} · ${lvName}</span><h1>${esc(s.name)} 내신 학원, ${BRAND}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
-${infoHtml}
-${schedCode ? `<div id="sched" data-code="${esc(schedCode)}" data-school="${esc(s.name)}"></div>
-<script>
-(function(){
-  var el=document.getElementById('sched');if(!el)return;
-  function h(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-  fetch('https://xn--vb0b6fp35b6njbws.com/api/schedule?code='+encodeURIComponent(el.getAttribute('data-code')))
-    .then(function(r){return r.json()})
-    .then(function(ev){
-      ev=(ev||[]).filter(function(e){return /방학|개학/.test(e.n)});
-      if(!ev.length)return;
-      function f(d){var dt=new Date(Date.UTC(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)));var w=['일','월','화','수','목','금','토'][dt.getUTCDay()];return (+d.slice(4,6))+'.'+(+d.slice(6,8))+'('+w+')'}
-      var rows=ev.map(function(e){
-        return '<div class="ev"><span class="en">'+h(e.n)+'</span><span class="ed">'+f(e.start)+(e.end!==e.start?' ~ '+f(e.end):'')+'</span></div>'}).join('');
-      el.innerHTML='<h2>'+h(el.getAttribute('data-school'))+' 방학·개학 일정</h2><div class="evs">'+rows+'</div><p class="ev-note">나이스 교육정보 기준이며, 학교 사정에 따라 바뀔 수 있습니다.</p>';
-    }).catch(function(){});
-})();
-</script>` : ''}
 ${bodyBlock}
 ${pick(COPY.wawaWay, key + 'way')(['국어', '영어', '수학', '사회', '과학'].filter((x) => s.branches.some((br) => br.subjects.includes(x))))}
 <h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2>
