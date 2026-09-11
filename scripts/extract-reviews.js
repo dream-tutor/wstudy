@@ -1,6 +1,7 @@
 // center(wcoachingcenter.com)/reviews 페이지에서 후기 데이터 추출 → data/reviews.json
 const fs = require('fs');
-const t = fs.readFileSync('C:/Users/goodj/Desktop/AI/center(wcoachingcenter.com)/reviews/index.html', 'utf8');
+const path = require('path');
+const t = fs.readFileSync(path.join(__dirname, '..', '..', 'center(wcoachingcenter.com)', 'reviews', 'index.html'), 'utf8');
 const arts = [...t.matchAll(/<article class="review-card" data-grade="(\w+)">([\s\S]*?)<\/article>/g)];
 const out = [];
 for (const [, grade, inner] of arts) {
@@ -18,6 +19,6 @@ for (const [, grade, inner] of arts) {
     meta: (meta || '').trim(),
   });
 }
-fs.writeFileSync('C:/Users/goodj/Desktop/AI/wstudycenter.com/data/reviews.json', JSON.stringify(out, null, 1), 'utf8');
+fs.writeFileSync(path.join(__dirname, '..', 'data', 'reviews.json'), JSON.stringify(out, null, 1), 'utf8');
 console.log('추출:', out.length, '건 / 카드', arts.length);
 out.forEach((r) => console.log('-', r.gradeLabel, r.subject, '|', r.author, '|', r.meta));

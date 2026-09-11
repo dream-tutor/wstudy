@@ -2,6 +2,7 @@
 // 1차: myschool schools.js(코드 보유)와 매칭 — 즉시. 2차: 나이스 이름 검색으로 보완.
 const fs = require('fs');
 const path = require('path');
+const { pathToFileURL } = require('url');
 const BRANCHES = require('../data/branches.json');
 const OUT = path.join(__dirname, '..', 'data', 'school-codes.json');
 const codes = fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, 'utf8')) : {};
@@ -22,7 +23,7 @@ function fullNames(n) {
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
-  const m = await import('file:///C:/Users/goodj/Desktop/AI/%EC%9A%B0%EB%A6%AC%ED%95%99%EA%B5%90%EA%B3%BC%EC%99%B8.com/myschool-workers/src/data/schools.js');
+  const m = await import(pathToFileURL(process.env.MYSCHOOL_SCHOOLS_JS || path.join(__dirname, '..', '..', '..', '과외(tutor)', '학교별과외(myschool)', 'myschool-workers', 'src', 'data', 'schools.js')).href);
   const SCHOOLS = m.SCHOOLS;
   const wanted = new Map();
   for (const b of Object.values(BRANCHES)) {

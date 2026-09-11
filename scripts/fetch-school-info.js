@@ -4,6 +4,7 @@
 // 사용: node scripts/fetch-school-info.js
 const fs = require('fs');
 const path = require('path');
+const { pathToFileURL } = require('url');
 const BRANCHES = require('../data/branches.json');
 
 const OUT = path.join(__dirname, '..', 'data', 'school-info.json');
@@ -16,7 +17,7 @@ function normSchools(arr) {
 }
 
 async function main() {
-  const m = await import('file:///C:/Users/goodj/Desktop/AI/%EC%9A%B0%EB%A6%AC%ED%95%99%EA%B5%90%EA%B3%BC%EC%99%B8.com/myschool-workers/src/data/schools.js');
+  const m = await import(pathToFileURL(process.env.MYSCHOOL_SCHOOLS_JS || path.join(__dirname, '..', '..', '..', '과외(tutor)', '학교별과외(myschool)', 'myschool-workers', 'src', 'data', 'schools.js')).href);
   const SCHOOLS = m.SCHOOLS;
 
   // 우리 학교 목록: region/district/학교명
