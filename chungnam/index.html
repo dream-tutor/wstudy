@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=84784a02">
+<link rel="stylesheet" href="../assets/style.css?v=32932e9d">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://wstudycenter.com/"},{"@type":"ListItem","position":2,"name":"충남"}]},{"@type":"WebPage","name":"충남 초중고 학원 | 와와학습학원 6개 지점","description":"충남의 와와학습학원 6개 지점 안내. 시·군·구별 지점 위치, 수업 과목, 관리 학교 목록.","url":"https://wstudycenter.com/chungnam/","datePublished":"2026-07-22","dateModified":"2026-08-25","inLanguage":"ko-KR"}]}</script>
 </head>
 <body>
@@ -45,14 +45,16 @@
 <script>
 (function(){
   var PREFIX='/chungnam/';
-  var q=document.getElementById('q'),res=document.getElementById('sres'),idx=null,loading=false;
+  var q=document.getElementById('q'),res=document.getElementById('sres'),idx=null,loading=false,waiters=[];
   if(!q)return;
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+  // 인덱스를 받는 중에 들어온 입력도 받은 뒤 검색되게 콜백을 모아 둔다 (2026-09-17 점검 code#10)
   function load(cb){
     if(idx){cb();return;}
+    waiters.push(cb);
     if(loading)return;
     loading=true;
-    fetch('../assets/search-index.json').then(function(r){return r.json()}).then(function(d){idx=d;loading=false;cb();}).catch(function(){loading=false;});
+    fetch('../assets/search-index.json').then(function(r){return r.json()}).then(function(d){idx=d;loading=false;waiters.splice(0).forEach(function(f){f();});}).catch(function(){loading=false;waiters=[];});
   }
   function run(){
     var v=q.value.trim();
@@ -79,7 +81,7 @@
 <footer class="site"><div class="in">
 <div class="brand">와와학습학원</div>
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
-<a href="tel:010-4864-5345">전화 상담</a> · <a href="../inquiry/">상담 신청</a> · <a href="../review/">수강후기</a><br>
+<a href="tel:010-4864-5345">전화 상담</a> · <a href="../inquiry/">상담 신청</a> · <a href="../review/">수강후기</a> · <a href="../guide/">공부법 칼럼</a> · <a href="../grade-calculator/">내신 등급 계산기</a> · <a href="../privacy/">개인정보처리방침</a><br>
 학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © 와와학습학원
 <div style="margin-top:8px;font-size:12px;opacity:.8"><time datetime="2026-08-25">정보 업데이트 2026.08.25</time></div>
 
@@ -125,34 +127,7 @@
   });
 })();
 </script>
-<script>document.documentElement.classList.add('js');(function(){var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('rv-in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'}):null;document.querySelectorAll('.rv,.st').forEach(function(el){io?io.observe(el):el.classList.add('rv-in')});var hd=document.querySelector('header.site');if(hd){var t=false;window.addEventListener('scroll',function(){var s=window.scrollY>8;if(s!==t){t=s;hd.classList.toggle('hd-s',s)}},{passive:true})}var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;document.querySelectorAll('.blk-h').forEach(function(h){h.addEventListener('click',function(){if(window.innerWidth>=768)return;h.parentNode.classList.toggle('blk-open')})});document.querySelectorAll('.hero .stats .n').forEach(function(el){var m=el.textContent.match(/^([d,]+)(.*)$/);if(!m||rm)return;var to=parseInt(m[1].replace(/,/g,''),10),suf=m[2],t0=null,dur=1400;function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/dur);p=1-Math.pow(1-p,3);el.textContent=Math.round(to*p).toLocaleString()+suf;if(p<1)requestAnimationFrame(step)}el.textContent='0'+suf;setTimeout(function(){requestAnimationFrame(step)},650)})})();</script>
-<!-- WAWA_AUTO_PROTECT_START -->
-<script>
-(function(){
-  // 우클릭 차단 (폼 입력칸은 허용 — 붙여넣기 등 정상 사용 보존)
-  document.addEventListener('contextmenu', function(e){
-    var t = e.target;
-    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
-    e.preventDefault();
-  }, false);
-  // F12 / 개발자도구·소스보기 단축키 차단
-  document.addEventListener('keydown', function(e){
-    var k = e.keyCode || e.which;
-    if (k === 123) { e.preventDefault(); return false; }                                      // F12
-    if (e.ctrlKey && e.shiftKey && (k === 73 || k === 74 || k === 67)) { e.preventDefault(); return false; } // Ctrl+Shift+I/J/C
-    if (e.ctrlKey && k === 85) { e.preventDefault(); return false; }                           // Ctrl+U (소스 보기)
-  }, false);
-  // 드래그·텍스트 선택 차단 (폼 입력칸은 허용)
-  document.addEventListener('dragstart', function(e){ e.preventDefault(); });
-  document.addEventListener('selectstart', function(e){
-    var t = e.target;
-    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
-    e.preventDefault();
-  }, false);
-})();
-</script>
-<style>body{-webkit-user-select:none;-moz-user-select:none;user-select:none}input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text}img{-webkit-user-drag:none}</style>
-<!-- WAWA_AUTO_PROTECT_END -->
+<script>document.documentElement.classList.add('js');(function(){var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('rv-in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'}):null;document.querySelectorAll('.rv,.st').forEach(function(el){io?io.observe(el):el.classList.add('rv-in')});var hd=document.querySelector('header.site');if(hd){var t=false;window.addEventListener('scroll',function(){var s=window.scrollY>8;if(s!==t){t=s;hd.classList.toggle('hd-s',s)}},{passive:true})}var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;document.querySelectorAll('.blk-h').forEach(function(h){h.addEventListener('click',function(){if(window.innerWidth>=768)return;h.parentNode.classList.toggle('blk-open')})});document.querySelectorAll('.hero .stats .n').forEach(function(el){var m=el.textContent.match(/^([\d,]+)(.*)$/);if(!m||rm)return;var to=parseInt(m[1].replace(/,/g,''),10),suf=m[2],t0=null,dur=1400;function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/dur);p=1-Math.pow(1-p,3);el.textContent=Math.round(to*p).toLocaleString()+suf;if(p<1)requestAnimationFrame(step)}el.textContent='0'+suf;setTimeout(function(){requestAnimationFrame(step)},650)})})();</script>
 <script defer src="https://xn--vb0by3y5wigqb.com/t.js" data-site="wstudy"></script>
 </body>
 </html>

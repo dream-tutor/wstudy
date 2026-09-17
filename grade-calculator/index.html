@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="3P6p9NW99Ly9i5ZQceo8vY71GaL1MPSoS9gVdI0UXKk">
+<meta name="naver-site-verification" content="3663cc9fe37352a1d7c03c5375c22ebb4275d9f4">
+<title>내신 등급 계산기 (5등급·9등급) | 와와학습학원</title>
+<meta name="description" content="과목별 석차와 수강자 수로 고등학교 내신 석차등급을 계산합니다. 2025년 고1부터 5등급, 이전 입학생은 9등급 기준입니다.">
+<link rel="canonical" href="https://wstudycenter.com/grade-calculator/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://wstudycenter.com/grade-calculator/">
+<meta property="og:title" content="내신 등급 계산기 (5등급·9등급) | 와와학습학원">
+<meta property="og:description" content="과목별 석차와 수강자 수로 고등학교 내신 석차등급을 계산합니다. 2025년 고1부터 5등급, 이전 입학생은 9등급 기준입니다.">
+<meta property="og:site_name" content="와와학습학원">
+<meta property="og:image" content="https://wstudycenter.com/assets/wawa-class.jpg">
+<meta property="og:image:width" content="900">
+<meta property="og:image:height" content="664">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="article:published_time" content="2026-09-17T00:00:00+09:00">
+<meta property="article:modified_time" content="2026-09-17T00:00:00+09:00">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css?v=32932e9d">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"내신 등급 계산기","applicationCategory":"EducationalApplication","operatingSystem":"Any","url":"https://wstudycenter.com/grade-calculator/","isAccessibleForFree":true,"inLanguage":"ko-KR","publisher":{"@type":"Organization","name":"와와학습학원"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"5등급과 9등급 중 어느 쪽으로 계산하나요?","acceptedAnswer":{"@type":"Answer","text":"2025학년도에 고등학교에 입학한 학생부터 5등급 체제가 적용됩니다. 2024학년도 이전에 입학한 학생은 9등급 체제로 성적이 나옵니다."}},{"@type":"Question","name":"평균 등급은 어떻게 계산하나요?","acceptedAnswer":{"@type":"Answer","text":"과목 등급에 학점(단위수)을 곱해 더한 뒤 학점 합으로 나눈 값입니다. 성적을 어디에 쓰느냐에 따라 반영 과목과 계산 방식이 달라서, 이 계산기의 평균은 참고용으로만 보세요."}},{"@type":"Question","name":"입력한 성적이 저장되나요?","acceptedAnswer":{"@type":"Answer","text":"저장하지 않습니다. 계산은 이 화면 안에서만 이뤄지고, 입력한 숫자를 어디로도 보내지 않습니다."}}]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://wstudycenter.com/"},{"@type":"ListItem","position":2,"name":"내신 등급 계산기"}]},{"@type":"WebPage","name":"내신 등급 계산기 (5등급·9등급) | 와와학습학원","description":"과목별 석차와 수강자 수로 고등학교 내신 석차등급을 계산합니다. 2025년 고1부터 5등급, 이전 입학생은 9등급 기준입니다.","url":"https://wstudycenter.com/grade-calculator/","datePublished":"2026-09-17","dateModified":"2026-09-17","inLanguage":"ko-KR"}]}</script>
+</head>
+<body>
+<div class="topbar"><span>초·중·고 교과 전문 와와학습학원</span><a href="tel:010-4864-5345">전화 상담</a></div>
+<header class="site"><div class="in">
+<a class="logo" href="../">와와학습학원<span class="dot">.</span></a>
+<nav class="gnb"><a class="cta" href="../inquiry/">상담 신청</a></nav>
+</div></header>
+<div class="wrap">
+<div class="crumb"><a href="../">홈</a><span>›</span>내신 등급 계산기</div>
+<div class="page-head"><span class="tag">고등학교 내신</span><h1>내신 등급 계산기</h1><div class="sub">과목별 석차와 수강자 수를 넣으면 석차등급을 계산합니다. 2025년 고1부터 적용되는 5등급과 2024년 이전 입학생의 9등급 중에서 고를 수 있습니다.</div></div>
+<div class="calc" id="calc" data-mode="rank">
+<div class="calc-top">
+<div class="calc-opt" role="radiogroup" aria-label="등급 체계"><span class="calc-lab">등급 체계</span><label><input type="radio" name="sys" value="5" checked> 5등급 <em>2025년 이후 입학</em></label><label><input type="radio" name="sys" value="9"> 9등급 <em>2024년 이전 입학</em></label></div>
+<div class="calc-opt" role="radiogroup" aria-label="입력 방식"><span class="calc-lab">입력 방식</span><label><input type="radio" name="mode" value="rank" checked> 석차와 수강자 수</label><label><input type="radio" name="mode" value="pct"> 석차 백분율</label></div>
+</div>
+<div id="cRows"></div>
+<div class="calc-btns"><button type="button" id="cAdd">과목 추가</button><button type="button" id="cReset" class="ghost">모두 지우기</button></div>
+<div class="calc-sum" id="cSum" aria-live="polite"></div>
+<noscript><p class="calc-empty">계산기는 브라우저에서 자바스크립트가 켜져 있어야 동작합니다.</p></noscript>
+</div>
+<p class="calc-foot">학교 학업성적관리규정과 실제 성적표가 기준입니다. 이 계산기는 결과를 확인해 보는 참고용이고, 결과를 보장하지 않습니다.</p>
+<article class="body">
+<h2>석차등급은 이렇게 정해집니다</h2>
+<p>고등학교 성적표의 석차등급은 과목 석차를 수강자 수에 비춰 정합니다. 먼저 수강자 수에 등급별 누적 비율을 곱하고 반올림해 등급별 누적 인원을 구합니다. 석차가 그 인원 안에 들면 해당 등급입니다.</p>
+<p>예를 들어 5등급 체제에서 수강자가 178명이면 1등급 누적 인원은 17.8을 반올림한 18명이고, 2등급 누적 인원은 60.52를 반올림한 61명입니다. 석차 18등까지 1등급, 19등부터 61등까지 2등급입니다.</p>
+<div class="tbl-scroll"><table class="info-table calc-cuts"><tbody>
+<tr><th>5등급<br><span>2025년 이후 입학</span></th><td>1등급<br><b>10% 이하</b></td><td>2등급<br><b>34%</b></td><td>3등급<br><b>66%</b></td><td>4등급<br><b>90%</b></td><td>5등급<br><b>90% 초과</b></td></tr>
+</tbody></table></div>
+<div class="tbl-scroll"><table class="info-table calc-cuts"><tbody>
+<tr><th>9등급<br><span>2024년 이전 입학</span></th><td>1등급<br><b>4% 이하</b></td><td>2등급<br><b>11%</b></td><td>3등급<br><b>23%</b></td><td>4등급<br><b>40%</b></td><td>5등급<br><b>60%</b></td><td>6등급<br><b>77%</b></td><td>7등급<br><b>89%</b></td><td>8등급<br><b>96%</b></td><td>9등급<br><b>96% 초과</b></td></tr>
+</tbody></table></div>
+<p style="color:var(--ink-soft);font-size:14px">표의 숫자는 누적 비율입니다. 5등급 체제의 2등급은 10% 초과 34% 이하입니다.</p>
+<h2>동점자가 등급 경계에 걸리면</h2>
+<p>동점자는 모두 같은 석차를 받고, 성적표에는 동석차 인원이 함께 적힙니다. 동점자 무리가 등급 경계에 걸쳐 있으면 중간석차 백분율로 등급을 줍니다.</p>
+<ul>
+<li>중간석차 = 석차 + (동석차 인원 − 1) ÷ 2</li>
+<li>중간석차 백분율 = 중간석차 ÷ 수강자 수 × 100</li>
+</ul>
+<p>이 백분율을 위 누적 비율과 비교합니다. 수강자 96명인 과목에서 1등 동점자가 19명이면 중간석차는 10, 백분율은 약 10.4%라서 5등급 체제에서는 19명 모두 2등급이 됩니다. 동점자가 한 등급 범위 안에 모여 있으면 중간석차를 쓰지 않습니다. 동점자를 줄이는 처리 방법은 학교마다 학업성적관리규정으로 정합니다.</p>
+<h2>결과를 볼 때 확인할 것</h2>
+<ul>
+<li>이 계산기는 시도교육청 학업성적관리 시행지침의 산출 방식을 따랐습니다. 실제 등급은 학교 규정과 성적표가 기준입니다.</li>
+<li>석차등급을 내지 않는 과목도 있습니다. 2025년 이후 입학생은 과학탐구실험, 체육·예술 과목, 교양 과목, 사회·과학 교과의 융합 선택 과목이 해당하고, 2024년 이전 입학생은 성취도(A·B·C)만 내는 선택 과목 등이 해당합니다.</li>
+<li>수강자가 적은 과목(5등급 체제 5명 이하, 9등급 체제 13명 이하)은 석차등급 칸에 등급 대신 '·'을 적을 수 있습니다.</li>
+<li>석차 백분율로 넣으면 누적 인원 반올림이 반영되지 않아, 등급 경계 근처에서는 석차로 계산한 결과와 한 등급 차이가 날 수 있습니다.</li>
+</ul>
+<h2>함께 읽을 내신 칼럼</h2><div class="chips st"><a href="../guide/high1-first-exam/">고1 첫 내신이 중요한 이유</a><a href="../guide/exam-4weeks/">내신 4주 대비 플랜 짜는 법</a><a href="../guide/performance-assessment/">수행평가 관리, 점수 새는 곳 막기</a><a href="../guide/high23-balance/">고2·3, 내신과 모의고사 사이 시간 배분</a></div>
+<h2>자주 묻는 질문</h2>
+<div class="faq"><details><summary>5등급과 9등급 중 어느 쪽으로 계산하나요?</summary><p>2025학년도에 고등학교에 입학한 학생부터 5등급 체제가 적용됩니다. 2024학년도 이전에 입학한 학생은 9등급 체제로 성적이 나옵니다.</p></details><details><summary>평균 등급은 어떻게 계산하나요?</summary><p>과목 등급에 학점(단위수)을 곱해 더한 뒤 학점 합으로 나눈 값입니다. 성적을 어디에 쓰느냐에 따라 반영 과목과 계산 방식이 달라서, 이 계산기의 평균은 참고용으로만 보세요.</p></details><details><summary>입력한 성적이 저장되나요?</summary><p>저장하지 않습니다. 계산은 이 화면 안에서만 이뤄지고, 입력한 숫자를 어디로도 보내지 않습니다.</p></details></div>
+</article>
+<div class="cta-band"><div class="t">상담 안내</div><div class="d">학교와 학년, 궁금한 과목을 남겨 주시면 지점에서 연락드려 수업 방법과 시간을 안내합니다.</div><div class="btns"><a class="tel" href="tel:010-4864-5345">전화 상담</a><a class="form" href="../inquiry/">상담 신청서 작성</a></div></div></div>
+<script>
+(function(){
+  var CUTS={"5":[10,34,66,90,100],"9":[4,11,23,40,60,77,89,96,100]};
+  var calc=document.getElementById('calc'),rows=document.getElementById('cRows'),sum=document.getElementById('cSum');
+  if(!calc)return;
+  var seq=0;
+  function field(cls,label,name,attrs){return '<label class="f '+cls+'"><span>'+label+'</span><input name="'+name+'" '+attrs+'></label>';}
+  function addRow(){
+    seq++;
+    var d=document.createElement('div');
+    d.className='c-row';
+    d.innerHTML='<div class="c-head"><b class="c-no"></b><button type="button" class="c-del" aria-label="이 과목 지우기">삭제</button></div>'+
+      '<div class="c-grid">'+
+      field('all','과목명(선택)','subj','type="text" maxlength="20" placeholder="예: 공통수학1"')+
+      field('all','학점(단위)','cr','type="number" inputmode="decimal" min="0.5" step="0.5" placeholder="비우면 1"')+
+      field('rank','석차','rank','type="number" inputmode="numeric" min="1" step="1" placeholder="예: 12"')+
+      field('rank','동석차 인원','tie','type="number" inputmode="numeric" min="1" step="1" placeholder="없으면 1"')+
+      field('rank','수강자 수','n','type="number" inputmode="numeric" min="1" step="1" placeholder="예: 178"')+
+      field('pct','석차 백분율(%)','pct','type="number" inputmode="decimal" min="0" max="100" step="0.01" placeholder="예: 7.5"')+
+      '</div><div class="c-out"></div>';
+    rows.appendChild(d);
+    renumber();calcAll();
+  }
+  function renumber(){var rs=rows.querySelectorAll('.c-row');for(var i=0;i<rs.length;i++)rs[i].querySelector('.c-no').textContent='과목 '+(i+1);}
+  function num(el){var v=el.value.trim();if(v==='')return null;var x=Number(v);return isFinite(x)?x:NaN;}
+  function isInt(x){return x!==null&&!isNaN(x)&&Math.floor(x)===x;}
+  function sys(){var r=calc.querySelector('input[name=sys]:checked');return r?r.value:'5';}
+  function mode(){var r=calc.querySelector('input[name=mode]:checked');return r?r.value:'rank';}
+  function fmt(x){return Math.round(x*100)/100;}
+  function one(row){
+    var cuts=CUTS[sys()],m=mode(),g=function(n){return row.querySelector('input[name='+n+']');};
+    var cr=num(g('cr'));
+    if(cr!==null&&(isNaN(cr)||cr<=0))return {err:'학점은 0보다 큰 숫자로 넣어 주세요.'};
+    var w=cr===null?1:cr;
+    if(m==='pct'){
+      var p=num(g('pct'));
+      if(p===null)return {empty:'석차 백분율을 넣으면 등급이 나옵니다.'};
+      if(isNaN(p)||p<=0||p>100)return {err:'석차 백분율은 0보다 크고 100 이하인 숫자로 넣어 주세요.'};
+      for(var i=0;i<cuts.length;i++)if(p<=cuts[i]+1e-9)return {grade:i+1,w:w,why:'석차 백분율 '+fmt(p)+'% · '+(i+1)+'등급 '+(i===cuts.length-1?'(누적 비율 '+cuts[i-1]+'% 초과)':'누적 비율 '+cuts[i]+'% 이하')};
+    }
+    var r=num(g('rank')),t=num(g('tie')),n=num(g('n'));
+    if(r===null||n===null)return {empty:'석차와 수강자 수를 넣으면 등급이 나옵니다.'};
+    if(t===null)t=1;
+    if(!isInt(r)||!isInt(n)||!isInt(t)||r<1||n<1||t<1)return {err:'석차, 동석차 인원, 수강자 수는 1 이상의 정수로 넣어 주세요.'};
+    if(r+t-1>n)return {err:'석차와 동석차 인원을 합친 범위가 수강자 수보다 큽니다. 숫자를 다시 확인해 주세요.'};
+    var cum=cuts.map(function(c){return Math.round(n*c/100);});
+    cum[cum.length-1]=n;
+    var last=r+t-1,g1=-1,g2=-1;
+    for(var k=0;k<cum.length;k++){if(g1<0&&r<=cum[k])g1=k;if(g2<0&&last<=cum[k])g2=k;}
+    var cumTxt='등급별 누적 인원: '+cum.map(function(c,i){return (i+1)+'등급 '+c+'명';}).join(' · ');
+    var small=(sys()==='5'&&n<=5)||(sys()==='9'&&n<=13)?'수강자가 '+n+'명이라 학교에 따라 석차등급 대신 \'·\'으로 적을 수 있습니다.':'';
+    if(g1===g2)return {grade:g1+1,w:w,why:'석차 '+r+'등'+(t>1?'(동석차 '+t+'명)':'')+' · '+(g1+1)+'등급 누적 인원 '+cum[g1]+'명 안',cum:cumTxt,small:small};
+    var mid=r+(t-1)/2,pct=mid/n*100,gm=cuts.length;
+    for(var j=0;j<cuts.length;j++)if(pct<=cuts[j]+1e-9){gm=j+1;break;}
+    return {grade:gm,w:w,why:'동점자가 등급 경계에 걸려 중간석차 '+fmt(mid)+'등, 중간석차 백분율 '+fmt(pct)+'%로 계산',cum:cumTxt,small:small};
+  }
+  function calcAll(){
+    calc.setAttribute('data-mode',mode());
+    var rs=rows.querySelectorAll('.c-row'),tot=0,ws=0,cnt=0;
+    for(var i=0;i<rs.length;i++){
+      var o=one(rs[i]),out=rs[i].querySelector('.c-out');
+      out.className='c-out'+(o.err?' err':o.empty?' wait':' ok');
+      out.innerHTML='';
+      if(o.err||o.empty){out.textContent=o.err||o.empty;continue;}
+      var gEl=document.createElement('span');gEl.className='g';gEl.textContent=o.grade+'등급';out.appendChild(gEl);
+      var wEl=document.createElement('span');wEl.className='why';wEl.textContent=o.why;out.appendChild(wEl);
+      if(o.cum){var cEl=document.createElement('span');cEl.className='cum';cEl.textContent=o.cum;out.appendChild(cEl);}
+      if(o.small){var sEl=document.createElement('span');sEl.className='cum';sEl.textContent=o.small;out.appendChild(sEl);}
+      tot+=o.grade*o.w;ws+=o.w;cnt++;
+    }
+    sum.innerHTML='';
+    if(!cnt){sum.textContent='과목을 하나 이상 계산하면 학점 가중 평균이 여기에 나옵니다.';sum.className='calc-sum wait';return;}
+    sum.className='calc-sum';
+    var a=document.createElement('b');a.textContent='평균 '+(Math.round(tot/ws*100)/100).toFixed(2)+'등급';sum.appendChild(a);
+    var b=document.createElement('span');b.textContent='과목 '+cnt+'개, 학점 합 '+fmt(ws)+' 기준 학점 가중 평균 ('+sys()+'등급 체제, 참고용)';sum.appendChild(b);
+  }
+  rows.addEventListener('input',calcAll);
+  rows.addEventListener('click',function(e){var del=e.target.closest('.c-del');if(!del)return;var row=del.closest('.c-row');if(rows.querySelectorAll('.c-row').length>1){row.parentNode.removeChild(row);}else{var ins=row.querySelectorAll('input');for(var i=0;i<ins.length;i++)ins[i].value='';}renumber();calcAll();});
+  calc.addEventListener('change',function(e){if(e.target.name==='sys'||e.target.name==='mode')calcAll();});
+  document.getElementById('cAdd').addEventListener('click',function(){if(rows.querySelectorAll('.c-row').length<20)addRow();});
+  document.getElementById('cReset').addEventListener('click',function(){rows.innerHTML='';addRow();addRow();addRow();});
+  addRow();addRow();addRow();
+})();
+</script>
+<footer class="site"><div class="in">
+<div class="brand">와와학습학원</div>
+전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
+<a href="tel:010-4864-5345">전화 상담</a> · <a href="../inquiry/">상담 신청</a> · <a href="../review/">수강후기</a> · <a href="../guide/">공부법 칼럼</a> · <a href="../grade-calculator/">내신 등급 계산기</a> · <a href="../privacy/">개인정보처리방침</a><br>
+학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © 와와학습학원
+<div style="margin-top:8px;font-size:12px;opacity:.8"><time datetime="2026-09-17">정보 업데이트 2026.09.17</time></div>
+
+
+</div></footer>
+<div class="float-cta"><a class="f-form" href="../inquiry/">상담 문의</a><a class="f-tel" href="tel:010-4864-5345">전화 상담</a></div>
+<div id="cOv" class="c-ov" hidden><div class="c-box"><button type="button" class="c-x" aria-label="닫기">×</button><iframe id="cFrame" title="상담 신청"></iframe></div></div>
+<script>
+(function(){
+  if(location.search.indexOf('embed=1')>-1)return;
+  var ov=document.getElementById('cOv'),fr=document.getElementById('cFrame');
+  if(!ov)return;
+  function openM(href){
+    var u=new URL(href,location.href);
+    u.searchParams.set('embed','1');
+    fr.src=u.pathname+u.search;
+    ov.hidden=false;document.body.style.overflow='hidden';
+  }
+  function closeM(){ov.hidden=true;fr.src='about:blank';document.body.style.overflow='';}
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[href*="inquiry"]');
+    if(!a)return;
+    e.preventDefault();openM(a.getAttribute('href'));
+  });
+  ov.addEventListener('click',function(e){if(e.target===ov)closeM();});
+  document.querySelector('.c-x').addEventListener('click',closeM);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)closeM();});
+})();
+(function(){
+  // 썸네일 대체: 없는 해상도는 404여도 120x90 자리표시 이미지가 오므로 크기로 판단해 다음 후보로 교체
+  function fb(img){var f=(img.dataset.fb||'').split(',').filter(Boolean);if(img.naturalWidth>120||!f.length)return;img.dataset.fb=f.slice(1).join(',');img.src=img.src.replace(/[^/]+.jpg$/,f[0]+'.jpg');}
+  var imgs=document.querySelectorAll('.frame[data-yt] img');
+  for(var i=0;i<imgs.length;i++){(function(img){img.addEventListener('load',function(){fb(img)});img.addEventListener('error',function(){fb(img)});if(img.complete&&img.naturalWidth)fb(img);})(imgs[i]);}
+  document.addEventListener('click',function(e){
+    var f=e.target.closest('.frame[data-yt]');
+    if(!f||f.classList.contains('on'))return;
+    var ifr=document.createElement('iframe');
+    ifr.src='https://www.youtube-nocookie.com/embed/'+f.getAttribute('data-yt')+'?autoplay=1&rel=0&playsinline=1';
+    ifr.title=f.getAttribute('data-title')||'와와 영상';
+    ifr.setAttribute('allow','accelerometer; autoplay; encrypted-media; picture-in-picture');
+    ifr.setAttribute('allowfullscreen','');
+    f.classList.add('on');f.innerHTML='';f.appendChild(ifr);
+  });
+})();
+</script>
+<script>document.documentElement.classList.add('js');(function(){var io='IntersectionObserver' in window?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('rv-in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'}):null;document.querySelectorAll('.rv,.st').forEach(function(el){io?io.observe(el):el.classList.add('rv-in')});var hd=document.querySelector('header.site');if(hd){var t=false;window.addEventListener('scroll',function(){var s=window.scrollY>8;if(s!==t){t=s;hd.classList.toggle('hd-s',s)}},{passive:true})}var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;document.querySelectorAll('.blk-h').forEach(function(h){h.addEventListener('click',function(){if(window.innerWidth>=768)return;h.parentNode.classList.toggle('blk-open')})});document.querySelectorAll('.hero .stats .n').forEach(function(el){var m=el.textContent.match(/^([\d,]+)(.*)$/);if(!m||rm)return;var to=parseInt(m[1].replace(/,/g,''),10),suf=m[2],t0=null,dur=1400;function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/dur);p=1-Math.pow(1-p,3);el.textContent=Math.round(to*p).toLocaleString()+suf;if(p<1)requestAnimationFrame(step)}el.textContent='0'+suf;setTimeout(function(){requestAnimationFrame(step)},650)})})();</script>
+<script defer src="https://xn--vb0by3y5wigqb.com/t.js" data-site="wstudy"></script>
+</body>
+</html>
