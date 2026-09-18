@@ -1491,8 +1491,8 @@
   "price_elem": 60000,
   "price_mid": 65000,
   "price_high": 75000,
-  "time_elem": "11",
-  "time_mid": "11",
+  "time_elem": "100",
+  "time_mid": "100",
   "time_high": "95",
   "keywords": [
    "수완고국어학원",
@@ -2058,7 +2058,7 @@
    "근영고"
   ],
   "open_time": "평일 오후 3시 이후",
-  "weekend": "상담 시 안내",
+  "weekend": "토요일 일부 과목 가능",
   "fee_type": "와와회비B",
   "price_elem": 60000,
   "price_mid": 65000,
@@ -8518,7 +8518,7 @@
    "사대부고",
    "경북여고"
   ],
-  "open_time": "평일 오전 11시 이후",
+  "open_time": "",
   "weekend": "토요일 정규수업진행중",
   "fee_type": "와와회비B",
   "price_elem": 60000,
@@ -11212,8 +11212,8 @@
   "price_mid": 65000,
   "price_high": 75000,
   "time_elem": "90",
-  "time_mid": "10",
-  "time_high": "10",
+  "time_mid": "110",
+  "time_high": "110",
   "keywords": [
    "구룡초국어학원",
    "구룡초근처학원",
@@ -11779,7 +11779,7 @@
    "한광여고",
    "평택여고"
   ],
-  "open_time": "평일 오전 11시이후",
+  "open_time": "",
   "weekend": "토요일가능",
   "fee_type": "와와회비B",
   "price_elem": 60000,
@@ -15042,7 +15042,7 @@
    "쌍용고",
    "천안여고"
   ],
-  "open_time": "평일 오후 12시 이후",
+  "open_time": "",
   "weekend": "토요일가능",
   "fee_type": "와와회비B",
   "price_elem": 60000,
@@ -18700,7 +18700,7 @@
   "schools_high": [
    "수명고"
   ],
-  "open_time": "평일 오전 11시 이후",
+  "open_time": "",
   "weekend": "토요일가능",
   "fee_type": "와와회비A",
   "price_elem": 70000,
@@ -27051,7 +27051,7 @@
    "원화중"
   ],
   "schools_high": [],
-  "open_time": "평일 오후 12시 이후",
+  "open_time": "",
   "weekend": "토요일 가능",
   "fee_type": "와와회비B",
   "price_elem": 60000,
@@ -27735,7 +27735,7 @@
    "연초고",
    "상문고"
   ],
-  "open_time": "평일 오후 12시 이후",
+  "open_time": "",
   "weekend": "토요일만 가능",
   "fee_type": "와와회비B",
   "price_elem": 60000,
@@ -28282,7 +28282,7 @@
    "은혜고",
    "효명고"
   ],
-  "open_time": "평일 오후 12시 이후",
+  "open_time": "",
   "weekend": "일요일가능",
   "fee_type": "와와회비B",
   "price_elem": 60000,

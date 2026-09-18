@@ -116,7 +116,8 @@ function weekendTxt(b) {
   const s = String(b.weekend || '').replace(/\s+/g, ' ').trim();
   if (!s) return '';
   if (/둘\s*다\s*불가/.test(s) || /^주말\s*불가$/.test(s)) return '주말 수업 없음';
-  if (/토일부/.test(s)) return '주말 일부 수업 있음(요일·시간은 상담 시 안내)';
+  // '토일부가능'은 토요일에 일부 과목만 가능하다는 뜻이다(2026-09-18 사용자 확인). '토요일 일부 가능'·'일요일 일부 가능'도 같게 본다
+  if (/일부/.test(s)) { const d = /일요일/.test(s) ? (/토요일|토\s/.test(s) ? '토·일' : '일요일') : '토요일'; return `${d} 일부 과목 수업 있음(과목·시간은 상담 시 안내)`; }
   const sat = /토/.test(s) && !/토요일[^,/.]*불가/.test(s);
   const sun = /일요일|토\s*[.,/]\s*일|토일/.test(s) && !/일요일\s*불가/.test(s);
   if (sat && sun && /자습/.test(s)) return '토요일 수업 있음, 시험 기간 일요일 자습 운영(상담 시 안내)';
