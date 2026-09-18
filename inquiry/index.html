@@ -59,26 +59,17 @@
 <label>희망 과목 <span style="font-weight:400;color:var(--ink-soft)">(누르면 선택됩니다)</span></label>
 <div class="subj-pills"><button type="button" class="sp" data-v="국어">국어</button><button type="button" class="sp" data-v="영어">영어</button><button type="button" class="sp" data-v="수학">수학</button><button type="button" class="sp" data-v="사회">사회</button><button type="button" class="sp" data-v="과학">과학</button></div>
 <div class="agree-box">
-<label class="agree" for="fAgree"><input type="checkbox" id="fAgree" required><span>개인정보 수집·이용에 동의합니다 <em>(필수)</em></span></label>
-<details class="agree-more"><summary>수집 항목과 보유 기간 보기</summary>
+<label class="agree" for="fAgree"><input type="checkbox" id="fAgree" checked required onclick="if(!this.checked){alert('체크를 해제하시면 상담 신청이 어렵습니다.');this.checked=true;}"><span>개인정보 수집·이용에 동의합니다 <em>(필수)</em></span></label>
+<details class="agree-more"><summary>수집 항목·이용 목적·보유 기간 보기</summary>
 <ul>
 <li><b>수집 항목</b>필수: 학생 이름, 연락처, 주소, 학년, 희망 과목 · 선택: 지점, 학교 이름 · 신청할 때 함께 저장: 신청 일시, 신청한 페이지와 유입 경로</li>
 <li><b>이용 목적</b>상담 연락과 수업·지점 안내</li>
 <li><b>처리 방법</b>신청 내용은 운영자가 관리하는 구글 시트에 저장되고, 상담을 맡을 와와 지점에 전달됩니다.</li>
+<li><b>제공받는 곳과 제공 항목</b>상담을 맡을 와와 지점(지점마다 따로 등록된 학원)에 학생 이름, 연락처, 주소, 학년, 희망 과목, 학교 이름(적은 경우)을 전달합니다.</li>
 <li><b>보유 기간</b>상담 목적을 이루면 지체 없이 파기합니다. 법령에 따라 보관해야 하는 정보는 그 기간 동안만 보관합니다.</li>
 <li><b>동의 거부</b>동의를 거부할 수 있습니다. 거부하시면 온라인 상담 신청은 할 수 없고, 전화 상담은 그대로 이용할 수 있습니다.</li>
 </ul>
 <a href="../privacy/" target="_blank" rel="noopener">개인정보처리방침 전체 보기</a>
-</details>
-<label class="agree" for="fAgree3" style="margin-top:12px"><input type="checkbox" id="fAgree3" required><span>상담 지점에 개인정보를 제공하는 데 동의합니다 <em>(필수)</em></span></label>
-<details class="agree-more"><summary>받는 곳과 제공 항목 보기</summary>
-<ul>
-<li><b>받는 곳</b>상담을 맡을 와와 지점(지점마다 따로 등록된 학원)</li>
-<li><b>제공 목적</b>상담 연락과 수업·지점 안내</li>
-<li><b>제공 항목</b>학생 이름, 연락처, 주소, 학년, 희망 과목, 학교 이름(적은 경우)</li>
-<li><b>보유 기간</b>상담 목적을 이루면 지체 없이 파기합니다. 법령에 따라 보관해야 하는 정보는 그 기간 동안만 보관합니다.</li>
-<li><b>동의 거부</b>동의를 거부할 수 있습니다. 거부하시면 온라인 상담 신청은 할 수 없고, 전화 상담은 그대로 이용할 수 있습니다.</li>
-</ul>
 </details>
 </div>
 <button type="submit" class="submit-btn">상담 신청하기</button>
@@ -180,7 +171,6 @@
     if(!lvEl.value||(!gdEl.disabled&&!gdEl.value)){alert('학년을 선택해 주세요.');(lvEl.value?gdEl:lvEl).focus();return;}
     if(!subj){alert('희망 과목을 1개 이상 선택해 주세요.');return;}
     if(!document.getElementById('fAgree').checked){alert('개인정보 수집·이용에 동의해 주셔야 상담 신청이 접수됩니다.');document.getElementById('fAgree').focus();return;}
-    if(!document.getElementById('fAgree3').checked){alert('상담 지점에 개인정보를 제공하는 데 동의해 주셔야 상담 신청이 접수됩니다.');document.getElementById('fAgree3').focus();return;}
     btn.disabled=true;btn.textContent='전송 중...';
     function normPhone(p,v){v=String(v||'').replace(/\D/g,'');if(v.length===11)return v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);if(v.length===10)return v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);if(v.length===8)return p+'-'+v.slice(0,4)+'-'+v.slice(4);if(v.length===7)return p+'-'+v.slice(0,3)+'-'+v.slice(3);return p+'-'+v;}
     var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:(function(){var sc=f.학교?f.학교.value.trim():'',lv=f.학년급?f.학년급.value:'',gd=f.학년상세?f.학년상세.value:'';return sc?[sc,gd||lv].filter(Boolean).join(' '):[lv,gd].filter(Boolean).join(' ');})(),학교:f.학교?f.학교.value.trim():'',과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:location.href,유입페이지제목:document.title,유입경로:document.referrer||'직접입력'};
