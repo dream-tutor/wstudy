@@ -17,6 +17,7 @@ const ROOT = __dirname;
 const DOMAIN = 'https://wstudycenter.com';
 const BRAND = '와와학습학원';
 const TEL = '010-4864-5345';
+const PRIVACY_EMAIL = 'zskykr@naver.com';
 const GAS = 'https://script.google.com/macros/s/AKfycbybsuTZMjzlp3HkkVaUX0IUFnNlSfnnN0DGThb-2BOIwZ8IyZNnMgkwoWOb_muHCEx5/exec';
 const TRACKER = '<script defer src="https://xn--vb0by3y5wigqb.com/t.js" data-site="wstudy"></script>';
 // 텍스트 선택·우클릭·F12 차단 스크립트(WAWA_AUTO_PROTECT)는 2026-09-17 점검(code#12)으로 뺐다. 학부모가 지점 주소를 복사해 지도 앱에 붙여 넣지 못하는 부작용이 있어
@@ -1376,7 +1377,9 @@ ${crumb(1, [{ name: '개인정보처리방침' }])}
 <p>남기신 정보의 열람, 정정, 삭제, 처리 정지를 언제든 요청할 수 있습니다. <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>으로 말씀해 주시면 확인 후 처리합니다.</p>
 <h2>8. 방문 기록</h2>
 <p>사이트 이용 현황을 보기 위해 방문한 페이지, 유입 경로(검색어·광고 태그 포함), 전화·상담 버튼을 누른 기록을 남깁니다. IP 주소는 원래 값을 저장하지 않고 날짜마다 바뀌는 변환값만 남겨 방문자를 따로 알아볼 수 없게 합니다. 지도, 영상, 주소 검색은 외부 서비스(OpenStreetMap, YouTube, 카카오 우편번호 서비스)를 불러오며, 이 부분은 각 서비스의 개인정보 처리방침을 따릅니다.</p>
-<h2>9. 시행일</h2>
+<h2>9. 개인정보 보호책임자</h2>
+<p>개인정보 보호책임자는 ${BRAND} 사이트 운영 담당자입니다. 개인정보 처리에 관한 문의, 열람·정정·삭제 요청, 불만 처리와 피해 구제는 이메일 <a href="mailto:${PRIVACY_EMAIL}" style="color:var(--brick);font-weight:700">${PRIVACY_EMAIL}</a>, <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>으로 받습니다.</p>
+<h2>10. 시행일</h2>
 <p>이 방침은 2026년 9월 17일부터 적용됩니다.</p>
 </article>
 ${ctaBand(null, 1)}</div>`;
