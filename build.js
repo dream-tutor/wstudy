@@ -277,7 +277,7 @@ function shell({ title, desc, canonical, body, depth, ld, ogTitle, footExtra, br
 <meta name="twitter:card" content="summary_large_image">
 <meta property="article:published_time" content="${datePublished}T00:00:00+09:00">
 <meta property="article:modified_time" content="${dateModified}T00:00:00+09:00">
-<link rel="icon" href="${base}favicon.svg" type="image/svg+xml">
+<link rel="icon" href="${DOMAIN}/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -532,9 +532,21 @@ function distM(a1, o1, a2, o2) {
   return Math.round(2 * R * Math.asin(Math.sqrt(h)));
 }
 const CLASS_ILLUST = ['illust/c05.jpg', 'illust/c10.jpg', 'illust/c12.jpg', 'illust/c13.jpg', 'illust/c15.jpg', 'illust/c03.jpg'];
+// 그림별 설명 (2026-09-22). alt 한 문구를 205쪽이 함께 쓰면 네이버가 불이익 대상으로 본다(report-seo).
+// src 는 절대경로로 — 페이지 깊이와 무관하게 같은 주소가 된다. 7장 모두 900x664.
+const CLASS_ILLUST_ALT = {
+  'illust/c03.jpg': '문이 열린 학습실 입구와 책장, 칸막이 책상에서 공부하는 학생들 일러스트',
+  'illust/c05.jpg': '초록 칸막이를 세운 개별 좌석과 선생님 책상 일러스트',
+  'illust/c10.jpg': '와와 로고와 게시판이 있는 학원 복도 일러스트',
+  'illust/c12.jpg': '세계지도가 걸린 벽과 칸막이 개별 좌석 일러스트',
+  'illust/c13.jpg': '화이트보드와 창가 개별 좌석이 있는 교실 일러스트',
+  'illust/c15.jpg': '칸막이 책상에서 각자 공부하는 학생들 일러스트',
+  'wawa-class.jpg': '개별 칸막이 책상에서 자습하는 교실 모습 일러스트',
+};
+
 function classPhoto(depth, key = '') {
   const f = key ? pick(CLASS_ILLUST, key + 'photo') : 'wawa-class.jpg';
-  return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/${f}" alt="와와 교실 공간 일러스트" width="900" height="664"></div>`;
+  return `<div class="photo"><img loading="lazy" src="${DOMAIN}/assets/${f}" alt="${CLASS_ILLUST_ALT[f]}" width="900" height="664"></div>`;
 }
 // 수업 방식 강조 블록 — 큰 글씨 선언 + 원칙 3개 (2026-09-07 지시: 자기주도·개별진도·강의식 없음·학습코칭 강조)
 // 같은 문장이 2,300페이지에 반복되면 페이지 간 유사도가 오르므로 슬롯별 변형을 페이지 키 해시로 고른다.
