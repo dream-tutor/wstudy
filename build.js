@@ -297,7 +297,7 @@ ${bodyOut}
 <a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/${cq}">상담 신청</a> · <a href="${base}review/">수강후기</a> · <a href="${base}guide/">공부법 칼럼</a> · <a href="${base}grade-calculator/">내신 등급 계산기</a> · <a href="${base}privacy/">개인정보처리방침</a><br>
 학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
 <div style="margin-top:8px;font-size:12px;opacity:.8"><time datetime="${dateModified}">정보 업데이트 ${dateModified.replace(/-/g, '.')}</time></div>
-${(() => { const s = []; if (/assets\/(illust\/|wawa-class)/.test(body)) s.push('사진 출처: 와와학습코칭센터, AI로 이미지 생성'); if (/class="video-box"/.test(body)) s.push('영상 출처: 유튜브 와와학습코칭센터'); return s.length ? '<div style="margin-top:8px;font-size:11px;opacity:.75">' + s.join(' · ') + '</div>' : ''; })()}
+${/assets\/(illust\/|wawa-class)/.test(body) ? '<div style="margin-top:8px;font-size:11px;opacity:.75">사진 출처: 와와학습코칭센터, AI로 이미지 생성</div>' : ''}
 ${footExtra ? `<div class="foot-reg">${footExtra}</div>` : ''}
 </div></footer>
 <div class="float-cta"><a class="f-form" href="${base}inquiry/${cq}">상담 문의</a><a class="f-tel" href="tel:${TEL}">전화 상담</a></div>
@@ -532,7 +532,6 @@ function distM(a1, o1, a2, o2) {
   return Math.round(2 * R * Math.asin(Math.sqrt(h)));
 }
 const CLASS_ILLUST = ['illust/c05.jpg', 'illust/c10.jpg', 'illust/c12.jpg', 'illust/c13.jpg', 'illust/c15.jpg', 'illust/c03.jpg'];
-const PHOTO_CAPS = ['와와 교실 공간 일러스트 (지점별 시설과 배치는 다를 수 있습니다)', '교실 일러스트입니다. 실제 지점의 시설과 배치는 다를 수 있습니다.', '와와 교실 모습을 그린 그림입니다. 지점마다 시설은 조금씩 다릅니다.'];
 function classPhoto(depth, key = '') {
   const f = key ? pick(CLASS_ILLUST, key + 'photo') : 'wawa-class.jpg';
   return `<div class="photo"><img loading="lazy" src="${'../'.repeat(depth)}assets/${f}" alt="와와 교실 공간 일러스트" width="900" height="664"></div>`;

@@ -197,7 +197,6 @@ article.body li { margin-bottom: 7px; }
   .video-box .frame.vertical { width: 260px; height: 380px; }
   .video-box .frame.vertical iframe { height: 462px; top: -41px; }
 }
-.video-box .cap { font-size: 13.5px; color: var(--ink-soft); margin-top: 8px; }
 
 /* ── CTA ── */
 .cta-band {
@@ -415,7 +414,6 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 /* ── 사진 ── */
 .photo { margin: 26px 0; }
 .photo img { width: 100%; height: auto; border-radius: 14px; display: block; border: 0; }
-.photo .cap { font-size: 13px; color: var(--ink-soft); margin-top: 7px; }
 
 /* ── 푸터 등록번호 ── */
 .foot-reg { color: #78839e; font-size: 12px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #26324e; }
