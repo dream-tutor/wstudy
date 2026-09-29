@@ -1426,6 +1426,13 @@ const SCHOOL_MOVED = {
   'gyeonggi/goyang': ['성라초 성사초', '화수중 성사중 원당중', '성사고 화수고'],
   'gyeonggi/namyangju': ['해밀초 화봉초', '풍양중 주곡중', '진접고 오남고'],
 };
+// 기준본에 옛 이름·오타로 적혀 같은 학교 페이지가 두 벌 만들어졌던 주소 (2026-09-29, center ee2e47b0f와 같은 표기).
+// 기준본은 새 이름으로 고쳤고, 옛 주소는 새 이름 학교 페이지로 옮기는 noindex 안내만 남긴다. 사이트맵에는 넣지 않는다.
+const SCHOOL_RENAMED = {
+  'gyeonggi/bucheon': { 증흥고: '중흥고' },
+  'daegu/suseong': { 동중: '대구동중' },
+  'gangwon/chuncheon': { 춘여고: '춘천여고' },
+};
 // 과목 중단으로 지운 동+과목 페이지 20쪽 (git 8a7a20c·f10de7f). 404 대신 지점 페이지로 옮긴다 (2026-09-17 점검 code#15).
 const SUBJECT_MOVED = [
   'chungbuk/cheongju/gaesin/science', 'gyeonggi/ansan/gojan/korean', 'gyeonggi/gimpo/janggi/korean', 'gyeonggi/gimpo/janggi/science',
@@ -1445,6 +1452,16 @@ function buildMovedPages() {
       const schoolUrl = (n) => `${DOMAIN}/${dir}/school/${encodeURIComponent(n)}/`;
       const target = parts.length ? schoolUrl(parts[0]) : `${DOMAIN}/${dir}/`;
       movedStub(`${dir}/school/${old}/index.html`, target, parts.map((n) => [`${n} 학원 안내`, schoolUrl(n)]));
+      MOVED_LOG.school++;
+    }
+  }
+  for (const [dir, map] of Object.entries(SCHOOL_RENAMED)) {
+    for (const [old, now] of Object.entries(map)) {
+      // 옛 이름이 기준본에 다시 들어와 페이지가 만들어졌으면 덮어쓰지 않고 로그로 알린다
+      if (built.has(`${dir}/school/${old}/`)) { MOVED_LOG.skipped.push(`${dir}/school/${old}`); continue; }
+      const nowRel = `${dir}/school/${now}/`;
+      const target = built.has(nowRel) ? `${DOMAIN}/${dir}/school/${encodeURIComponent(now)}/` : `${DOMAIN}/${dir}/`;
+      movedStub(`${dir}/school/${old}/index.html`, target);
       MOVED_LOG.school++;
     }
   }

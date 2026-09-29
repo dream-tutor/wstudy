@@ -1,6 +1,7 @@
 // center(wcoachingcenter.com)/reviews 페이지에서 후기 데이터 추출 → data/reviews.json
-// ⚠ 다시 돌리지 말 것: data/reviews.json은 추출 뒤 손으로 고쳤다(지점명 실존 지점으로 교정 e1f947ffc,
-//   2026-09-17 점검으로 입시·합격 후기 2건과 중3 '1등급' 후기 제외, 오타·타 학원 비하 문장 정리). 다시 추출하면 전부 되돌아간다.
+// ⚠ 다시 돌리지 말 것: data/reviews.json은 추출 뒤 손으로 고쳤다(2026-09-17 점검으로 입시·합격 후기 2건과 중3 '1등급' 후기 제외,
+//   오타·타 학원 비하 문장 정리). 다시 추출하면 전부 되돌아간다.
+// 후기 meta에는 지점명을 넣지 않는다(2026-09-29, center 09-18 결정과 통일 — 추출 뒤 끼워 넣은 지점명이라 근거가 없다). 학년만 적는다.
 const fs = require('fs');
 const path = require('path');
 const t = fs.readFileSync(path.join(__dirname, '..', '..', 'center(wcoachingcenter.com)', 'reviews', 'index.html'), 'utf8');
