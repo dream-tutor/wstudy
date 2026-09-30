@@ -8,10 +8,8 @@ const COPY = require('./lib/copy.js');
 // style.css 내용 해시를 ?v=로 붙여 CSS 변경 시 브라우저·CDN 캐시(max-age 600)를 자동으로 깬다 (2026-09-07)
 const CSS_V = require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, 'assets/style.css'))).digest('hex').slice(0, 8);
 const GUIDES = [...require('./lib/guides-habit.js'), ...require('./lib/guides-subject.js'), ...require('./lib/guides-grade.js')];
-const SCHOOL_INFO = fs.existsSync(path.join(__dirname, 'data', 'school-info.json')) ? require('./data/school-info.json') : {};
 const REVIEWS = fs.existsSync(path.join(__dirname, 'data', 'reviews.json')) ? require('./data/reviews.json') : [];
 const SCHOOL_GEO = fs.existsSync(path.join(__dirname, 'data', 'school-geo.json')) ? require('./data/school-geo.json') : {};
-const SCHOOL_CODES = fs.existsSync(path.join(__dirname, 'data', 'school-codes.json')) ? require('./data/school-codes.json') : {};
 
 const ROOT = __dirname;
 const DOMAIN = 'https://wstudycenter.com';
@@ -1030,7 +1028,7 @@ function buildSchool(s) {
   const faq = faqHtml(isElem
     ? [COPY.faqPool.elem[0], COPY.faqPool.subject[1], COPY.faqPool.common[0]]
     : [COPY.faqPool.school[0], COPY.faqPool.school[1], COPY.faqPool.common[0]], { tel: TEL, school: s.name });
-  // 나이스 학교기본정보·학사일정은 2026-09-08 사용자 지시로 비노출(오류 데이터 많음). data/school-info.json·SCHOOL_CODES는 남겨 두되 렌더링하지 않는다.
+  // 나이스 학교기본정보·학사일정은 2026-09-08 사용자 지시로 비노출(오류 데이터 많음). data/school-info.json·school-codes.json은 폴더에 남겨 두되 읽지도 렌더링하지도 않는다(미사용 require는 2026-09-30 제거).
   // 학사일정 위젯 (나이스 코드 확보된 학교만 — myschool 워커 API 경유, 24h 캐시)
   // 학교→지점 거리 (지오코딩 성공 + 8km 이내일 때만 — 좌표 오매칭 방지)
   const geo = SCHOOL_GEO[`${s.region}|${s.district}|${s.name}`];
@@ -1192,7 +1190,7 @@ function buildInquiry() {
 ${crumb(1, [{ name: '상담 신청' }])}
 <div class="page-head"><h1>상담 신청</h1><div class="sub">상담은 예약제로 진행됩니다. 아래 내용을 남겨 주시면 해당 지점에서 시간을 잡아 연락드립니다. 전화가 편하시면 <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>을 눌러 주세요.</div></div>
 <div class="form-card">
-<form id="f">
+<form id="f" method="post" onsubmit="return false">
 <label>지점 선택 <span style="font-weight:400;color:var(--ink-soft)">(모르시면 비워 두셔도 됩니다)</span></label>
 <div class="sel-row three">
 <select id="fSido"><option value="">시/도</option>${Object.values(regions).map((r) => `<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('')}</select>
@@ -1328,8 +1326,10 @@ ${crumb(1, [{ name: '상담 신청' }])}
     if(!subj){alert('희망 과목을 1개 이상 선택해 주세요.');return;}
     if(!document.getElementById('fAgree').checked){alert('개인정보 수집·이용에 동의해 주셔야 상담 신청이 접수됩니다.');document.getElementById('fAgree').focus();return;}
     btn.disabled=true;btn.textContent='전송 중...';
+    // iframe 팝업(embed=1)에서 보내면 유입페이지·유입경로가 iframe 값(/inquiry/?embed=1)이 되므로 같은 출처의 부모 창 값을 쓴다 (2026-09-30, 와와센터와 같은 방식)
+    var P=window;try{if(window.parent!==window&&new URLSearchParams(location.search).get('embed')==='1'&&window.parent.location.host===location.host)P=window.parent;}catch(_e){P=window;}
     function normPhone(p,v){v=String(v||'').replace(/\\D/g,'');if(v.length===11)return v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);if(v.length===10)return v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);if(v.length===8)return p+'-'+v.slice(0,4)+'-'+v.slice(4);if(v.length===7)return p+'-'+v.slice(0,3)+'-'+v.slice(3);return p+'-'+v;}
-    var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:(function(){var sc=f.학교?f.학교.value.trim():'',lv=f.학년급?f.학년급.value:'',gd=f.학년상세?f.학년상세.value:'';return sc?[sc,gd||lv].filter(Boolean).join(' '):[lv,gd].filter(Boolean).join(' ');})(),학교:f.학교?f.학교.value.trim():'',과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:location.href,유입페이지제목:document.title,유입경로:document.referrer||'직접입력'};
+    var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:(function(){var sc=f.학교?f.학교.value.trim():'',lv=f.학년급?f.학년급.value:'',gd=f.학년상세?f.학년상세.value:'';return sc?[sc,gd||lv].filter(Boolean).join(' '):[lv,gd].filter(Boolean).join(' ');})(),학교:f.학교?f.학교.value.trim():'',과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:P.location.href,유입페이지제목:P.document.title,유입경로:P.document.referrer||'직접입력'};
     var q=Object.keys(data).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(data[k])}).join('&');
     (new Image()).src='${GAS}?'+q;
     setTimeout(function(){f.style.display='none';document.getElementById('ok').classList.add('on');},700);
@@ -1364,7 +1364,7 @@ ${crumb(1, [{ name: '개인정보처리방침' }])}
 <h2>4. 보유 기간과 파기</h2>
 <p>상담이 끝난 뒤 6개월 이내에 파기합니다. 법령에 따라 보관해야 하는 정보는 그 법령이 정한 기간 동안만 보관한 뒤 파기합니다.</p>
 <h2>5. 제3자 제공</h2>
-<p>와와 지점은 지점마다 따로 등록된 학원이라, 지점에 신청 내용을 넘기는 것은 제3자 제공에 해당합니다. 상담 신청서에서 수집·이용 동의와 따로 동의를 받은 경우에만 아래와 같이 제공합니다.</p>
+<p>와와 지점은 지점마다 따로 등록된 학원이라, 지점에 신청 내용을 넘기는 것은 제3자 제공에 해당합니다. 상담 신청서의 개인정보 수집·이용 동의 안내에 제공받는 곳과 제공 항목을 함께 적어 두었고, 그 동의를 받은 경우에만 아래와 같이 제공합니다.</p>
 <ul>
 <li>받는 곳: 상담을 맡을 와와 지점</li>
 <li>제공 목적: 상담 연락과 수업·지점 안내</li>
@@ -1373,7 +1373,7 @@ ${crumb(1, [{ name: '개인정보처리방침' }])}
 </ul>
 <p>이 밖에는 제3자에게 제공하지 않습니다. 법령에 따라 요구받는 경우는 예외입니다.</p>
 <h2>6. 동의를 거부할 권리</h2>
-<p>개인정보 수집·이용 동의와 상담 지점 제공 동의는 각각 거부할 수 있습니다. 어느 하나라도 거부하시면 온라인 상담 신청은 할 수 없고, <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>은 그대로 이용할 수 있습니다.</p>
+<p>개인정보 수집·이용 동의(상담 지점 전달 포함)는 거부할 수 있습니다. 거부하시면 온라인 상담 신청은 할 수 없고, <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>은 그대로 이용할 수 있습니다.</p>
 <h2>7. 열람·정정·삭제 요청</h2>
 <p>남기신 정보의 열람, 정정, 삭제, 처리 정지를 언제든 요청할 수 있습니다. <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>으로 말씀해 주시면 확인 후 처리합니다.</p>
 <h2>8. 방문 기록</h2>
@@ -1441,9 +1441,21 @@ const SUBJECT_MOVED = [
   'gyeonggi/namyangju/pyeongnae/science', 'gyeonggi/pyeongtaek/ichung/korean', 'gyeonggi/pyeongtaek/ichung/science', 'jeju/jeju-si/nohyeong/korean',
   'jeju/jeju-si/nohyeong/science', 'jeju/jeju-si/nohyeong/social', 'seoul/dongdaemun/jegi/social', 'ulsan/bukgu/songjeong/social',
 ];
-const MOVED_LOG = { school: 0, subject: 0, skipped: [] };
+// 주엽 2호점이 주엽점으로 통합되며(2026-08-31) 사라진 지점 주소 4쪽. 손으로 두었던 스텁을 빌드가 같은 내용으로 만든다 (2026-09-30 점검 W5). 사이트맵에는 넣지 않는다.
+// 과목 주소는 새 지점에 같은 과목 페이지가 있으면 그쪽으로, 없으면(주엽점은 과학 미개설) 지점 페이지로 보낸다.
+const BRANCH_MOVED = {
+  'gyeonggi/goyang/juyeob2ho': { to: 'gyeonggi/goyang/juyeob', subjects: ['english', 'math', 'science'] },
+};
+const MOVED_LOG = { school: 0, subject: 0, branch: 0, skipped: [] };
 function buildMovedPages() {
   const built = new Set(urls);
+  for (const [old, { to, subjects }] of Object.entries(BRANCH_MOVED)) {
+    if (built.has(`${old}/`)) { MOVED_LOG.skipped.push(old); continue; } // 지점이 기준본에 다시 들어와 페이지가 만들어졌으면 덮어쓰지 않는다
+    const toUrl = built.has(`${to}/`) ? `${DOMAIN}/${to}/` : `${DOMAIN}/${to.split('/').slice(0, 2).join('/')}/`;
+    movedStub(`${old}/index.html`, toUrl);
+    for (const s of subjects) movedStub(`${old}/${s}/index.html`, built.has(`${to}/${s}/`) ? `${DOMAIN}/${to}/${s}/` : toUrl);
+    MOVED_LOG.branch++;
+  }
   for (const [dir, olds] of Object.entries(SCHOOL_MOVED)) {
     const [rs, ds] = dir.split('/');
     for (const old of olds) {
@@ -1705,7 +1717,7 @@ fs.writeFileSync(path.join(ROOT, 'CNAME'), 'wstudycenter.com\n', 'utf8');
 fs.writeFileSync(path.join(ROOT, 'favicon.svg'),
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#22314e"/><text x="32" y="44" font-size="34" font-weight="800" text-anchor="middle" fill="#f0b58f" font-family="sans-serif">W</text></svg>`, 'utf8');
 console.log('생성 완료:', urls.length, '페이지');
-console.log('이동 안내 페이지: 학교', MOVED_LOG.school, '· 과목', MOVED_LOG.subject, MOVED_LOG.skipped.length ? '· 건너뜀 ' + MOVED_LOG.skipped.join(', ') : '');
+console.log('이동 안내 페이지: 학교', MOVED_LOG.school, '· 과목', MOVED_LOG.subject, '· 지점', MOVED_LOG.branch, MOVED_LOG.skipped.length ? '· 건너뜀 ' + MOVED_LOG.skipped.join(', ') : '');
 if (DATA_WARN.length) console.warn('[데이터 경고]\n  ' + DATA_WARN.join('\n  '));
 if (SCHOOL_NO_SUBJ.length) console.warn('[학교급에 개설 과목 없는 학교 페이지]', SCHOOL_NO_SUBJ.length, SCHOOL_NO_SUBJ.slice(0, 10).join(', '));
 // description 80자(네이버 권고) 전수 점검 — 넘으면 목록을 출력한다 (2026-09-17 점검 code#8)

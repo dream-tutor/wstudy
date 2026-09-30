@@ -584,7 +584,7 @@ html.js .st.rv-in > * { opacity: 1; transform: none; }
 .st.rv-in > *:nth-child(2) { transition-delay: .08s; } .st.rv-in > *:nth-child(3) { transition-delay: .16s; } .st.rv-in > *:nth-child(4) { transition-delay: .24s; }
 .st.rv-in > *:nth-child(5) { transition-delay: .32s; } .st.rv-in > *:nth-child(6) { transition-delay: .4s; } .st.rv-in > *:nth-child(7) { transition-delay: .48s; }
 .st.rv-in > *:nth-child(8) { transition-delay: .56s; } .st.rv-in > *:nth-child(n+9) { transition-delay: .64s; }
-.kmap.st > * { transform: scale(.85); }
+html.js .kmap.st > * { transform: scale(.85); } html.js .kmap.st.rv-in > * { transform: none; }
 html.js .w-photo.rv img { transform: scale(1.05); transition: transform 1.3s cubic-bezier(.2,.7,.2,1); }
 html.js .w-photo.rv.rv-in img { transform: none; }
 .w-photo .photo { overflow: hidden; border-radius: 20px; }
@@ -602,7 +602,7 @@ header.site.hd-s { box-shadow: 0 6px 24px rgba(25,31,40,.08); }
 .faq details { transition: background .2s; }
 .faq summary::after { transition: transform .25s; }
 .faq details[open] summary::after { transform: rotate(180deg); }
-@media (prefers-reduced-motion: reduce) { html.js .hero.w .award, html.js .hero.w h1, html.js .hero.w p, html.js .hero.w .btns, html.js .hero.w .stats { animation: none; } html.js .st > * { opacity: 1; transform: none; transition: none; } html.js .w-photo.rv img { transform: none; } }
+@media (prefers-reduced-motion: reduce) { html.js .hero.w .award, html.js .hero.w h1, html.js .hero.w p, html.js .hero.w .btns, html.js .hero.w .stats { animation: none; } html.js .st > * { opacity: 1; transform: none; transition: none; } html.js .kmap.st > * { transform: none; } html.js .w-photo.rv img { transform: none; } }
 
 /* ── 지점 페이지 머리: PC에서는 제목 블록 옆에 사진을 작게 (2026-09-08) ── */
 .bh { display: grid; gap: 8px; }
