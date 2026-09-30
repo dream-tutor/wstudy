@@ -379,8 +379,7 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .float-cta a { display: block; padding: 12px 20px; border-radius: 30px; font-weight: 700; font-size: 14.5px; box-shadow: 0 6px 20px rgba(0,0,0,.25); text-align: center; }
 .float-cta .f-form { background: var(--brick); color: #fff; }
 .float-cta .f-tel { background: var(--navy); color: #fff; }
-/* PC·태블릿(≥768px)은 tel: 연결이 안 되므로 전화 버튼 숨김 (2026-09-01 사용자 지시 — 번호 팝업은 전문과외만 시범) */
-@media (min-width: 768px) { .float-cta .f-tel { display: none; } }
+/* PC 에서도 전화 버튼을 보인다 — 공용 t.js 가 PC 에서 번호 안내 창을 띄운다 (2026-09-18 전 사이트 규칙, 2026-09-30 잔존 삭제) */
 
 /* ── 학사일정 ── */
 .evs { background: var(--soft); border: 0; border-radius: 12px; padding: 6px 16px; margin: 12px 0 8px; }
@@ -523,7 +522,6 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .w-cta .btns a { display: inline-block; padding: 14px 24px; border-radius: 10px; font-weight: 700; }
 .w-cta .b1 { background: var(--brick); color: #fff; }
 .w-cta .b2 { background: transparent; color: #fff; border: 1px solid #4a5878; }
-@media (min-width: 768px) { .w-cta .b2 { display: none; } }
 html.js .rv { opacity: 0; transform: translateY(22px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
 html.js .rv.rv-in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { html.js .rv { opacity: 1; transform: none; transition: none; } }
@@ -663,7 +661,7 @@ article.body .video-box { margin-top: 28px; }
 @media (max-width: 480px) { .sel-row.three select { font-size: 14px; padding-left: 8px; padding-right: 20px; } }
 .form-card .two { display: grid; grid-template-columns: 1fr 1.25fr; gap: 0 10px; }
 .form-card .two > div { min-width: 0; }
-@media (max-width: 380px) { .form-card .two { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .form-card .two { grid-template-columns: 1fr; } } /* 이름·연락처 두 줄 기준 560px (2026-09-23 지시) */
 
 /* ── 지점·하위 페이지 모션: 제목·사진 등장, 섹션 제목 등장, 섹션 본문 순차 등장, 칩 순차, 영상 확대 진입 ── */
 html.js .bh .page-head { animation: rise .7s .05s cubic-bezier(.2,.7,.2,1) both; }
