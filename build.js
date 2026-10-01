@@ -275,7 +275,9 @@ function shell({ title, desc, canonical, body, depth, ld, ogTitle, footExtra, br
 <meta name="twitter:card" content="summary_large_image">
 <meta property="article:published_time" content="${datePublished}T00:00:00+09:00">
 <meta property="article:modified_time" content="${dateModified}T00:00:00+09:00">
+<link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="${DOMAIN}/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -1689,6 +1691,9 @@ fs.writeFileSync(path.join(ROOT, '5e5ad86af25533efae3948773b676a6c.txt'), '5e5ad
 fs.writeFileSync(path.join(ROOT, 'CNAME'), 'wstudycenter.com\n', 'utf8');
 fs.writeFileSync(path.join(ROOT, 'favicon.svg'),
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#22314e"/><text x="32" y="44" font-size="34" font-weight="800" text-anchor="middle" fill="#f0b58f" font-family="sans-serif">W</text></svg>`, 'utf8');
+// 실제 아이콘 파일 — 네이버·구글은 /favicon.ico 를 직접 받아 간다(svg 만 있으면 검색·광고에 지구본으로 나온다).
+// 원본은 assets/icons/ (위 favicon.svg 를 래스터로 뽑은 것). svg 를 바꾸면 이 두 파일도 다시 뽑을 것.
+for (const f of ['favicon.ico', 'apple-touch-icon.png']) fs.copyFileSync(path.join(ROOT, 'assets', 'icons', f), path.join(ROOT, f));
 console.log('생성 완료:', urls.length, '페이지');
 console.log('이동 안내 페이지: 학교', MOVED_LOG.school, '· 과목', MOVED_LOG.subject, '· 지점', MOVED_LOG.branch, MOVED_LOG.skipped.length ? '· 건너뜀 ' + MOVED_LOG.skipped.join(', ') : '');
 if (DATA_WARN.length) console.warn('[데이터 경고]\n  ' + DATA_WARN.join('\n  '));
