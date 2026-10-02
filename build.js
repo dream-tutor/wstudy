@@ -877,9 +877,9 @@ ${ctaBand(null, 2)}</div>`;
       const bn = d.branches.map((b) => b.name);
       const names = (k) => bn.slice(0, k).join(', ') + (bn.length > k ? ` 외 ${bn.length - k}곳` : '');
       return fitDesc(
-        `${rd}의 ${BRAND} 지점 안내. ${names(3)}. 관리 학교 ${schoolsHere.length}곳의 내신 대비.`,
-        `${rd}의 ${BRAND} 지점 안내. ${names(2)}. 관리 학교 ${schoolsHere.length}곳의 내신 대비.`,
-        `${rd}의 ${BRAND} 지점 ${bn.length}곳 안내. 지점 위치와 관리 학교 ${schoolsHere.length}곳의 내신 대비.`,
+        `${rd} 초중고 학원 ${BRAND} ${names(3)}. 관리 학교 ${schoolsHere.length}곳 내신 대비, 상담 신청.`,
+        `${rd} 초중고 학원 ${BRAND} ${names(2)}. 관리 학교 ${schoolsHere.length}곳 내신 대비, 상담 신청.`,
+        `${rd} 초중고 학원 ${BRAND} 지점 ${bn.length}곳. 관리 학교 ${schoolsHere.length}곳 내신 대비.`,
       );
     })(),
     canonical: `${DOMAIN}/${r.slug}/${d.slug}/`, body, depth: 2,
@@ -1005,12 +1005,16 @@ ${ctaBand(b, 4)}
     branch: b.name,
     title: `${b.dong} ${subj}학원 | ${BRAND} ${b.name}`,
     desc: elemOnly
-      ? fitDesc(`${b.district} ${b.dong} 초등 ${subj} 수업 안내. ${BRAND} ${b.name}에서 학교 교과 진도에 맞춰 수업하고 공부 습관을 잡습니다.`, `${b.dong} 초등 ${subj} 수업 안내. ${BRAND} ${b.name}에서 학교 교과 진도에 맞춰 수업합니다.`)
+      // 말투(2026-10-02 사장님 지적): '~안내. ~합니다' 설명문 대신 검색어를 앞에, 사실을 명사로 끊어 쉼표로
+      ? fitDesc(
+        `${b.district} ${b.dong} 초등 ${subj}학원 ${BRAND} ${b.name}. 학교 교과 진도 맞춤 ${subj} 수업, 공부 습관 관리. 수강료 공개, 상담 신청.`,
+        `${b.dong} 초등 ${subj}학원 ${BRAND} ${b.name}. 학교 교과 진도 맞춤 수업, 수강료 공개.`,
+      )
       : fitDesc(
-        `${b.district} ${b.dong} ${subj}학원 안내. ${BRAND} ${b.name}의 ${subj} 수업 방식과 학년별 커리큘럼, ${ctx.schoolShort} 내신 대비.`,
-        `${b.district} ${b.dong} ${subj}학원 안내. ${BRAND} ${b.name}의 ${subj} 수업 방식과 학년별 커리큘럼, ${schoolShort(b, levels, 2)} 내신 대비.`,
-        `${b.dong} ${subj}학원 안내. ${BRAND} ${b.name}의 ${subj} 수업 방식과 학년별 커리큘럼, ${schoolShort(b, levels, 1)} 내신 대비.`,
-        `${b.dong} ${subj}학원 안내. ${BRAND} ${b.name}의 ${subj} 수업 방식과 학년별 커리큘럼, 학교별 내신 대비.`,
+        `${b.district} ${b.dong} ${subj}학원 ${BRAND} ${b.name}. ${ctx.schoolShort} 내신 대비, 학년별 ${subj} 수업. 수강료 공개, 상담 신청.`,
+        `${b.district} ${b.dong} ${subj}학원 ${BRAND} ${b.name}. ${schoolShort(b, levels, 2)} 내신 대비, 학년별 ${subj} 수업. 수강료 공개, 상담 신청.`,
+        `${b.dong} ${subj}학원 ${BRAND} ${b.name}. ${schoolShort(b, levels, 1)} 내신 대비, 학년별 ${subj} 수업. 수강료 공개.`,
+        `${b.dong} ${subj}학원 ${BRAND} ${b.name}. 학교별 내신 대비, 수강료 공개.`,
       ),
     canonical: `${DOMAIN}/${r.slug}/${d.slug}/${b.branch_slug}/${slug}/`, body, depth: 4,
     ld: faq.ld,
@@ -1084,16 +1088,16 @@ ${schoolFeeSection(s)}
       const one = bn[0] + (bn.length > 1 ? ` 외 ${bn.length - 1}곳` : '');
       return isElem
         ? fitDesc(
-          `${s.name} 학생을 위한 수업 안내. ${s.district} ${BRAND} ${all}에서 ${s.name} 교과 진도에 맞춰 수업하고 공부 습관을 잡습니다.`,
-          `${s.name} 학생을 위한 수업 안내. ${s.district} ${BRAND} ${one}에서 교과 진도에 맞춰 수업하고 공부 습관을 잡습니다.`,
-          `${s.name} 학생을 위한 수업 안내. ${BRAND} ${one}에서 교과 진도에 맞춰 수업하고 공부 습관을 잡습니다.`,
-          `${s.name} 학생 수업 안내. ${BRAND} ${bn[0]}에서 교과 진도에 맞춰 수업합니다.`,
+          `${s.name} 근처 학원 ${s.district} ${BRAND} ${all}. ${s.name} 교과 진도 맞춤 수업, 공부 습관 관리. 수강료 공개, 상담 신청.`,
+          `${s.name} 근처 학원 ${s.district} ${BRAND} ${one}. 학교 교과 진도 맞춤 수업, 공부 습관 관리. 수강료 공개, 상담 신청.`,
+          `${s.name} 근처 학원 ${BRAND} ${one}. 학교 교과 진도 맞춤 수업, 공부 습관 관리. 수강료 공개.`,
+          `${s.name} 근처 학원 ${BRAND} ${bn[0]}. 교과 진도 맞춤 수업, 수강료 공개.`,
         )
         : fitDesc(
-          `${s.name} 재학생을 위한 내신 대비 안내. ${s.district} ${BRAND} ${all}에서 ${s.name} 진도와 기출 기준으로 시험을 준비합니다.`,
-          `${s.name} 재학생을 위한 내신 대비 안내. ${s.district} ${BRAND} ${one}에서 학교 진도와 기출 기준으로 시험을 준비합니다.`,
-          `${s.name} 재학생을 위한 내신 대비 안내. ${BRAND} ${one}에서 학교 진도와 기출 기준으로 시험을 준비합니다.`,
-          `${s.name} 내신 대비 안내. ${BRAND} ${bn[0]}에서 학교 진도와 기출 기준으로 준비합니다.`,
+          `${s.name} 내신 학원 ${s.district} ${BRAND} ${all}. ${s.name} 진도·기출 기준 시험 대비. 수강료 공개, 상담 신청.`,
+          `${s.name} 내신 학원 ${s.district} ${BRAND} ${one}. 학교 진도·기출 기준 시험 대비. 수강료 공개, 상담 신청.`,
+          `${s.name} 내신 학원 ${BRAND} ${one}. 학교 진도·기출 기준 시험 대비. 수강료 공개.`,
+          `${s.name} 내신 학원 ${BRAND} ${bn[0]}. 학교 진도·기출 기준 시험 대비.`,
         );
     })(),
     canonical: `${DOMAIN}/${s.region_slug}/${s.district_slug}/school/${encodeURIComponent(s.name)}/`, body, depth: 4,
