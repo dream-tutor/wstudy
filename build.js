@@ -1423,18 +1423,28 @@ const SUBJECT_MOVED = [
 ];
 // 주엽 2호점이 주엽점으로 통합되며(2026-08-31) 사라진 지점 주소 4쪽. 손으로 두었던 스텁을 빌드가 같은 내용으로 만든다 (2026-09-30 점검 W5). 사이트맵에는 넣지 않는다.
 // 과목 주소는 새 지점에 같은 과목 페이지가 있으면 그쪽으로, 없으면(주엽점은 과학 미개설) 지점 페이지로 보낸다.
+// 2026-10-15 마포점→마포2호점(10-08 통합), 화성태안점→병점점(사장님 지시로 지금 반영) 통합도 같은 방식.
+// schools: 흡수된 지점에만 적혀 있던 학교라 페이지가 더 만들어지지 않는 같은 시군구 학교 주소 — 남는 지점 페이지로 보낸다(학교 목록은 합치지 않는다).
 const BRANCH_MOVED = {
   'gyeonggi/goyang/juyeob2ho': { to: 'gyeonggi/goyang/juyeob', subjects: ['english', 'math', 'science'] },
+  'seoul/mapo/mapo': { to: 'seoul/mapo/mapo2ho', subjects: ['korean', 'english', 'math', 'science', 'social'], schools: ['숭문중'] },
+  'gyeonggi/hwaseong/hwaseongtaean': { to: 'gyeonggi/hwaseong/byeong', subjects: ['korean', 'english', 'math'], schools: ['송화초', '안용중'] },
 };
 const MOVED_LOG = { school: 0, subject: 0, branch: 0, skipped: [] };
 function buildMovedPages() {
   const built = new Set(urls);
-  for (const [old, { to, subjects }] of Object.entries(BRANCH_MOVED)) {
+  for (const [old, { to, subjects, schools: oldSchools = [] }] of Object.entries(BRANCH_MOVED)) {
     if (built.has(`${old}/`)) { MOVED_LOG.skipped.push(old); continue; } // 지점이 기준본에 다시 들어와 페이지가 만들어졌으면 덮어쓰지 않는다
     const toUrl = built.has(`${to}/`) ? `${DOMAIN}/${to}/` : `${DOMAIN}/${to.split('/').slice(0, 2).join('/')}/`;
     movedStub(`${old}/index.html`, toUrl);
     for (const s of subjects) movedStub(`${old}/${s}/index.html`, built.has(`${to}/${s}/`) ? `${DOMAIN}/${to}/${s}/` : toUrl);
     MOVED_LOG.branch++;
+    const dir = old.split('/').slice(0, 2).join('/');
+    for (const n of oldSchools) {
+      if (built.has(`${dir}/school/${n}/`)) { MOVED_LOG.skipped.push(`${dir}/school/${n}`); continue; } // 다른 지점 목록에 그 학교가 생겨 페이지가 만들어졌으면 덮어쓰지 않는다
+      movedStub(`${dir}/school/${n}/index.html`, toUrl);
+      MOVED_LOG.school++;
+    }
   }
   for (const [dir, olds] of Object.entries(SCHOOL_MOVED)) {
     const [rs, ds] = dir.split('/');
