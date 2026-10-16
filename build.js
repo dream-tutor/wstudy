@@ -5,6 +5,7 @@ const path = require('path');
 const BRANCHES = require('./data/branches.json');
 const VIDEOS = require('./data/videos.json');
 const COPY = require('./lib/copy.js');
+const SEASON = require('./lib/season.js');
 // style.css 내용 해시를 ?v=로 붙여 CSS 변경 시 브라우저·CDN 캐시(max-age 600)를 자동으로 깬다 (2026-09-07)
 const CSS_V = require('crypto').createHash('md5').update(fs.readFileSync(path.join(__dirname, 'assets/style.css'))).digest('hex').slice(0, 8);
 const GUIDES = [...require('./lib/guides-habit.js'), ...require('./lib/guides-subject.js'), ...require('./lib/guides-grade.js')];
@@ -73,7 +74,9 @@ function pageDates(seed) {
   const born = PAGE_DATES.born[s];
   const revised = PAGE_DATES.revised[s];
   const published = born ? new Date(born + 'T00:00:00Z') : new Date(SITE_LAUNCH_EPOCH + (h % LAUNCH_SPAN_DAYS) * 86400000);
-  const nowKst = new Date(Date.now() + 9 * 3600 * 1000); // KST 기준 오늘
+  // DATE_FREEZE=YYYY-MM-DD: 월 단위 수정일 회전의 기준일만 고정한다(지점·링크만 바꾸는 빌드에서 1,000장 날짜가 한꺼번에 도는 것 방지).
+  // 새 페이지 공개일(born)은 실제 오늘(TODAY_KST)로 적힌다. 2026-10-15 추가 — 전에는 Date.now 자체를 바꿔 돌렸다.
+  const nowKst = process.env.DATE_FREEZE ? new Date(process.env.DATE_FREEZE + 'T12:00:00Z') : new Date(Date.now() + 9 * 3600 * 1000); // KST 기준 오늘
   const y = nowKst.getUTCFullYear();
   const m = nowKst.getUTCMonth();
   const dayOff = h2 % 28;
@@ -161,13 +164,14 @@ function feeSection(b) {
 <div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th><th class="tm">1회 수업</th><th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div><div class="fee-legal">${feeWho(b)}</div>`;
 }
 // 학교 페이지용: 해당 학교 학년(초/중/고)에 맞춘 지점별 교습비. 지점마다 금액 줄 바로 아래에 그 금액의 학원 명칭·등록번호·공시 자료 줄을 붙인다.
-function schoolFeeSection(s) {
+// up: 학교 페이지(깊이 4)는 '../../', 학교 아래 시즌 페이지(깊이 5)는 '../../../' — 시군구 폴더까지 올라가는 경로
+function schoolFeeSection(s, up = '../../') {
   const lv = s.level === '초' ? '초등' : s.level === '중' ? '중등' : '고등';
   const minKey = { 초등: 'time_elem', 중등: 'time_mid', 고등: 'time_high' }[lv];
   const many = s.branches.length > 1;
   const rows = s.branches.map((b) => {
     const p = FEE_TABLES[feeGrade(b)][lv];
-    return `<tr class="fee-row"><th><a href="../../${b.branch_slug}/#fee" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td class="tm">${lessonMin(b[minKey])}</td><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr><tr class="fee-who"><td colspan="5"><div class="fee-legal">${feeWho(b)}</div></td></tr>`;
+    return `<tr class="fee-row"><th><a href="${up}${b.branch_slug}/#fee" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td class="tm">${lessonMin(b[minKey])}</td><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr><tr class="fee-who"><td colspan="5"><div class="fee-legal">${feeWho(b)}</div></td></tr>`;
   }).join('');
   return `<h2 id="fee">${esc(s.name)} 학생 수강료 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">${lv}부 월 교습비 기준표(원)입니다. ${many ? '지점마다 금액과 1회 수업 시간이 다를 수 있어 지점별로 나눠 적었고, ' : ''}금액 아래에 학원 정식 명칭과 교육청 등록번호, 교습비 공시 자료를 함께 두었습니다. 수업 시간과 횟수는 상담에서 정합니다.</p>
 <div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>지점</th><th class="tm">1회 수업</th><th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>`;
@@ -294,7 +298,7 @@ ${bodyOut}
 <footer class="site"><div class="in">
 <div class="brand">${BRAND}</div>
 전국 지점에서 초·중·고 교과 수업과 학교별 내신 관리를 합니다.<br>
-<a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/${cq}">상담 신청</a> · <a href="${base}review/">수강후기</a> · <a href="${base}guide/">공부법 칼럼</a> · <a href="${base}grade-calculator/">내신 등급 계산기</a> · <a href="${base}privacy/">개인정보처리방침</a><br>
+<a href="tel:${TEL}">전화 상담</a> · <a href="${base}inquiry/${cq}">상담 신청</a> · <a href="${base}review/">수강후기</a> · <a href="${base}guide/">공부법 칼럼</a> · <a href="${base}final-exam/">기말고사 대비</a> · <a href="${base}next-grade/">겨울방학 다음 학년 준비</a> · <a href="${base}grade-calculator/">내신 등급 계산기</a> · <a href="${base}privacy/">개인정보처리방침</a><br>
 학원 등록번호는 각 지점 페이지에 표기되어 있습니다. © ${BRAND}
 <div style="margin-top:8px;font-size:12px;opacity:.8">광고전화는 정중히 사절합니다.</div>
 <div style="margin-top:8px;font-size:12px;opacity:.8"><time datetime="${dateModified}">정보 업데이트 ${dateModified.replace(/-/g, '.')}</time></div>
@@ -356,7 +360,7 @@ function crumb(depth, items) {
   for (let i = 0; i < items.length; i++) {
     if (i < items.length - 1) {
       acc += items[i].slug + '/';
-      accUrl += encodeURIComponent(items[i].slug) + '/';
+      accUrl += items[i].slug.split('/').map(encodeURIComponent).join('/') + '/';
       html += `<span>›</span><a href="${acc}">${esc(items[i].name)}</a>`;
       ldItems.push({ '@type': 'ListItem', position: i + 2, name: items[i].name, item: accUrl });
     } else {
@@ -1077,6 +1081,7 @@ ${faq.html}
 ${ctaBand(b0, 4)}
 <article class="body">
 ${s.level === '고' ? `<div class="note calc-note"><b>${esc(s.name)} 성적표로 등급 계산해 보기</b> 과목별 석차와 수강자 수를 넣으면 5등급(2025년 고1부터)·9등급 기준 석차등급을 계산합니다. <a href="../../../../grade-calculator/">내신 등급 계산기 →</a></div>` : ''}
+${seasonLinks(s)}
 ${guideLinks(LEVEL_GUIDES[s.level], 4)}
 ${schoolFeeSection(s)}
 </article></div>`;
@@ -1104,6 +1109,210 @@ ${schoolFeeSection(s)}
     ld: faq.ld,
     // 교습비 표가 있는 페이지라 푸터에도 지점별 정식 명칭·등록번호를 한 줄씩 둔다 (지점·과목 페이지와 같은 형식)
     footExtra: s.branches.filter((b) => b.reg).map((b) => `${esc(b.office || BRAND + ' ' + b.name)} · 등록번호 ${esc(b.reg)}`).join('<br>'),
+  }));
+}
+
+// ── 시즌 페이지: 학교별 기말고사 대비 · 겨울방학 다음 학년 준비 + 허브 2장 (2026-10-15 사장님 지시) ──
+// 주소: /{시도}/{시군구}/school/{학교}/final-exam/ (중·고만 — 초등은 지필 정기고사가 없다) · /…/school/{학교}/next-grade/ (초·중·고)
+// 허브: /final-exam/ · /next-grade/. 카피와 지켜야 할 표현 규칙은 lib/season.js 머리말.
+// 변형 고르기는 pick() 대신 COPY.pickBy() — pick()의 djb2 해시는 접미사만 다른 키끼리 4개 중 고르는 번호가 같이 움직여,
+// 같은 지점 학교 두 곳이 모든 칸에서 같은 변형을 골라 본문이 84%까지 겹쳤다(2026-10-15 실측).
+const SUBJ_ORDER = ['국어', '영어', '수학', '사회', '과학'];
+const LV_NAME = { 초: '초등학교', 중: '중학교', 고: '고등학교' };
+function schoolSubs(s) {
+  return SUBJ_ORDER.filter((x) => s.branches.some((b) => (b.subjects || []).includes(x) && offered(b, x, s.level)));
+}
+function oneOrMore(s) { const bn = s.branches.map((b) => b.name); return bn[0] + (bn.length > 1 ? ` 외 ${bn.length - 1}곳` : ''); }
+// 학교에서 지점까지의 거리 표기는 학교 페이지(buildSchool)와 같은 규칙. up = 시군구 폴더까지 올라가는 경로
+function schoolBranchTable(s, up) {
+  const geo = SCHOOL_GEO[`${s.region}|${s.district}|${s.name}`];
+  const rows = s.branches.map((b) => {
+    let dist = '';
+    if (geo && b.lat && b.lng) {
+      const m = distM(geo.lat, geo.lng, b.lat, b.lng);
+      if (m <= 8000) dist = `<span style="color:var(--brick);font-weight:600;font-size:13.5px">${esc(s.name)}에서 약 ${m < 1000 ? `${Math.max(50, Math.round(m / 50) * 50)}m` : `${(m / 1000).toFixed(1)}km`}</span><br>`;
+    }
+    const subs = (b.subjects || []).filter((sj) => offered(b, sj, s.level));
+    return `<tr><th><a href="${up}${b.branch_slug}/" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td>${dist}${esc(b.address)}<br><span style="color:var(--ink-soft);font-size:13.5px">${esc([subs.join(' · ') || '과목은 상담 시 확인', openTimeTxt(b)].filter(Boolean).join(' · '))}</span></td></tr>`;
+  }).join('');
+  return `<h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2><div class="tbl-scroll"><table class="info-table">${rows}</table></div>`;
+}
+function stepsHtml(steps) {
+  return `<div class="steps wk st">${steps.map(([no, t, d]) => `<div class="step"><span class="no">${esc(no)}</span><div class="t">${esc(t)}</div><div class="d">${esc(d)}</div></div>`).join('')}</div>`;
+}
+// season.js FAQ 항목({q, a: ctx => [변형…]})을 faqHtml 형식으로
+function seasonFaq(f, key) { return { q: f.q, a: (c) => COPY.pickBy(f.a(c), key + f.q) }; }
+// 학교 페이지에 붙는 시즌 페이지 링크 (학교 페이지는 깊이 4라 './' 아래)
+function seasonLinks(s) {
+  const a = [];
+  if (s.level !== '초') a.push(`<a href="./final-exam/">${esc(s.name)} 기말고사 대비</a>`);
+  a.push(`<a href="./next-grade/">${esc(s.name)} 겨울방학 다음 학년 준비</a>`);
+  return `<h2>${esc(s.name)} 시험·방학 준비</h2><div class="chips st">${a.join('')}</div>`;
+}
+function seasonCrumb(s, last) {
+  return crumb(5, [{ name: s.region, slug: s.region_slug }, { name: s.district, slug: s.district_slug }, { name: s.name + (s.level === '초' ? ' 학원' : ' 내신 학원'), slug: `school/${s.name}` }, { name: last }]);
+}
+function seasonFoot(s) { return s.branches.filter((b) => b.reg).map((b) => `${esc(b.office || BRAND + ' ' + b.name)} · 등록번호 ${esc(b.reg)}`).join('<br>'); }
+
+const FINAL_INTRO = [
+  (s) => `<p>시험 날짜에서 거꾸로 4주를 셉니다. 학교마다 기말 날짜가 달라 ${esc(s)} 학사일정에 나온 날짜를 기준으로 잡습니다.</p>`,
+  (s) => `<p>기말 대비는 시험 4주 전에 시작합니다. 아래 순서는 기본 틀이고, ${esc(s)} 시험 일정과 학생의 중간고사 결과에 따라 주마다 비중이 달라집니다.</p>`,
+  (s) => `<p>${esc(s)} 기말 날짜가 정해지면 그날부터 4주를 거슬러 올라가 일정을 짭니다. 수행평가 마감이 몰리는 주는 미리 표시해 둡니다.</p>`,
+];
+const NEXT_INTRO = [
+  (s) => `<p>겨울방학은 보통 6주 안팎입니다. 학교마다 방학 날짜가 달라 ${esc(s)} 학사일정에 맞춰 주 단위로 나눕니다.</p>`,
+  (s) => `<p>방학 계획은 진단에서 시작합니다. 아래 순서는 기본 틀이고, ${esc(s)} 학생의 진단 결과에 따라 단원과 분량이 달라집니다.</p>`,
+  (s) => `<p>${esc(s)} 방학식 다음 주부터 개학 전까지를 몇 단계로 나눠 씁니다. 방학이 짧으면 단계마다 기간을 줄이고 순서는 그대로 둡니다.</p>`,
+];
+
+function buildSchoolFinal(s) {
+  const key = `${s.region_slug}/${s.district_slug}/${s.name}/final`;
+  const b0 = s.branches[0];
+  const lv = s.level;
+  const subs = schoolSubs(s);
+  const ctx = { school: s.name, branchName: b0.name };
+  const faq = faqHtml([seasonFaq(SEASON.finalFaq.start, key), seasonFaq(SEASON.finalFaq.range, key), COPY.faqPool.school[1], COPY.faqPool.common[1]], ctx);
+  const subjHtml = subs.length
+    ? `<h2>${esc(s.name)} 과목별 기말 준비</h2>${subs.map((x) => `<h3>${x}</h3><p>${esc(COPY.pickBy(SEASON.finalSubj[x], key + x)(s.name))}</p>`).join('')}`
+    : '';
+  const body = `<div class="wrap">
+${seasonCrumb(s, '기말고사 대비')}
+<div class="page-head"><span class="tag">${esc(s.district)} · ${LV_NAME[lv]} · 기말고사</span><h1>${esc(s.name)} 기말고사 대비, ${BRAND}</h1><div class="sub">${esc(COPY.pickBy(SEASON.finalLede[lv], key)(s.name, b0.name, b0.dong))}</div></div>
+<article class="body">
+<h2>${esc(s.name)} 기말 4주 준비</h2>
+${COPY.pickBy(FINAL_INTRO, key + 'i')(s.name)}
+${stepsHtml(COPY.pickBy(SEASON.finalSteps[lv], key + 'st')(s.name))}
+${subjHtml}
+${COPY.pickBy(SEASON.finalHow, key + 'h')(esc(s.name))}
+${schoolBranchTable(s, '../../../')}
+${faq.html}
+</article>
+${ctaBand(b0, 5)}
+<article class="body">
+<h2>함께 보면 좋은 페이지</h2><div class="chips st"><a href="../">${esc(s.name)} ${lv === '초' ? '학원' : '내신 학원'}</a><a href="../next-grade/">${esc(s.name)} 겨울방학 다음 학년 준비</a><a href="../../../../../final-exam/">학교별 기말고사 대비</a></div>
+${guideLinks(lv === '고' ? ['midterm-final', 'exam-4weeks', 'high1-first-exam'] : ['midterm-final', 'exam-4weeks', 'after-exam'], 5)}
+${schoolFeeSection(s, '../../../')}
+</article></div>`;
+  write(`${s.region_slug}/${s.district_slug}/school/${s.name}/final-exam/index.html`, shell({
+    title: `${s.name} 기말고사 대비 | ${s.district} ${BRAND}`,
+    desc: fitDesc(
+      `${s.name} 기말고사 대비 ${s.district} ${BRAND} ${oneOrMore(s)}. 4주 대비 일정, 수행평가 마감 관리, 과목별 준비. 수강료 공개.`,
+      `${s.name} 기말고사 대비 ${BRAND} ${oneOrMore(s)}. 4주 대비 일정, 수행평가 마감 관리. 수강료 공개.`,
+      `${s.name} 기말고사 대비 ${BRAND} ${b0.name}. 4주 대비 일정, 과목별 준비.`,
+    ),
+    canonical: `${DOMAIN}/${s.region_slug}/${s.district_slug}/school/${encodeURIComponent(s.name)}/final-exam/`, body, depth: 5,
+    ld: faq.ld, footExtra: seasonFoot(s),
+  }));
+}
+
+function buildSchoolNext(s) {
+  const key = `${s.region_slug}/${s.district_slug}/${s.name}/next`;
+  const b0 = s.branches[0];
+  const lv = s.level;
+  const subs = schoolSubs(s);
+  const open = openTimeTxt(b0);
+  const fq = [seasonFaq(SEASON.nextFaq.only, key), seasonFaq(SEASON.nextFaq.ahead, key)];
+  if (open) fq.push(seasonFaq(SEASON.nextFaq.time, key));
+  fq.push(COPY.faqPool.common[1]);
+  const faq = faqHtml(fq, { school: s.name, branch: b0.name, branchName: b0.name, open });
+  const trans = SEASON.nextTransition[lv].map((alts, i) => COPY.pickBy(alts, key + 't' + i));
+  const subjHtml = subs.length
+    ? `<h2>${esc(s.name)} 학생 과목별 방학 공부</h2>${subs.map((x) => `<h3>${x}</h3><p>${esc(COPY.pickBy(SEASON.nextSubj[x], key + x)(s.name, lv))}</p>`).join('')}`
+    : '';
+  const guides = { 초: ['pre-middle', 'elem-habit', 'study-planner'], 중: ['pre-high', 'free-semester', 'daily-routine'], 고: ['high1-first-exam', 'high23-balance', 'daily-routine'] }[lv];
+  const body = `<div class="wrap">
+${seasonCrumb(s, '겨울방학 다음 학년 준비')}
+<div class="page-head"><span class="tag">${esc(s.district)} · ${LV_NAME[lv]} · 겨울방학</span><h1>${esc(s.name)} 겨울방학, 다음 학년 준비</h1><div class="sub">${esc(COPY.pickBy(SEASON.nextLede[lv], key)(s.name, b0.name, b0.dong))}</div></div>
+<article class="body">
+<h2>${esc(s.name)} 겨울방학 공부 순서</h2>
+${COPY.pickBy(NEXT_INTRO, key + 'i')(s.name)}
+${stepsHtml(COPY.pickBy(SEASON.nextSteps[lv], key + 'st')())}
+${trans.map((f) => f(esc(s.name))).join('\n')}
+${subjHtml}
+${COPY.pickBy(SEASON.nextHow, key + 'h')(esc(s.name))}
+${schoolBranchTable(s, '../../../')}
+${faq.html}
+</article>
+${ctaBand(b0, 5)}
+<article class="body">
+<h2>함께 보면 좋은 페이지</h2><div class="chips st"><a href="../">${esc(s.name)} ${lv === '초' ? '학원' : '내신 학원'}</a>${lv !== '초' ? `<a href="../final-exam/">${esc(s.name)} 기말고사 대비</a>` : ''}<a href="../../../../../next-grade/">겨울방학 다음 학년 준비</a></div>
+${guideLinks(guides, 5)}
+${schoolFeeSection(s, '../../../')}
+</article></div>`;
+  write(`${s.region_slug}/${s.district_slug}/school/${s.name}/next-grade/index.html`, shell({
+    title: `${s.name} 겨울방학 학원, 다음 학년 준비 | ${s.district} ${BRAND}`,
+    desc: fitDesc(
+      `${s.name} 겨울방학 학원 ${s.district} ${BRAND} ${oneOrMore(s)}. 지난 학년 빈 단원 진단, 공부 습관, 새 학기 준비. 수강료 공개.`,
+      `${s.name} 겨울방학 학원 ${BRAND} ${oneOrMore(s)}. 지난 학년 빈 단원 진단, 공부 습관, 새 학기 준비.`,
+      `${s.name} 겨울방학 학원 ${BRAND} ${b0.name}. 빈 단원 진단, 새 학기 준비.`,
+    ),
+    canonical: `${DOMAIN}/${s.region_slug}/${s.district_slug}/school/${encodeURIComponent(s.name)}/next-grade/`, body, depth: 5,
+    ld: faq.ld, footExtra: seasonFoot(s),
+  }));
+}
+
+// 허브의 학교 목록 — 시도별로 접어 둔다. sub: 'final-exam' | 'next-grade'
+function hubSchoolList(levels, sub) {
+  const byRegion = {};
+  for (const s of Object.values(schools)) {
+    if (!levels.includes(s.level)) continue;
+    (byRegion[s.region_slug] = byRegion[s.region_slug] || { name: s.region, list: [] }).list.push(s);
+  }
+  return Object.values(regions).filter((r) => byRegion[r.slug]).map((r) => {
+    const g = byRegion[r.slug];
+    g.list.sort((a, b) => (a.district + a.name).localeCompare(b.district + b.name, 'ko'));
+    return `<details><summary>${esc(g.name)} ${g.list.length}개교</summary><div class="chips">${g.list.map((s) => `<a href="../${s.region_slug}/${s.district_slug}/school/${encodeURIComponent(s.name)}/${sub}/">${esc(s.name)}<span style="color:var(--ink-soft);font-size:12px;margin-left:4px">${esc(s.district)}</span></a>`).join('')}</div></details>`;
+  }).join('');
+}
+
+function buildFinalHub() {
+  const n = Object.values(schools).filter((s) => s.level !== '초').length;
+  const faq = faqHtml([seasonFaq(SEASON.finalFaq.start, 'hub-final'), COPY.faqPool.school[1], COPY.faqPool.common[0]], { school: '다니는 학교' });
+  const body = `<div class="wrap">
+${crumb(1, [{ name: '기말고사 대비' }])}
+<div class="page-head"><span class="tag">중학교 · 고등학교</span><h1>학교별 기말고사 대비</h1><div class="sub">기말고사는 중간고사보다 범위가 넓고, 과목 수가 늘고, 학기말 수행평가 마감과 겹칩니다. ${BRAND}은 학생이 다니는 학교의 시험 범위와 일정을 기준으로 4주 전부터 대비합니다.</div></div>
+<article class="body">
+<h2>중학교 기말</h2><p>중학교 기말에는 중간고사에 없던 과목이 더해지는 경우가 많고, 성적은 지필고사와 수행평가를 합쳐 나옵니다. 그래서 4주 전에 과목별 일정표를 먼저 만들고, 수행평가는 시험 3주 전까지 끝내도록 챙깁니다. 중간고사에서 틀린 문항을 원인별로 나눠 보면 기말에 어느 과목에 시간을 더 쓸지 정해집니다.</p>
+<h2>고등학교 기말</h2><p>고등학교 기말은 학기 등급을 정하는 마지막 지필시험입니다. 평가계획의 반영 비율로 과목별 목표 점수를 계산하고, 범위가 넓은 과목은 한 바퀴를 먼저 돈 뒤 약한 단원으로 돌아옵니다. 등급을 가르는 고난도 문항과 서술형 부분 점수는 따로 연습합니다.</p>
+<h2>4주 대비 순서</h2>
+${stepsHtml(SEASON.finalSteps.중[0]('다니는 학교'))}
+${SEASON.finalHow[0]('학교')}
+<h2>우리 학교 기말 대비 찾기</h2><p>와와학습학원 지점에 재학생이 다니는 중·고등학교 ${n.toLocaleString()}곳의 기말 대비 페이지입니다. 시도를 눌러 학교를 찾으면 가까운 지점, 수업 과목, 수강료를 함께 볼 수 있습니다.</p>
+<div class="faq">${hubSchoolList(['중', '고'], 'final-exam')}</div>
+${faq.html}
+${guideLinks(['midterm-final', 'exam-4weeks', 'after-exam', 'performance-assessment', 'high1-first-exam'], 1, '기말 준비에 도움이 되는 칼럼')}
+</article>
+${ctaBand(null, 1)}</div>`;
+  write('final-exam/index.html', shell({
+    title: `학교별 기말고사 대비 학원 | ${BRAND}`,
+    desc: fitDesc(`학교별 기말고사 대비 ${BRAND}. 중·고등학교 ${n.toLocaleString()}곳, 4주 대비 일정, 수행평가 마감 관리, 과목별 준비. 가까운 지점 상담.`),
+    canonical: `${DOMAIN}/final-exam/`, body, depth: 1, ld: faq.ld,
+  }));
+}
+
+function buildNextHub() {
+  const n = Object.values(schools).length;
+  const faq = faqHtml([seasonFaq(SEASON.nextFaq.only, 'hub-next'), seasonFaq(SEASON.nextFaq.ahead, 'hub-next'), COPY.faqPool.common[0]], {});
+  const body = `<div class="wrap">
+${crumb(1, [{ name: '겨울방학 다음 학년 준비' }])}
+<div class="page-head"><span class="tag">초등 · 중등 · 고등</span><h1>겨울방학, 다음 학년 준비</h1><div class="sub">학교 진도가 멈추는 겨울방학은 지난 학년에서 비어 있는 단원을 메우고, 매일 공부하는 시간을 다시 잡기 좋은 때입니다. ${BRAND}은 방학 첫 주 진단으로 학생마다 방학 교재와 단원을 정합니다.</div></div>
+<article class="body">
+<h2>초등학생</h2><p>연산, 어휘, 읽기를 점검하고 빈 단원은 학년을 거슬러 올라가 메웁니다. 분량보다 매일 정해진 시간에 앉아 그날 몫을 끝내는 습관이 먼저입니다. 6학년은 중학교 수학과 이어지는 분수·비율 단원을 따로 확인합니다.</p>
+<h2>중학생</h2><p>1·2학기 시험지와 성적표로 점수를 잃은 단원을 찾고, 수학과 영어의 빈 곳부터 메웁니다. 중3은 고등 수학이 시작되는 인수분해, 이차방정식, 함수 단원을 먼저 진단합니다.</p>
+<h2>고등학생</h2><p>지난 학년 내신과 모의고사 성적을 과목별로 놓고 다시 볼 단원을 정합니다. 새 학년 과목과 평가 일정을 확인해 학기 중 공부 시간을 어떻게 나눌지도 방학에 미리 정해 둡니다.</p>
+<h2>방학 공부 순서</h2>
+${stepsHtml(SEASON.nextSteps.중[0]())}
+${SEASON.nextHow[0]('학교')}
+<h2>우리 학교 겨울방학 준비 찾기</h2><p>와와학습학원 지점에 재학생이 다니는 초·중·고등학교 ${n.toLocaleString()}곳의 겨울방학 페이지입니다. 시도를 눌러 학교를 찾으면 가까운 지점, 수업 과목, 수강료를 함께 볼 수 있습니다.</p>
+<div class="faq">${hubSchoolList(['초', '중', '고'], 'next-grade')}</div>
+${faq.html}
+${guideLinks(['pre-middle', 'pre-high', 'free-semester', 'high1-first-exam', 'daily-routine'], 1, '방학 계획에 도움이 되는 칼럼')}
+</article>
+${ctaBand(null, 1)}</div>`;
+  write('next-grade/index.html', shell({
+    title: `겨울방학 학원, 다음 학년 준비 | ${BRAND}`,
+    desc: fitDesc(`겨울방학 학원 ${BRAND}. 지난 학년 빈 단원 진단, 공부 습관, 새 학기 준비. 초·중·고 ${n.toLocaleString()}개교, 가까운 지점 상담.`),
+    canonical: `${DOMAIN}/next-grade/`, body, depth: 1, ld: faq.ld,
   }));
 }
 
@@ -1665,6 +1874,9 @@ for (const r of Object.values(regions)) {
   }
 }
 for (const s of Object.values(schools)) buildSchool(s);
+for (const s of Object.values(schools)) { if (s.level !== '초') buildSchoolFinal(s); buildSchoolNext(s); }
+buildFinalHub();
+buildNextHub();
 buildMovedPages();
 build404();
 
