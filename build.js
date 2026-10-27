@@ -891,6 +891,24 @@ ${ctaBand(null, 2)}</div>`;
 }
 
 // ── 지점 페이지 ──
+// 지점 소개 글(strengths, 2026-10-27 회사 시트 '센터강점'에서 정리한 공개용 한두 문장, 111곳). 지점 안내 머리에 평문 한 단락으로만 보인다 — 새 디자인 없음.
+//   사람(코치·강사·원장 등)·가격·내부 메모는 기준본을 만들 때 이미 뺐다. 구조화된 칸과 어긋나는 문장은 칸을 믿고 그 문장만 뺀다:
+//   주말 칸이 '주말불가'인데 주말·토·일 수업/특강/보강/보충을 말하는 문장, 토요일만 되는데 일요일 수업을 말하는 문장(자습실·독서실 개방은 수업이 아니라 둔다).
+const STRENGTH_LESSON = '(수업|특강|보강|보충|강의|클리닉)';
+const STRENGTH_DROPPED = [];
+function strengthsPara(b) {
+  const raw = String(b.strengths || '').replace(/\s+/g, ' ').trim();
+  if (!raw) return '';
+  const wk = weekendTxt(b);
+  const drop = [];
+  if (wk === '주말 수업 없음') drop.push(new RegExp('(주말|토요일|일요일|토·일|토일)[^.]*' + STRENGTH_LESSON));
+  else if (/^토요일/.test(wk) && !/일요일|토·일/.test(wk)) drop.push(new RegExp('일요일[^.]*' + STRENGTH_LESSON));
+  else if (/^일요일/.test(wk)) drop.push(new RegExp('토요일[^.]*' + STRENGTH_LESSON));
+  const sentences = raw.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const kept = sentences.filter((x) => !drop.some((re) => re.test(x)));
+  if (kept.length !== sentences.length) STRENGTH_DROPPED.push(`${b.name}: ${sentences.filter((x) => !kept.includes(x)).join(' ')}`);
+  return kept.length ? `<p>${esc(kept.join(' '))}</p>\n` : '';
+}
 function buildBranch(r, d, b) {
   const key = b.branch_slug;
   const lede = pick(COPY.ledeBranch, key)(b);
@@ -912,7 +930,7 @@ ${crumb(3, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { na
 ${classPhoto(3, b.branch_slug)}</div>
 <article class="body">
 ${sectionize(`<h2>지점 안내</h2>
-<div class="tbl-scroll"><table class="info-table">
+${strengthsPara(b)}<div class="tbl-scroll"><table class="info-table">
 <tr><th>주소</th><td>${esc(b.address)}${b.location_guide ? `<br><span style="color:var(--ink-soft);font-size:13.5px">${esc(b.location_guide).replace(/\n/g, '<br>')}</span>` : ''}</td></tr>
 ${nearbyRow(b)}
 <tr><th>수업 과목</th><td><div class="sp-row">${subjPills}</div></td></tr>
@@ -1629,14 +1647,21 @@ const SUBJECT_MOVED = [
   'gyeongbuk/pohang/duho/social', 'gyeonggi/gimpo/unyang/korean', 'gyeonggi/gimpo/unyang/social', 'gyeonggi/namyangju/pyeongnae/korean',
   'gyeonggi/namyangju/pyeongnae/science', 'gyeonggi/pyeongtaek/ichung/korean', 'gyeonggi/pyeongtaek/ichung/science', 'jeju/jeju-si/nohyeong/korean',
   'jeju/jeju-si/nohyeong/science', 'jeju/jeju-si/nohyeong/social', 'seoul/dongdaemun/jegi/social', 'ulsan/bukgu/songjeong/social',
+  // 2026-10-27 마포점 이름 복귀: 옛(염리동) 마포점에만 있던 과학 주소. 지금 마포점(토정로 252)은 과학 미개설이라 지점 페이지로 보낸다
+  'seoul/mapo/mapo/science',
+  // 2026-10-27 회사 시트 반영으로 과목이 빠진 곳 — 서신점 과학, 개신점 국어 (지점 페이지로)
+  'jeonbuk/jeonju/seosin/science', 'chungbuk/cheongju/gaesin/korean',
 ];
 // 주엽 2호점이 주엽점으로 통합되며(2026-08-31) 사라진 지점 주소 4쪽. 손으로 두었던 스텁을 빌드가 같은 내용으로 만든다 (2026-09-30 점검 W5). 사이트맵에는 넣지 않는다.
 // 과목 주소는 새 지점에 같은 과목 페이지가 있으면 그쪽으로, 없으면(주엽점은 과학 미개설) 지점 페이지로 보낸다.
 // 2026-10-15 마포점→마포2호점(10-08 통합), 화성태안점→병점점(사장님 지시로 지금 반영) 통합도 같은 방식.
+// 2026-10-27 사장님 결정: 통합된 마포 지점 이름을 마포점(slug mapo)으로 되돌림 — 내용은 옛 마포2호점(토정로 252) 그대로, 교육지원청 명칭·등록번호도 그대로.
+//   10-15 에 마포점→마포2호점으로 두었던 안내를 거꾸로 돌린다: 마포2호점 주소 5쪽(지점+과목 4)이 마포점으로 간다.
+//   schools 의 숭문중은 옛(염리동) 마포점에만 있던 학교라 페이지가 없다 — 10-15 부터 안내 페이지였고 이제 마포점으로 보낸다. 옛 마포점 과학 주소는 SUBJECT_MOVED.
 // schools: 흡수된 지점에만 적혀 있던 학교라 페이지가 더 만들어지지 않는 같은 시군구 학교 주소 — 남는 지점 페이지로 보낸다(학교 목록은 합치지 않는다).
 const BRANCH_MOVED = {
   'gyeonggi/goyang/juyeob2ho': { to: 'gyeonggi/goyang/juyeob', subjects: ['english', 'math', 'science'] },
-  'seoul/mapo/mapo': { to: 'seoul/mapo/mapo2ho', subjects: ['korean', 'english', 'math', 'science', 'social'], schools: ['숭문중'] },
+  'seoul/mapo/mapo2ho': { to: 'seoul/mapo/mapo', subjects: ['korean', 'english', 'math', 'social'], schools: ['숭문중'] },
   'gyeonggi/hwaseong/hwaseongtaean': { to: 'gyeonggi/hwaseong/byeong', subjects: ['korean', 'english', 'math'], schools: ['송화초', '안용중'] },
 };
 const MOVED_LOG = { school: 0, subject: 0, branch: 0, skipped: [] };
@@ -1924,6 +1949,7 @@ for (const f of ['favicon.ico', 'apple-touch-icon.png']) fs.copyFileSync(path.jo
 console.log('생성 완료:', urls.length, '페이지');
 console.log('이동 안내 페이지: 학교', MOVED_LOG.school, '· 과목', MOVED_LOG.subject, '· 지점', MOVED_LOG.branch, MOVED_LOG.skipped.length ? '· 건너뜀 ' + MOVED_LOG.skipped.join(', ') : '');
 if (DATA_WARN.length) console.warn('[데이터 경고]\n  ' + DATA_WARN.join('\n  '));
+console.log('지점 소개 글(strengths) 실린 지점:', Object.values(BRANCHES).filter((b) => b.strengths).length, STRENGTH_DROPPED.length ? `· 구조화 칸과 어긋나 뺀 문장 ${STRENGTH_DROPPED.length}\n  ${STRENGTH_DROPPED.join('\n  ')}` : '');
 if (SCHOOL_NO_SUBJ.length) console.warn('[학교급에 개설 과목 없는 학교 페이지]', SCHOOL_NO_SUBJ.length, SCHOOL_NO_SUBJ.slice(0, 10).join(', '));
 // description 80자(네이버 권고) 전수 점검 — 넘으면 목록을 출력한다 (2026-09-17 점검 code#8)
 {
