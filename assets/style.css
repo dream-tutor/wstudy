@@ -292,7 +292,7 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
 .form-card .subject-checks label.checked { background: var(--brick); border-color: var(--brick); color: #fff; }
 .form-card .subject-checks label.off { opacity: .45; text-decoration: line-through; cursor: not-allowed; }
 .form-card .subject-checks label:focus-within { outline: 2px solid var(--brick); outline-offset: 1px; }
-@media (max-width: 480px) { .form-card .subject-checks { gap: 5px; } .form-card .subject-checks label { font-size: 13px; } }
+@media (max-width: 480px) { .form-card .subject-checks { gap: 5px; } .form-card .subject-checks label { font-size: 13px; min-width: 52px; } } /* 360px(갤럭시)에서도 다섯 버튼 한 줄: 5×52+4×5=280 ≤ 안쪽 294 */
 /* 상담 폼 공통 부품 — 필수 별·선택 안내·주소 검색 버튼·칸 아래 안내·버튼 아래 전화 줄 (2026-10-28 통일) */
 .form-card .req { color: #e03131; font-weight: 700; }
 .form-card .hint { font-weight: 400; font-size: 13px; color: var(--ink-soft); }
