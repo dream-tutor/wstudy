@@ -1419,48 +1419,62 @@ ${ctaBand(null, 1)}</div>`;
 }
 
 // ── 상담 신청 ──
+// 2026-10-28 사장님 지시: 와와 네 사이트 상담 폼을 wcoachingcenter.com 지점 폼과 같은 구조로(칸 순서·문구·필수 별·details 두 개·버튼·전화 줄). 색·둥글기만 이 사이트 팔레트.
+//   전송 키·순서는 그대로(+문의내용), 과목은 알약 대신 체크박스(value 를 ', ' 로 이어 종전 꼴). 라벨이 들어간 글자는 네 사이트 같게 — 바꿀 때 네 곳 함께.
 function buildInquiry() {
   const body = `<div class="wrap">
 ${crumb(1, [{ name: '상담 신청' }])}
 <div class="page-head"><h1>상담 신청</h1><div class="sub">상담은 예약제로 진행됩니다. 아래 내용을 남겨 주시면 해당 지점에서 시간을 잡아 연락드립니다. 전화가 편하시면 <a href="tel:${TEL}" style="color:var(--brick);font-weight:700">전화 상담</a>을 눌러 주세요.</div></div>
 <div class="form-card">
 <form id="f" method="post" onsubmit="return false">
-<label>지점 선택 <span style="font-weight:400;color:var(--ink-soft)">(모르시면 비워 두셔도 됩니다)</span></label>
+<label for="fSido">상담받을 지점 <span class="hint">(선택 — 모르시면 비워 두셔도 됩니다)</span></label>
 <div class="sel-row three">
 <select id="fSido"><option value="">시/도</option>${Object.values(regions).map((r) => `<option value="${esc(r.name)}">${esc(r.name)}</option>`).join('')}</select>
 <select id="fGu" disabled><option value="">시/군/구</option></select>
 <select name="지점" id="fBranch" disabled><option value="">지점</option></select>
 </div>
-<div class="two"><div><label>학생 이름</label><div style="display:flex;gap:6px"><input name="이름" required placeholder="이름" style="flex:1;min-width:0"><select name="성별" aria-label="성별" style="flex:0 0 52px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="">성별</option><option value="남">남</option><option value="여">여</option></select></div></div>
-<div><label>학부모 연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div></div></div>
-<label for="fAddr">주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label>
+<div class="two"><div><label for="fName">학생 이름 <span class="req">*</span></label><div style="display:flex;gap:6px"><input name="이름" id="fName" required placeholder="이름" style="flex:1;min-width:0"><select name="성별" aria-label="성별" style="flex:0 0 52px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="">성별</option><option value="남">남</option><option value="여">여</option></select></div></div>
+<div><label for="fTel">학부모 연락처 <span class="req">*</span></label><div style="display:flex;gap:6px"><select name="연락처앞" aria-label="연락처 앞자리" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" id="fTel" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div></div></div>
+<label for="fAddr">거주 주소 <span class="req">*</span></label>
 <div class="sel-row" style="align-items:stretch">
-<input name="거주주소" id="fAddr" required placeholder="도로명 검색 또는 직접 입력" autocomplete="street-address" maxlength="80" style="flex:1;min-width:0;background:#fff">
-<button type="button" id="addrBtn" style="flex:0 0 auto;padding:0 14px;border:1.5px solid var(--brick);border-radius:8px;background:#fff;color:var(--brick);font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap">도로명 검색</button>
+<input name="거주주소" id="fAddr" required placeholder="주소 검색 또는 직접 입력" autocomplete="street-address" maxlength="80" style="flex:1;min-width:0;background:#fff">
+<button type="button" id="addrBtn" class="addr-btn">🔍 주소 검색</button>
 </div>
-<label for="fLv">학년</label>
+<p class="field-note">* 도로명 주소까지만 입력해주세요</p>
+<label for="fLv">학년 <span class="req">*</span></label>
 <div class="sel-row">
 <select name="학년급" id="fLv" required><option value="">선택</option><option>초등</option><option>중등</option><option>고등</option><option>기타</option></select>
 <select name="학년상세" id="fGrade" required disabled aria-label="학년 선택"><option value="">-</option></select>
 </div>
-<label>학교 이름 <span style="font-weight:400;color:var(--ink-soft)">(선택)</span></label><input name="학교" placeholder="예: 덕풍중" maxlength="30">
-<label>희망 과목 <span style="font-weight:400;color:var(--ink-soft)">(누르면 선택됩니다)</span></label>
-<div class="subj-pills">${['국어', '영어', '수학', '사회', '과학'].map((s) => `<button type="button" class="sp" data-v="${s}">${s}</button>`).join('')}</div>
+<label for="fSchool">학교 이름 <span class="hint">(선택)</span></label><input name="학교" id="fSchool" placeholder="예: 덕풍중" maxlength="30">
+<label>희망 과목 <span class="req">*</span></label>
+<div class="subject-checks" role="group" aria-label="희망 과목">${['국어', '영어', '수학', '과학', '사회'].map((s) => `<label><input type="checkbox" name="과목" value="${s}"> ${s}</label>`).join('')}</div>
+<label for="fMemo">문의 내용 <span class="hint">(선택)</span></label>
+<textarea name="문의내용" id="fMemo" rows="2" maxlength="500" placeholder="궁금한 점을 짧게 남겨 주세요"></textarea>
 <div class="agree-box">
-<label class="agree" for="fAgree"><input type="checkbox" id="fAgree" checked required onclick="if(!this.checked){alert('체크를 해제하시면 상담 신청이 어렵습니다.');this.checked=true;}"><span>개인정보 수집·이용에 동의합니다 <em>(필수)</em></span></label>
+<label class="agree" for="fAgree"><input type="checkbox" id="fAgree" checked required onclick="if(!this.checked){alert('체크를 해제하시면 상담 신청이 어렵습니다.');this.checked=true;}"><span>개인정보 수집·이용에 동의합니다. <span class="hint">(필수)</span></span></label>
 <details class="agree-more"><summary>수집 항목·이용 목적·보유 기간 보기</summary>
-<ul>
-<li><b>수집 항목</b>필수: 학생 이름, 학부모 연락처, 주소, 학년, 희망 과목 · 선택: 성별, 지점, 학교 이름 · 신청할 때 함께 저장: 신청 일시, 신청한 페이지와 유입 경로</li>
-<li><b>이용 목적</b>상담 연락과 수업·지점 안내</li>
-<li><b>처리 방법</b>신청 내용은 운영자가 관리하는 구글 시트에 저장되고, 상담을 맡을 와와 지점에 전달됩니다.</li>
-<li><b>제공받는 곳과 제공 항목</b>상담을 맡을 와와 지점(지점마다 따로 등록된 학원)에 학생 이름, 학부모 연락처, 주소, 학년, 희망 과목, 성별·학교 이름(적은 경우)을 전달합니다.</li>
-<li><b>보유 기간</b>상담이 끝난 뒤 6개월 이내에 파기합니다. 법령에 따라 보관해야 하는 정보는 그 기간 동안만 보관합니다.</li>
-<li><b>동의 거부</b>동의를 거부할 수 있습니다. 거부하시면 온라인 상담 신청은 할 수 없고, 전화 상담은 그대로 이용할 수 있습니다.</li>
-</ul>
-<a href="../privacy/" target="_blank" rel="noopener">개인정보처리방침 전체 보기</a>
+<div class="agree-body">
+<b>수집 항목</b>: 학생 이름, 성별(선택), 학부모 연락처, 거주 주소, 학년, 희망 지점·과목, 학교 이름(선택), 문의 내용(선택). 신청 일시와 신청한 페이지 주소도 함께 저장됩니다.<br>
+<b>이용 목적</b>: 상담 연락과 수업·지점 안내<br>
+<b>보관</b>: 운영자가 관리하는 구글 시트와 상담 기록에 저장합니다. 서비스 서버가 국외에 있을 수 있습니다.<br>
+<b>보유 기간</b>: 상담이 끝난 뒤 6개월 이내에 파기합니다. 법령에 보관 의무가 있으면 그 기간 동안만 보관합니다.<br>
+동의하지 않으실 수 있습니다. 동의하지 않으시면 온라인 상담 신청은 할 수 없고, 전화 상담은 그대로 이용하실 수 있습니다.<br>
+<a href="../privacy/" target="_blank" rel="noopener">개인정보처리방침 보기</a><br>
+만 14세 미만 학생은 학부모가 작성해 주세요.
+</div>
+</details>
+<details class="agree-more"><summary>받는 곳·제공 항목 보기</summary>
+<div class="agree-body">
+<b>받는 곳</b>: 상담을 맡을 와와 지점 — 고른 지점, 비워 두면 가까운 지점(지점마다 교육청에 따로 등록된 학원)<br>
+<b>제공 목적</b>: 상담 연락과 수업·교습비 안내<br>
+<b>제공 항목</b>: 학생 이름, 성별(적은 경우), 학부모 연락처, 거주 주소, 학년, 희망 과목, 학교 이름·문의 내용(적은 경우)<br>
+<b>받는 곳의 보유 기간</b>: 상담이 끝난 뒤 6개월 이내에 파기합니다. 등록하시면 그 뒤로는 등록한 학원의 개인정보처리방침을 따릅니다.
+</div>
 </details>
 </div>
-<button type="submit" class="submit-btn">상담 신청하기</button>
+<button type="submit" class="submit-btn">📋 지금 상담 신청하기</button>
+<div class="form-note">📞 빠른 상담은 <a href="tel:${TEL}">여기를 눌러 전화 주세요</a></div>
 </form>
 <div class="form-ok" id="ok"><div class="big">신청이 접수되었습니다</div><p>지점에서 상담 시간을 잡아 연락드리겠습니다.</p></div>
 </div></div>
@@ -1495,28 +1509,30 @@ ${crumb(1, [{ name: '상담 신청' }])}
         sel.value=p;break outer;
       }}}}
   }
-  document.querySelectorAll('.subj-pills .sp').forEach(function(b){b.addEventListener('click',function(){if(b.disabled)return;b.classList.toggle('on')})});
+  // 희망 과목 체크박스 — 고르면 라벨 색을 바꾼다 (:has() 대신 change 때 label 에 .checked 토글, 루트 규칙)
+  var subjBoxes=Array.prototype.slice.call(document.querySelectorAll('.subject-checks input[type=checkbox]'));
+  function syncSubj(cb){var l=cb.closest('label');if(l){if(cb.checked)l.classList.add('checked');else l.classList.remove('checked');}}
+  subjBoxes.forEach(function(cb){cb.addEventListener('change',function(){syncSubj(cb)});syncSubj(cb);});
   // 지점 선택 시 해당 지점 미개설 과목은 선택 불가 처리. 학년급(초등·중등·고등)까지 고르면 그 학년급에 열리지 않은 과목도 막는다 (2026-09-17 점검 code#2)
-  function updatePills(){
+  function updateSubjects(){
     var subs=null,gl=null;
     if(sel.value&&sido.value&&gu.value){
       (DATA[sido.value][gu.value]||[]).forEach(function(b){if(b.n===sel.value){subs=b.s||null;gl=b.g||null;}});
     }
     var lvSel=document.getElementById('fLv'),L=({'초등':'초','중등':'중','고등':'고'})[lvSel?lvSel.value:'']||'';
-    document.querySelectorAll('.subj-pills .sp').forEach(function(b){
-      var v=b.getAttribute('data-v');
+    subjBoxes.forEach(function(cb){
+      var v=cb.value,l=cb.closest('label');
       var ok=(!subs||subs.indexOf(v)>-1)&&(!L||!gl||!gl[v]||gl[v].indexOf(L)>-1);
-      b.disabled=!ok;
-      b.style.opacity=ok?'':'0.35';
-      b.style.textDecoration=ok?'':'line-through';
-      if(!ok)b.classList.remove('on');
+      cb.disabled=!ok;
+      if(l){if(ok)l.classList.remove('off');else l.classList.add('off');}
+      if(!ok){cb.checked=false;syncSubj(cb);}
     });
   }
-  sel.addEventListener('change',updatePills);
-  gu.addEventListener('change',updatePills);
-  sido.addEventListener('change',updatePills);
-  if(document.getElementById('fLv'))document.getElementById('fLv').addEventListener('change',updatePills);
-  updatePills();
+  sel.addEventListener('change',updateSubjects);
+  gu.addEventListener('change',updateSubjects);
+  sido.addEventListener('change',updateSubjects);
+  if(document.getElementById('fLv'))document.getElementById('fLv').addEventListener('change',updateSubjects);
+  updateSubjects();
   var addrLayer=document.getElementById('addrLayer');
   function closeAddr(){addrLayer.style.display='none';document.getElementById('addrBox').innerHTML='';}
   document.getElementById('addrClose').addEventListener('click',closeAddr);
@@ -1547,7 +1563,7 @@ ${crumb(1, [{ name: '상담 신청' }])}
   document.getElementById('f').addEventListener('submit',function(e){
     e.preventDefault();
     var f=e.target,btn=f.querySelector('.submit-btn');
-    var subj=Array.from(document.querySelectorAll('.subj-pills .sp.on')).map(function(x){return x.getAttribute('data-v')}).join(', ');
+    var subj=Array.prototype.slice.call(document.querySelectorAll('.subject-checks input[type=checkbox]:checked')).map(function(x){return x.value}).join(', ');
     if(!f.이름.value.trim()){alert('학생 이름을 입력해 주세요.');f.이름.focus();return;}
     // 연락처 자릿수 (2026-09-17 점검 code#5): 010은 뒷자리 8자리(전체 11자리)만, 011·016~019는 뒷자리 7~8자리(전체 10~11자리)만 받는다.
     //   뒷자리 칸에 전체 번호를 적은 경우도 같은 기준으로 본다.
@@ -1559,11 +1575,11 @@ ${crumb(1, [{ name: '상담 신청' }])}
     if(!lvEl.value||(!gdEl.disabled&&!gdEl.value)){alert('학년을 선택해 주세요.');(lvEl.value?gdEl:lvEl).focus();return;}
     if(!subj){alert('희망 과목을 1개 이상 선택해 주세요.');return;}
     if(!document.getElementById('fAgree').checked){alert('개인정보 수집·이용에 동의해 주셔야 상담 신청이 접수됩니다.');document.getElementById('fAgree').focus();return;}
-    btn.disabled=true;btn.textContent='전송 중...';
+    btn.disabled=true;btn.textContent='⏳ 전송 중...';
     // iframe 팝업(embed=1)에서 보내면 유입페이지·유입경로가 iframe 값(/inquiry/?embed=1)이 되므로 같은 출처의 부모 창 값을 쓴다 (2026-09-30, 와와센터와 같은 방식)
     var P=window;try{if(window.parent!==window&&new URLSearchParams(location.search).get('embed')==='1'&&window.parent.location.host===location.host)P=window.parent;}catch(_e){P=window;}
     function normPhone(p,v){v=String(v||'').replace(/\\D/g,'');if(v.length===11)return v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);if(v.length===10)return v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);if(v.length===8)return p+'-'+v.slice(0,4)+'-'+v.slice(4);if(v.length===7)return p+'-'+v.slice(0,3)+'-'+v.slice(3);return p+'-'+v;}
-    var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,성별:f.성별?f.성별.value:'',연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:(function(){var sc=f.학교?f.학교.value.trim():'',lv=f.학년급?f.학년급.value:'',gd=f.학년상세?f.학년상세.value:'';return sc?[sc,gd||lv].filter(Boolean).join(' '):[lv,gd].filter(Boolean).join(' ');})(),학교:f.학교?f.학교.value.trim():'',과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:P.location.href,유입페이지제목:P.document.title,유입경로:P.document.referrer||'직접입력'};
+    var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,성별:f.성별?f.성별.value:'',연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:(function(){var sc=f.학교?f.학교.value.trim():'',lv=f.학년급?f.학년급.value:'',gd=f.학년상세?f.학년상세.value:'';return sc?[sc,gd||lv].filter(Boolean).join(' '):[lv,gd].filter(Boolean).join(' ');})(),학교:f.학교?f.학교.value.trim():'',과목:subj,문의내용:f.문의내용?f.문의내용.value.trim():'',신청일:new Date().toLocaleString('ko-KR'),유입페이지:P.location.href,유입페이지제목:P.document.title,유입경로:P.document.referrer||'직접입력'};
     var q=Object.keys(data).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(data[k])}).join('&');
     (new Image()).src='${GAS}?'+q;
     setTimeout(function(){f.style.display='none';document.getElementById('ok').classList.add('on');},700);
@@ -1586,7 +1602,7 @@ ${crumb(1, [{ name: '개인정보처리방침' }])}
 <div class="page-head"><h1>개인정보처리방침</h1></div>
 <article class="body privacy">
 <h2>수집하는 정보</h2>
-<p>학생 이름, 학부모 연락처, 주소, 학년, 희망 과목을 받습니다. 성별, 상담받을 지점, 학교 이름은 원하실 때만 적습니다.</p>
+<p>학생 이름, 학부모 연락처, 주소, 학년, 희망 과목을 받습니다. 성별, 상담받을 지점, 학교 이름, 문의 내용은 원하실 때만 적습니다.</p>
 <h2>보관 기간</h2>
 <p>상담이 끝난 뒤 6개월 이내에 파기합니다.</p>
 </article>

@@ -285,12 +285,23 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
   background: var(--soft);
 }
 .form-card input:focus, .form-card select:focus, .form-card textarea:focus { outline: none; border-color: var(--navy); }
-.form-card .subj-row { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14.5px; }
-.form-card .subj-row label { display: flex; align-items: center; gap: 5px; margin: 4px 0; font-weight: 400; color: var(--ink); }
-.form-card .subj-row input { width: auto; }
-.subj-pills { display: flex; gap: 6px; }
-.subj-pills .sp { flex: 1; padding: 11px 0; border: 1.5px solid var(--line); border-radius: 8px; background: var(--paper); font-size: 14.5px; font-family: inherit; cursor: pointer; color: var(--ink-soft); font-weight: 600; transition: background .12s, color .12s, border-color .12s; }
-.subj-pills .sp.on { background: var(--brick); border-color: var(--brick); color: #fff; }
+/* 희망 과목 체크박스 — wcoachingcenter 지점 폼과 같은 구조(2026-10-28 사장님 지시: 와와 네 사이트 상담 폼 통일). 라벨 다섯 칸 한 줄 균등, 고르면 .checked(JS 토글 — :has() 안 씀), 지점·학년에 없는 과목은 .off */
+.subject-checks { display: flex; flex-wrap: nowrap; gap: 6px; padding: 2px 0 0; }
+.form-card .subject-checks label { flex: 1; min-width: 0; display: inline-flex; align-items: center; justify-content: center; margin: 0; padding: 10px 0; border: 1.5px solid var(--line); border-radius: 8px; background: var(--paper); font-size: 14px; font-weight: 600; color: var(--ink-soft); cursor: pointer; white-space: nowrap; user-select: none; transition: background .12s, color .12s, border-color .12s; }
+.form-card .subject-checks input { flex: 0 0 auto; width: 15px; height: 15px; padding: 0; margin: 0 4px 0 0; border: 0; border-radius: 0; background: none; accent-color: var(--brick); }
+.form-card .subject-checks label.checked { background: var(--brick); border-color: var(--brick); color: #fff; }
+.form-card .subject-checks label.checked input { accent-color: #fff; }
+.form-card .subject-checks label.off { opacity: .35; text-decoration: line-through; cursor: not-allowed; }
+@media (max-width: 480px) { .form-card .subject-checks { gap: 5px; } .form-card .subject-checks label { font-size: 13px; padding: 9px 0; } .form-card .subject-checks input { width: 14px; height: 14px; margin-right: 3px; } }
+/* 상담 폼 공통 부품 — 필수 별·선택 안내·주소 검색 버튼·칸 아래 안내·버튼 아래 전화 줄 (2026-10-28 통일) */
+.form-card .req { color: #e03131; font-weight: 700; }
+.form-card .hint { font-weight: 400; font-size: 13px; color: var(--ink-soft); }
+.form-card textarea { display: block; resize: vertical; line-height: 1.5; }
+.form-card .addr-btn { flex: 0 0 auto; padding: 0 14px; border: 1.5px solid var(--brick); border-radius: 10px; background: var(--white); color: var(--brick); font-weight: 600; font-size: 14px; font-family: inherit; cursor: pointer; white-space: nowrap; }
+.form-card .addr-btn:hover { background: var(--brick-soft); }
+.form-card .field-note { margin: 5px 0 0; font-size: 12px; color: var(--mute); line-height: 1.5; }
+.form-card .form-note { text-align: center; font-size: 12.5px; color: var(--ink-soft); margin-top: 12px; }
+.form-card .form-note a { color: var(--brick); font-weight: 600; }
 .form-card select { width: 100%; padding: 12px 13px; border: 1px solid var(--line); border-radius: 10px; font-size: 15px; font-family: inherit; background: var(--soft); }
 .form-card select:focus { outline: none; border-color: var(--navy); }
 .form-card select:disabled { color: var(--mute); background: var(--soft); }
@@ -694,12 +705,11 @@ html.js .video-box.rv.rv-in .frame img { transform: none; }
 .agree-box { margin-top: 18px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
 .form-card .agree-box .agree { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14.5px; font-weight: 600; color: var(--ink); cursor: pointer; }
 .form-card .agree-box .agree input { flex: 0 0 auto; width: 18px; height: 18px; padding: 0; margin: 0; accent-color: var(--brick); }
-.agree-box .agree em { font-style: normal; font-weight: 500; font-size: 13px; color: var(--brick); }
 .agree-more { margin-top: 8px; font-size: 13px; color: var(--ink-soft); line-height: 1.65; }
 .agree-more summary { cursor: pointer; color: var(--navy); font-weight: 600; }
-.agree-more ul { margin: 8px 0 8px 18px; }
-.agree-more li { margin-bottom: 4px; }
-.agree-more li b { color: var(--ink); font-weight: 600; margin-right: 6px; }
+.agree-more + .agree-more { margin-top: 6px; }
+.agree-more .agree-body { margin-top: 6px; padding: 10px 12px; background: var(--white); border: 1px solid var(--line); border-radius: 8px; word-break: keep-all; }
+.agree-more .agree-body b { color: var(--ink); font-weight: 600; }
 .agree-more a { color: var(--brick); font-weight: 600; text-decoration: underline; }
 article.body.privacy h2 { font-size: 18px; }
 
