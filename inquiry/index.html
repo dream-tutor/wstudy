@@ -45,8 +45,8 @@
 <select id="fGu" disabled><option value="">시/군/구</option></select>
 <select name="지점" id="fBranch" disabled><option value="">지점</option></select>
 </div>
-<div class="two"><div><label>학생 이름</label><input name="이름" required placeholder="이름"></div>
-<div><label>연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div></div></div>
+<div class="two"><div><label>학생 이름</label><div style="display:flex;gap:6px"><input name="이름" required placeholder="이름" style="flex:1;min-width:0"><select name="성별" aria-label="성별" style="flex:0 0 52px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="">성별</option><option value="남">남</option><option value="여">여</option></select></div></div>
+<div><label>학부모 연락처</label><div style="display:flex;gap:6px"><select name="연락처앞" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div></div></div>
 <label for="fAddr">주소 <span style="font-weight:400;color:var(--ink-soft)">(도로명까지만 적어 주세요)</span></label>
 <div class="sel-row" style="align-items:stretch">
 <input name="거주주소" id="fAddr" required placeholder="도로명 검색 또는 직접 입력" autocomplete="street-address" maxlength="80" style="flex:1;min-width:0;background:#fff">
@@ -64,10 +64,10 @@
 <label class="agree" for="fAgree"><input type="checkbox" id="fAgree" checked required onclick="if(!this.checked){alert('체크를 해제하시면 상담 신청이 어렵습니다.');this.checked=true;}"><span>개인정보 수집·이용에 동의합니다 <em>(필수)</em></span></label>
 <details class="agree-more"><summary>수집 항목·이용 목적·보유 기간 보기</summary>
 <ul>
-<li><b>수집 항목</b>필수: 학생 이름, 연락처, 주소, 학년, 희망 과목 · 선택: 지점, 학교 이름 · 신청할 때 함께 저장: 신청 일시, 신청한 페이지와 유입 경로</li>
+<li><b>수집 항목</b>필수: 학생 이름, 학부모 연락처, 주소, 학년, 희망 과목 · 선택: 성별, 지점, 학교 이름 · 신청할 때 함께 저장: 신청 일시, 신청한 페이지와 유입 경로</li>
 <li><b>이용 목적</b>상담 연락과 수업·지점 안내</li>
 <li><b>처리 방법</b>신청 내용은 운영자가 관리하는 구글 시트에 저장되고, 상담을 맡을 와와 지점에 전달됩니다.</li>
-<li><b>제공받는 곳과 제공 항목</b>상담을 맡을 와와 지점(지점마다 따로 등록된 학원)에 학생 이름, 연락처, 주소, 학년, 희망 과목, 학교 이름(적은 경우)을 전달합니다.</li>
+<li><b>제공받는 곳과 제공 항목</b>상담을 맡을 와와 지점(지점마다 따로 등록된 학원)에 학생 이름, 학부모 연락처, 주소, 학년, 희망 과목, 성별·학교 이름(적은 경우)을 전달합니다.</li>
 <li><b>보유 기간</b>상담이 끝난 뒤 6개월 이내에 파기합니다. 법령에 따라 보관해야 하는 정보는 그 기간 동안만 보관합니다.</li>
 <li><b>동의 거부</b>동의를 거부할 수 있습니다. 거부하시면 온라인 상담 신청은 할 수 없고, 전화 상담은 그대로 이용할 수 있습니다.</li>
 </ul>
@@ -177,7 +177,7 @@
     // iframe 팝업(embed=1)에서 보내면 유입페이지·유입경로가 iframe 값(/inquiry/?embed=1)이 되므로 같은 출처의 부모 창 값을 쓴다 (2026-09-30, 와와센터와 같은 방식)
     var P=window;try{if(window.parent!==window&&new URLSearchParams(location.search).get('embed')==='1'&&window.parent.location.host===location.host)P=window.parent;}catch(_e){P=window;}
     function normPhone(p,v){v=String(v||'').replace(/\D/g,'');if(v.length===11)return v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);if(v.length===10)return v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);if(v.length===8)return p+'-'+v.slice(0,4)+'-'+v.slice(4);if(v.length===7)return p+'-'+v.slice(0,3)+'-'+v.slice(3);return p+'-'+v;}
-    var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:(function(){var sc=f.학교?f.학교.value.trim():'',lv=f.학년급?f.학년급.value:'',gd=f.학년상세?f.학년상세.value:'';return sc?[sc,gd||lv].filter(Boolean).join(' '):[lv,gd].filter(Boolean).join(' ');})(),학교:f.학교?f.학교.value.trim():'',과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:P.location.href,유입페이지제목:P.document.title,유입경로:P.document.referrer||'직접입력'};
+    var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,성별:f.성별?f.성별.value:'',연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:(function(){var sc=f.학교?f.학교.value.trim():'',lv=f.학년급?f.학년급.value:'',gd=f.학년상세?f.학년상세.value:'';return sc?[sc,gd||lv].filter(Boolean).join(' '):[lv,gd].filter(Boolean).join(' ');})(),학교:f.학교?f.학교.value.trim():'',과목:subj,신청일:new Date().toLocaleString('ko-KR'),유입페이지:P.location.href,유입페이지제목:P.document.title,유입경로:P.document.referrer||'직접입력'};
     var q=Object.keys(data).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(data[k])}).join('&');
     (new Image()).src='https://script.google.com/macros/s/AKfycbybsuTZMjzlp3HkkVaUX0IUFnNlSfnnN0DGThb-2BOIwZ8IyZNnMgkwoWOb_muHCEx5/exec?'+q;
     setTimeout(function(){f.style.display='none';document.getElementById('ok').classList.add('on');},700);
