@@ -1421,6 +1421,7 @@ ${ctaBand(null, 1)}</div>`;
 // ── 상담 신청 ──
 // 2026-10-28 사장님 지시: 와와 네 사이트 상담 폼을 wcoachingcenter.com 지점 폼과 같은 구조로(칸 순서·문구·필수 별·details 두 개·버튼·전화 줄). 색·둥글기만 이 사이트 팔레트.
 //   전송 키·순서는 그대로(+문의내용), 과목은 알약 대신 체크박스(value 를 ', ' 로 이어 종전 꼴). 라벨이 들어간 글자는 네 사이트 같게 — 바꿀 때 네 곳 함께.
+//   같은 날 사장님 "체크표시 말고 버튼식으로·국영수사과(기타 없음)": 체크박스 네모는 CSS 로 숨기고 라벨 전체가 버튼(t.js 가 name="과목" 체크박스를 읽어 초안에 싣으므로 input 마크업은 유지), 순서 국어·영어·수학·사회·과학. 라벨 글자 앞 공백 없음(숨긴 뒤 글자가 가운데 오게).
 function buildInquiry() {
   const body = `<div class="wrap">
 ${crumb(1, [{ name: '상담 신청' }])}
@@ -1448,7 +1449,7 @@ ${crumb(1, [{ name: '상담 신청' }])}
 </div>
 <label for="fSchool">학교 이름 <span class="hint">(선택)</span></label><input name="학교" id="fSchool" placeholder="예: 덕풍중" maxlength="30">
 <label>희망 과목 <span class="req">*</span></label>
-<div class="subject-checks" role="group" aria-label="희망 과목">${['국어', '영어', '수학', '과학', '사회'].map((s) => `<label><input type="checkbox" name="과목" value="${s}"> ${s}</label>`).join('')}</div>
+<div class="subject-checks" role="group" aria-label="희망 과목">${['국어', '영어', '수학', '사회', '과학'].map((s) => `<label><input type="checkbox" name="과목" value="${s}">${s}</label>`).join('')}</div>
 <label for="fMemo">문의 내용 <span class="hint">(선택)</span></label>
 <textarea name="문의내용" id="fMemo" rows="2" maxlength="500" placeholder="궁금한 점을 짧게 남겨 주세요"></textarea>
 <div class="agree-box">
@@ -1509,7 +1510,7 @@ ${crumb(1, [{ name: '상담 신청' }])}
         sel.value=p;break outer;
       }}}}
   }
-  // 희망 과목 체크박스 — 고르면 라벨 색을 바꾼다 (:has() 대신 change 때 label 에 .checked 토글, 루트 규칙)
+  // 희망 과목 버튼(체크박스 네모는 CSS 로 숨김) — 고르면 라벨 색을 바꾼다 (:has() 대신 change 때 label 에 .checked 토글, 루트 규칙)
   var subjBoxes=Array.prototype.slice.call(document.querySelectorAll('.subject-checks input[type=checkbox]'));
   function syncSubj(cb){var l=cb.closest('label');if(l){if(cb.checked)l.classList.add('checked');else l.classList.remove('checked');}}
   subjBoxes.forEach(function(cb){cb.addEventListener('change',function(){syncSubj(cb)});syncSubj(cb);});

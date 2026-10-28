@@ -285,14 +285,14 @@ footer.site .brand { color: #e8e4dc; font-weight: 700; font-size: 15px; margin-b
   background: var(--soft);
 }
 .form-card input:focus, .form-card select:focus, .form-card textarea:focus { outline: none; border-color: var(--navy); }
-/* 희망 과목 체크박스 — wcoachingcenter 지점 폼과 같은 구조(2026-10-28 사장님 지시: 와와 네 사이트 상담 폼 통일). 라벨 다섯 칸 한 줄 균등, 고르면 .checked(JS 토글 — :has() 안 씀), 지점·학년에 없는 과목은 .off */
-.subject-checks { display: flex; flex-wrap: nowrap; gap: 6px; padding: 2px 0 0; }
-.form-card .subject-checks label { flex: 1; min-width: 0; display: inline-flex; align-items: center; justify-content: center; margin: 0; padding: 10px 0; border: 1.5px solid var(--line); border-radius: 8px; background: var(--paper); font-size: 14px; font-weight: 600; color: var(--ink-soft); cursor: pointer; white-space: nowrap; user-select: none; transition: background .12s, color .12s, border-color .12s; }
-.form-card .subject-checks input { flex: 0 0 auto; width: 15px; height: 15px; padding: 0; margin: 0 4px 0 0; border: 0; border-radius: 0; background: none; accent-color: var(--brick); }
+/* 희망 과목 버튼 — wcoachingcenter 지점 폼과 같은 구조(2026-10-28 사장님 지시: 와와 네 사이트 상담 폼 통일, 같은 날 "체크표시 말고 버튼식으로"). 체크박스 네모는 숨기고(t.js 가 읽는 name="과목" input 은 그대로) 라벨 전체가 버튼, 다섯 칸 한 줄(좁으면 줄바꿈), 고르면 .checked(JS 토글 — :has() 안 씀), 지점·학년에 없는 과목은 .off. user-select 는 쓰지 않는다 */
+.subject-checks { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 0 0; }
+.form-card .subject-checks label { flex: 1 1 auto; min-width: 56px; display: inline-flex; align-items: center; justify-content: center; margin: 0; padding: 9px 0; border: 1.5px solid var(--line); border-radius: 8px; background: var(--paper); font-size: 14px; font-weight: 600; color: var(--ink-soft); cursor: pointer; white-space: nowrap; transition: background .12s, color .12s, border-color .12s; }
+.form-card .subject-checks input[type=checkbox] { position: absolute; opacity: 0; width: 0; height: 0; margin: 0; padding: 0; border: 0; pointer-events: none; }
 .form-card .subject-checks label.checked { background: var(--brick); border-color: var(--brick); color: #fff; }
-.form-card .subject-checks label.checked input { accent-color: #fff; }
-.form-card .subject-checks label.off { opacity: .35; text-decoration: line-through; cursor: not-allowed; }
-@media (max-width: 480px) { .form-card .subject-checks { gap: 5px; } .form-card .subject-checks label { font-size: 13px; padding: 9px 0; } .form-card .subject-checks input { width: 14px; height: 14px; margin-right: 3px; } }
+.form-card .subject-checks label.off { opacity: .45; text-decoration: line-through; cursor: not-allowed; }
+.form-card .subject-checks label:focus-within { outline: 2px solid var(--brick); outline-offset: 1px; }
+@media (max-width: 480px) { .form-card .subject-checks { gap: 5px; } .form-card .subject-checks label { font-size: 13px; } }
 /* 상담 폼 공통 부품 — 필수 별·선택 안내·주소 검색 버튼·칸 아래 안내·버튼 아래 전화 줄 (2026-10-28 통일) */
 .form-card .req { color: #e03131; font-weight: 700; }
 .form-card .hint { font-weight: 400; font-size: 13px; color: var(--ink-soft); }

@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=e7e2d819">
+<link rel="stylesheet" href="../assets/style.css?v=b2bfe99d">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://wstudycenter.com/"},{"@type":"ListItem","position":2,"name":"상담 신청"}]},{"@type":"WebPage","name":"상담 신청 | 와와학습학원","description":"와와학습학원 상담 신청. 학생의 학교·학년·희망 과목을 남겨 주시면 지점에서 연락드립니다.","url":"https://wstudycenter.com/inquiry/","datePublished":"2026-07-24","dateModified":"2026-09-27","inLanguage":"ko-KR"}]}</script>
 </head>
 <body>
@@ -60,7 +60,7 @@
 </div>
 <label for="fSchool">학교 이름 <span class="hint">(선택)</span></label><input name="학교" id="fSchool" placeholder="예: 덕풍중" maxlength="30">
 <label>희망 과목 <span class="req">*</span></label>
-<div class="subject-checks" role="group" aria-label="희망 과목"><label><input type="checkbox" name="과목" value="국어"> 국어</label><label><input type="checkbox" name="과목" value="영어"> 영어</label><label><input type="checkbox" name="과목" value="수학"> 수학</label><label><input type="checkbox" name="과목" value="과학"> 과학</label><label><input type="checkbox" name="과목" value="사회"> 사회</label></div>
+<div class="subject-checks" role="group" aria-label="희망 과목"><label><input type="checkbox" name="과목" value="국어">국어</label><label><input type="checkbox" name="과목" value="영어">영어</label><label><input type="checkbox" name="과목" value="수학">수학</label><label><input type="checkbox" name="과목" value="사회">사회</label><label><input type="checkbox" name="과목" value="과학">과학</label></div>
 <label for="fMemo">문의 내용 <span class="hint">(선택)</span></label>
 <textarea name="문의내용" id="fMemo" rows="2" maxlength="500" placeholder="궁금한 점을 짧게 남겨 주세요"></textarea>
 <div class="agree-box">
@@ -121,7 +121,7 @@
         sel.value=p;break outer;
       }}}}
   }
-  // 희망 과목 체크박스 — 고르면 라벨 색을 바꾼다 (:has() 대신 change 때 label 에 .checked 토글, 루트 규칙)
+  // 희망 과목 버튼(체크박스 네모는 CSS 로 숨김) — 고르면 라벨 색을 바꾼다 (:has() 대신 change 때 label 에 .checked 토글, 루트 규칙)
   var subjBoxes=Array.prototype.slice.call(document.querySelectorAll('.subject-checks input[type=checkbox]'));
   function syncSubj(cb){var l=cb.closest('label');if(l){if(cb.checked)l.classList.add('checked');else l.classList.remove('checked');}}
   subjBoxes.forEach(function(cb){cb.addEventListener('change',function(){syncSubj(cb)});syncSubj(cb);});
