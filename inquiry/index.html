@@ -49,7 +49,7 @@
 <div><label for="fTel">학부모 연락처 <span class="req">*</span></label><div style="display:flex;gap:6px"><select name="연락처앞" aria-label="연락처 앞자리" style="flex:0 0 44px;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;padding:0"><option value="010" selected>010</option><option value="011">011</option><option value="016">016</option><option value="017">017</option><option value="018">018</option><option value="019">019</option></select><input name="연락처" id="fTel" required placeholder="1234-5678" inputmode="tel" style="flex:1;min-width:0"></div></div></div>
 <label for="fAddr">거주 주소 <span class="req">*</span></label>
 <div class="sel-row" style="align-items:stretch">
-<input name="거주주소" id="fAddr" required placeholder="주소 검색 또는 직접 입력" autocomplete="street-address" maxlength="80" style="flex:1;min-width:0;background:#fff">
+<input name="거주주소" id="fAddr" required placeholder="눌러서 주소 검색" autocomplete="street-address" maxlength="80" style="flex:1;min-width:0;background:#fff">
 <button type="button" id="addrBtn" class="addr-btn">🔍 주소 검색</button>
 </div>
 <p class="field-note">* 도로명 주소까지만 입력해주세요</p>
@@ -147,8 +147,8 @@
   updateSubjects();
   var addrLayer=document.getElementById('addrLayer');
   function closeAddr(){addrLayer.style.display='none';document.getElementById('addrBox').innerHTML='';}
-  document.getElementById('addrClose').addEventListener('click',closeAddr);
-  addrLayer.addEventListener('click',function(e){if(e.target===addrLayer)closeAddr();});
+  document.getElementById('addrClose').addEventListener('click',function(){closeAddr();addrManual();});
+  addrLayer.addEventListener('click',function(e){if(e.target===addrLayer){closeAddr();addrManual();}});
   document.getElementById('addrBtn').addEventListener('click',function(){
     function openPost(){
       addrLayer.style.display='block';
@@ -158,8 +158,13 @@
       }).embed(document.getElementById('addrBox'));
     }
     if(window.daum&&window.daum.Postcode){openPost();return;}
-    var s=document.createElement('script');s.src='https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';s.onload=openPost;s.onerror=function(){alert('주소 검색을 불러오지 못했습니다. 주소를 칸에 직접 입력해 주세요.');var a=document.getElementById('fAddr');if(a)a.focus();};document.head.appendChild(s);
+    var s=document.createElement('script');s.src='https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';s.onload=openPost;s.onerror=function(){alert('주소 검색을 불러오지 못했습니다. 주소를 칸에 직접 입력해 주세요.');addrManual();};document.head.appendChild(s);
   });
+  /* 주소 칸을 누르면 바로 주소 검색(2026-11-06 사장님 "주소 빈칸 누르면 도로명주소 검색") — 휴대폰 글자판이 먼저 뜨지 않게 inputmode none(스크립트가 붙인다 — 스크립트가 안 돌면 보통 칸).
+     ×·바깥을 눌러 닫거나 검색을 못 불러오면 그때부터 손으로 적는다. 칸은 readonly 로 막지 않는다(루트 규칙 — readonly 면 required 검사가 빠지고 직접 입력도 못 한다). */
+  var addrIn=document.getElementById('fAddr'),addrHand=false;
+  function addrManual(){addrHand=true;if(!addrIn)return;addrIn.removeAttribute('inputmode');addrIn.placeholder='주소를 직접 입력해 주세요';addrIn.focus();}
+  if(addrIn){addrIn.setAttribute('inputmode','none');addrIn.addEventListener('click',function(){if(addrHand||addrLayer.style.display==='block')return;addrIn.blur();document.getElementById('addrBtn').click();});}
 
   (function(){
     var lv=document.getElementById('fLv'),gd=document.getElementById('fGrade');
