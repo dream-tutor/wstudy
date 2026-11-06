@@ -1661,7 +1661,12 @@ const SCHOOL_RENAMED = {
   'gyeonggi/bucheon': { 증흥고: '중흥고' },
   'daegu/suseong': { 동중: '대구동중' },
   'gangwon/chuncheon': { 춘여고: '춘천여고' },
+  // 2026-11-06 루원시티점 '신형중'은 신현중(나이스 E10|7361094) 오타 — 본사 원자료부터 오타, 나이스에 '신형'이 든 학교 없음
+  'incheon/seogu': { 신형중: '신현중' },
 };
+// 학교 아래 시즌 페이지(/final-exam/·/next-grade/, 2026-10-16 생김)까지 공개된 뒤 이름을 고친 학교 — 옛 이름 시즌 주소도 같은 안내를 둔다.
+// 09-29 세 곳은 시즌 페이지가 생기기 전에 고쳐 옛 시즌 주소가 없다(공개된 적 없는 주소에 안내를 새로 만들지 않는다).
+const SCHOOL_RENAMED_SEASON = ['incheon/seogu/신형중'];
 // 과목 중단으로 지운 동+과목 페이지 20쪽 (git 8a7a20c·f10de7f). 404 대신 지점 페이지로 옮긴다 (2026-09-17 점검 code#15).
 const SUBJECT_MOVED = [
   'chungbuk/cheongju/gaesin/science', 'gyeonggi/ansan/gojan/korean', 'gyeonggi/gimpo/janggi/korean', 'gyeonggi/gimpo/janggi/science',
@@ -1721,6 +1726,13 @@ function buildMovedPages() {
       const target = built.has(nowRel) ? `${DOMAIN}/${dir}/school/${encodeURIComponent(now)}/` : `${DOMAIN}/${dir}/`;
       movedStub(`${dir}/school/${old}/index.html`, target);
       MOVED_LOG.school++;
+      if (!SCHOOL_RENAMED_SEASON.includes(`${dir}/${old}`)) continue;
+      for (const sub of ['final-exam', 'next-grade']) {
+        // 새 이름 학교에 같은 시즌 페이지가 있으면 그쪽, 없으면(초등은 기말 없음) 새 이름 학교 페이지로
+        const subRel = `${nowRel}${sub}/`;
+        movedStub(`${dir}/school/${old}/${sub}/index.html`, built.has(subRel) ? `${DOMAIN}/${dir}/school/${encodeURIComponent(now)}/${sub}/` : target);
+        MOVED_LOG.school++;
+      }
     }
   }
   for (const rel of SUBJECT_MOVED) {

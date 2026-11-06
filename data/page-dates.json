@@ -2025,8 +2025,6 @@
   "/gyeonggi/pyeongtaek/school/효명고/final-exam/": "2026-10-16",
   "/gyeonggi/pyeongtaek/school/효명고/next-grade/": "2026-10-16",
   "/incheon/seogu/school/가현초/next-grade/": "2026-10-16",
-  "/incheon/seogu/school/신형중/final-exam/": "2026-10-16",
-  "/incheon/seogu/school/신형중/next-grade/": "2026-10-16",
   "/incheon/seogu/school/신현여중/final-exam/": "2026-10-16",
   "/incheon/seogu/school/신현여중/next-grade/": "2026-10-16",
   "/incheon/seogu/school/가현중/final-exam/": "2026-10-16",
@@ -2171,7 +2169,10 @@
   "/seoul/gangseo/school/명덕여자고등학교/final-exam/": "2026-10-27",
   "/seoul/gangseo/school/명덕여자고등학교/next-grade/": "2026-10-27",
   "/seoul/gangseo/school/화곡고/final-exam/": "2026-10-27",
-  "/seoul/gangseo/school/화곡고/next-grade/": "2026-10-27"
+  "/seoul/gangseo/school/화곡고/next-grade/": "2026-10-27",
+  "/incheon/seogu/school/신현중/": "2026-11-06",
+  "/incheon/seogu/school/신현중/final-exam/": "2026-11-06",
+  "/incheon/seogu/school/신현중/next-grade/": "2026-11-06"
  },
  "revised": {
   "/guide/": "2026-09-17",
