@@ -893,9 +893,53 @@ ${ctaBand(null, 2)}</div>`;
 // ── 지점 페이지 ──
 // 지점 소개 글(strengths, 2026-10-27 회사 시트 '센터강점'에서 정리한 공개용 한두 문장, 111곳). 지점 안내 머리에 평문 한 단락으로만 보인다 — 새 디자인 없음.
 //   사람(코치·강사·원장 등)·가격·내부 메모는 기준본을 만들 때 이미 뺐다. 구조화된 칸과 어긋나는 문장은 칸을 믿고 그 문장만 뺀다:
-//   주말 칸이 '주말불가'인데 주말·토·일 수업/특강/보강/보충을 말하는 문장, 토요일만 되는데 일요일 수업을 말하는 문장(자습실·독서실 개방은 수업이 아니라 둔다).
+//   주말 칸이 '주말불가'인데 주말·토·일 수업/특강/보강/보충을 말하는 문장, 토요일만 되는데 일요일 수업을 말하는 문장(자습실·독서실 개방은 수업이 아니라 둔다),
+//   개설 과목(subjects)에 없는 과목 이름이나 개설 과목 수와 다른 '○ 과목'을 말하는 문장(2026-11-10 점검 wstudy-A-3 — center·와와레슨과 같은 대조).
+// 와와 금지어(코칭센터 마케팅 가이드 — 교육청 단속 사유. 1:1·일대일, 입시·대입, 진학·진로, 선행, 컨설팅, 과외, 학원 글의 온라인 수업, 공부방·교습소, 과장 표현)도
+//   이 빌드가 거른다(2026-11-10 점검 wstudy-A-1 — 전에는 주말 칸만 대조해 지점 31곳 소개 글에 그대로 실렸다). 기준본 글은 다른 와와 사이트도 읽으므로 고치지 않는다.
+//   ① STRENGTH_EDIT: 금지어가 문장 일부에만 걸린 문장은 그 부분만 덜어 낸 글로 바꾼다. 기준본 문장과 글자까지 같을 때만 쓰이고,
+//      기준본 글이 바뀌어 안 맞게 되면 빌드가 알려 준다(그때는 ②③이 대신 거른다 — 지우거나 새 문장에 맞춰 고칠 것).
+//   ② STRENGTH_BAN: 바꿔 쓸 말이 없는 낱말이 남은 문장은 문장째 뺀다. 입시 상담·진도를 앞서 나간다는 문장은 되살리지 않는다(lib/copy.js 머리말).
+//   ③ STRENGTH_SWAP: 1:1·1대1·일대일 → 개별·밀착, 컨설팅 → 상담.
+//   '특강'은 금지어 목록에 없어 거르지 않는다(넣을지는 사장님 판단 — 2026-11-10 점검 메모).
 const STRENGTH_LESSON = '(수업|특강|보강|보충|강의|클리닉)';
+const STRENGTH_EDIT = new Map([
+  ['학생 유형에 맞춘 수업과 폭넓은 진학 상담을 진행합니다.', '학생 유형에 맞춘 수업을 진행합니다.'], // 사동
+  ['전문관에서 수업을 진행하며, 입시 상담도 함께 진행합니다.', '전문관에서 수업을 진행합니다.'], // 수지
+  ['학교 수행평가와 내신을 관리하고, 매월 정기고사로 성취도를 확인하며 입시 상담도 가능합니다.', '학교 수행평가와 내신을 관리하고, 매월 정기고사로 성취도를 확인합니다.'], // 이곡
+  ['국어·영어·수학·사회·과학을 초중고 전 학년 일대일로 수업하며, 주말에는 일대일 방문 수업도 병행할 수 있습니다.', '국어·영어·수학·사회·과학을 초중고 전 학년 개별로 수업합니다.'], // 대구도남
+  ['수학은 방학 선행 뒤 개학 후 보완 학습을 하고 시험 4주 전부터 시험 연습에 들어갑니다.', '수학은 개학 후 보완 학습을 하고 시험 4주 전부터 시험 연습에 들어갑니다.'], // 염창
+  ['초중고 내신과 입시 준비를 함께 하며, 내방공부9도 코칭 과정도 운영합니다.', '초중고 내신을 준비하며, 내방공부9도 코칭 과정도 운영합니다.'], // 반월당
+  ['입시설명회와 코칭데이는 정기적으로 열립니다.', '코칭데이는 정기적으로 열립니다.'], // 반월당
+  ['단원평가 시스템으로 학습 상황을 점검하고, 전과목 관리와 입시 상담을 진행합니다.', '단원평가 시스템으로 학습 상황을 점검하고, 전과목을 관리합니다.'], // 수지(글로리드)
+  ['매월 정기평가 후 보고서와 코칭평가서를 전달하고, 코칭데이와 입시설명회로 부족한 부분을 짚습니다.', '매월 정기평가 후 보고서와 코칭평가서를 전달하고, 코칭데이로 부족한 부분을 짚습니다.'], // 다산도농
+  ['학원과 과외의 장점을 합친 1대1 맞춤 수업으로, 학생에게 필요한 수업을 구성합니다.', '학생에게 필요한 수업을 맞춤으로 구성합니다.'], // 송파위례
+  ['시험 대비 플랜과 방학 학습 관리를 운영하고, 공부법·입시 상담을 수시로 진행합니다.', '시험 대비 플랜과 방학 학습 관리를 운영하고, 공부법 상담을 수시로 진행합니다.'], // 송파위례
+  ['시험 기간에는 시험 대비 집중반을 운영해 학교 시험을 준비하고, 입시 코칭데이를 따로 마련해 진학 방향을 함께 살핍니다.', '시험 기간에는 시험 대비 집중반을 운영해 학교 시험을 준비합니다.'], // 후곡
+  ['입시설명회와 코칭데이도 정기적으로 진행합니다.', '코칭데이도 정기적으로 진행합니다.'], // 대구역
+  ['초등 기초부터 고등 입시까지 국어·영어·수학·과학을 수업합니다.', '초등 기초부터 고등까지 국어·영어·수학·과학을 수업합니다.'], // 신봉
+  ['과목별 수강과 전과목 관리가 모두 가능하고, 내신·입시 대비 특별반과 매주 토요일 국어 특강을 운영합니다.', '과목별 수강과 전과목 관리가 모두 가능하고, 내신 대비 특별반과 매주 토요일 국어 특강을 운영합니다.'], // 신봉
+  ['플래너 중심의 학습 지도와 AI 온라인 학습을 병행하며, 시험 기간에는 전 과목을 대비하고 입시 지도도 가능합니다.', '플래너 중심으로 학습을 지도하고, 시험 기간에는 전 과목을 대비합니다.'], // 충주용산
+  ['플래너 중심의 학습 관리와 함께 수행평가·입시 관리를 진행합니다.', '플래너 중심의 학습 관리와 함께 수행평가 관리를 진행합니다.'], // 종암
+  ['국어·영어·수학·사회·과학 전 과목을 수업하며, 과목 학습에 그치지 않고 입시 컨설팅까지 이어지는 All Care Class를 운영합니다.', '국어·영어·수학·사회·과학 전 과목을 수업합니다.'], // 영통
+  ['초등에서 대입까지 이어지는 장기 로드맵으로 학습을 연계합니다.', '초등에서 고등까지 이어지는 장기 로드맵으로 학습을 연계합니다.'], // 동소문
+]);
+const STRENGTH_BAN = /입시|(?<![가-힣])대입(?!니다|하|해)|진학|(?<![가-힣])진로|선행|(?<!교)과외|방문\s*수업|온라인|공부방(?!법)|교습소|종합학원|단과학원|최고(?!\s*학년)|최대(?!한)|제일(?![고중초여])|유일|일타|100\s*%/;
+const STRENGTH_1ON1 = '(?:(?<!\\d)1\\s*:\\s*1(?!\\d)|(?<!\\d)1\\s*대\\s*1(?!\\d)|일대일)';
+const STRENGTH_SWAP = [
+  [new RegExp(STRENGTH_1ON1 + '에\\s*가깝게\\s*관리', 'g'), '밀착해 관리'],
+  [new RegExp('학생\\s*' + STRENGTH_1ON1 + '\\s*', 'g'), '학생별 밀착 '],
+  [new RegExp(STRENGTH_1ON1 + '(?:로)?\\s*(?=밀착|개별)', 'g'), ''],
+  [new RegExp(STRENGTH_1ON1 + '\\s*(?=맞춤)', 'g'), '개별 '],
+  [new RegExp(STRENGTH_1ON1 + '로\\s*', 'g'), '밀착해 '],
+  [new RegExp(STRENGTH_1ON1 + '\\s*', 'g'), '밀착 '],
+  [/컨설팅/g, '상담'],
+];
+const STRENGTH_SUBJ = { 국어: /(?<!외)국어/, 영어: /영어/, 수학: /수학(?!여행)/, 과학: /과학(?![고중초])/, 사회: /사회(?![성적])/ };
+const STRENGTH_KNUM = { 두: 2, 세: 3, 네: 4, 다섯: 5 };
 const STRENGTH_DROPPED = [];
+const STRENGTH_EDIT_USED = new Set();
+let STRENGTH_SHOWN = 0;
 function strengthsPara(b) {
   const raw = String(b.strengths || '').replace(/\s+/g, ' ').trim();
   if (!raw) return '';
@@ -904,9 +948,21 @@ function strengthsPara(b) {
   if (wk === '주말 수업 없음') drop.push(new RegExp('(주말|토요일|일요일|토·일|토일)[^.]*' + STRENGTH_LESSON));
   else if (/^토요일/.test(wk) && !/일요일|토·일/.test(wk)) drop.push(new RegExp('일요일[^.]*' + STRENGTH_LESSON));
   else if (/^일요일/.test(wk)) drop.push(new RegExp('토요일[^.]*' + STRENGTH_LESSON));
-  const sentences = raw.split(/(?<=[.!?])\s+/).filter(Boolean);
-  const kept = sentences.filter((x) => !drop.some((re) => re.test(x)));
-  if (kept.length !== sentences.length) STRENGTH_DROPPED.push(`${b.name}: ${sentences.filter((x) => !kept.includes(x)).join(' ')}`);
+  const subs = b.subjects || [];
+  const subjBad = (x) => Object.entries(STRENGTH_SUBJ).some(([s, re]) => !subs.includes(s) && re.test(x))
+    || (((m) => m && STRENGTH_KNUM[m[1]] !== subs.length)(x.match(/(?<![가-힣])(두|세|네|다섯)\s*과목(?!씩)/)));
+  const kept = [];
+  const dropped = [];
+  for (const orig of raw.split(/(?<=[.!?])\s+/).filter(Boolean)) {
+    let s = orig;
+    if (STRENGTH_EDIT.has(orig)) { s = STRENGTH_EDIT.get(orig); STRENGTH_EDIT_USED.add(orig); }
+    const why = drop.some((re) => re.test(s)) ? '주말' : STRENGTH_BAN.test(s) ? '금지어' : subjBad(s) ? '과목' : '';
+    if (why) { dropped.push(`[${why}] ${orig}`); continue; }
+    for (const [re, to] of STRENGTH_SWAP) s = s.replace(re, to);
+    kept.push(s);
+  }
+  if (dropped.length) STRENGTH_DROPPED.push(`${b.name}: ${dropped.join(' ')}`);
+  if (kept.length) STRENGTH_SHOWN++;
   return kept.length ? `<p>${esc(kept.join(' '))}</p>\n` : '';
 }
 function buildBranch(r, d, b) {
@@ -1983,7 +2039,8 @@ for (const f of ['favicon.ico', 'apple-touch-icon.png']) fs.copyFileSync(path.jo
 console.log('생성 완료:', urls.length, '페이지');
 console.log('이동 안내 페이지: 학교', MOVED_LOG.school, '· 과목', MOVED_LOG.subject, '· 지점', MOVED_LOG.branch, MOVED_LOG.skipped.length ? '· 건너뜀 ' + MOVED_LOG.skipped.join(', ') : '');
 if (DATA_WARN.length) console.warn('[데이터 경고]\n  ' + DATA_WARN.join('\n  '));
-console.log('지점 소개 글(strengths) 실린 지점:', Object.values(BRANCHES).filter((b) => b.strengths).length, STRENGTH_DROPPED.length ? `· 구조화 칸과 어긋나 뺀 문장 ${STRENGTH_DROPPED.length}\n  ${STRENGTH_DROPPED.join('\n  ')}` : '');
+console.log('지점 소개 글(strengths) 실린 지점:', STRENGTH_SHOWN, '/ 기준본', Object.values(BRANCHES).filter((b) => b.strengths).length, `· 금지어 부분만 덜어 낸 문장 ${STRENGTH_EDIT_USED.size}`, STRENGTH_DROPPED.length ? `· 문장을 뺀 지점 ${STRENGTH_DROPPED.length}(주말 칸·금지어·개설 과목)\n  ${STRENGTH_DROPPED.join('\n  ')}` : '');
+{ const stale = [...STRENGTH_EDIT.keys()].filter((k) => !STRENGTH_EDIT_USED.has(k)); if (stale.length) console.warn(`[STRENGTH_EDIT 중 기준본에 없는 문장 ${stale.length} — 기준본 글이 바뀜, 지우거나 새 문장에 맞출 것]\n  ` + stale.join('\n  ')); }
 if (SCHOOL_NO_SUBJ.length) console.warn('[학교급에 개설 과목 없는 학교 페이지]', SCHOOL_NO_SUBJ.length, SCHOOL_NO_SUBJ.slice(0, 10).join(', '));
 // description 80자(네이버 권고) 전수 점검 — 넘으면 목록을 출력한다 (2026-09-17 점검 code#8)
 {
