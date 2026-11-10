@@ -11,6 +11,8 @@ const CSS_V = require('crypto').createHash('md5').update(fs.readFileSync(path.jo
 const GUIDES = [...require('./lib/guides-habit.js'), ...require('./lib/guides-subject.js'), ...require('./lib/guides-grade.js')];
 const REVIEWS = fs.existsSync(path.join(__dirname, 'data', 'reviews.json')) ? require('./data/reviews.json') : [];
 const SCHOOL_GEO = fs.existsSync(path.join(__dirname, 'data', 'school-geo.json')) ? require('./data/school-geo.json') : {};
+// 학교 좌표 찾기. 기준본 district 가 빈 지점(세종)은 빌드가 '세종시'로 채우지만 좌표 파일 키는 빈값('세종||새뜸중')이라 그 키로도 찾는다 (2026-11-10 점검 wstudy-A-4)
+function schoolGeo(s) { return SCHOOL_GEO[`${s.region}|${s.district}|${s.name}`] || SCHOOL_GEO[`${s.region}||${s.name}`]; }
 
 const ROOT = __dirname;
 const DOMAIN = 'https://wstudycenter.com';
@@ -161,7 +163,7 @@ function feeSection(b) {
   const mins = { 초등: b.time_elem, 중등: b.time_mid, 고등: b.time_high };
   const rows = Object.entries(t).map(([lv, p]) => `<tr><th>${lv}</th><td class="tm">${lessonMin(mins[lv])}</td><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr>`).join('');
   return `<h2 id="fee">수강료 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">${esc(b.name)}의 월 교습비 기준표(원)입니다. 지점에 등록된 교습비는 표 아래 교습비 공시 자료에서 확인할 수 있고, 수업 시간과 횟수는 상담에서 정합니다.</p>
-<div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>학년</th><th class="tm">1회 수업</th><th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div><div class="fee-legal">${feeWho(b)}</div>`;
+<div class="tbl-scroll" tabindex="0" role="region" aria-label="수강료 표"><table class="info-table fee-table"><thead><tr><th>학년</th><th class="tm">1회 수업</th><th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div><div class="fee-legal">${feeWho(b)}</div>`;
 }
 // 학교 페이지용: 해당 학교 학년(초/중/고)에 맞춘 지점별 교습비. 지점마다 금액 줄 바로 아래에 그 금액의 학원 명칭·등록번호·공시 자료 줄을 붙인다.
 // up: 학교 페이지(깊이 4)는 '../../', 학교 아래 시즌 페이지(깊이 5)는 '../../../' — 시군구 폴더까지 올라가는 경로
@@ -174,7 +176,7 @@ function schoolFeeSection(s, up = '../../') {
     return `<tr class="fee-row"><th><a href="${up}${b.branch_slug}/#fee" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td class="tm">${lessonMin(b[minKey])}</td><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td></tr><tr class="fee-who"><td colspan="5"><div class="fee-legal">${feeWho(b)}</div></td></tr>`;
   }).join('');
   return `<h2 id="fee">${esc(s.name)} 학생 수강료 안내</h2><p style="color:var(--ink-soft);font-size:14px;margin-bottom:4px">${lv}부 월 교습비 기준표(원)입니다. ${many ? '지점마다 금액과 1회 수업 시간이 다를 수 있어 지점별로 나눠 적었고, ' : ''}금액 아래에 학원 정식 명칭과 교육청 등록번호, 교습비 공시 자료를 함께 두었습니다. 수업 시간과 횟수는 상담에서 정합니다.</p>
-<div class="tbl-scroll"><table class="info-table fee-table"><thead><tr><th>지점</th><th class="tm">1회 수업</th><th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+<div class="tbl-scroll" tabindex="0" role="region" aria-label="지점별 수강료 표"><table class="info-table fee-table"><thead><tr><th>지점</th><th class="tm">1회 수업</th><th>주2회</th><th>주3회</th><th>주5회</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 // ── 데이터 구조화 ──
@@ -986,7 +988,7 @@ ${crumb(3, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { na
 ${classPhoto(3, b.branch_slug)}</div>
 <article class="body">
 ${sectionize(`<h2>지점 안내</h2>
-${strengthsPara(b)}<div class="tbl-scroll"><table class="info-table">
+${strengthsPara(b)}<div class="tbl-scroll" tabindex="0" role="region" aria-label="지점 안내 표"><table class="info-table">
 <tr><th>주소</th><td>${esc(b.address)}${b.location_guide ? `<br><span style="color:var(--ink-soft);font-size:13.5px">${esc(b.location_guide).replace(/\n/g, '<br>')}</span>` : ''}</td></tr>
 ${nearbyRow(b)}
 <tr><th>수업 과목</th><td><div class="sp-row">${subjPills}</div></td></tr>
@@ -1068,7 +1070,7 @@ ${wayBlock(true, key)}
 ${gradeBlocks}
 ${bv ? video(bv, `${BRAND} ${b.name} 영상`) : ''}
 <h2>지점 정보</h2>
-<div class="tbl-scroll"><table class="info-table">
+<div class="tbl-scroll" tabindex="0" role="region" aria-label="지점 정보 표"><table class="info-table">
 <tr><th>지점</th><td><a href="../" style="color:var(--brick);font-weight:600">${BRAND} ${esc(b.name)}</a></td></tr>
 <tr><th>주소</th><td>${esc(b.address)}</td></tr>
 <tr><th>수업 시간</th><td>${esc(hoursTxt(b))}</td></tr>
@@ -1116,7 +1118,7 @@ function buildSchool(s) {
   // 나이스 학교기본정보·학사일정은 2026-09-08 사용자 지시로 비노출(오류 데이터 많음). data/school-info.json·school-codes.json은 폴더에 남겨 두되 읽지도 렌더링하지도 않는다(미사용 require는 2026-09-30 제거).
   // 학사일정 위젯 (나이스 코드 확보된 학교만 — myschool 워커 API 경유, 24h 캐시)
   // 학교→지점 거리 (지오코딩 성공 + 8km 이내일 때만 — 좌표 오매칭 방지)
-  const geo = SCHOOL_GEO[`${s.region}|${s.district}|${s.name}`];
+  const geo = schoolGeo(s);
   // 이 학교 학생이 들을 수 있는 과목 = 지점 개설 과목 중 이 학교급(초·중·고) 학년이 열린 과목 (2026-09-17 점검 code#2)
   const subsOf = (b) => (b.subjects || []).filter((sj) => offered(b, sj, s.level));
   const bRows = s.branches.map((b) => {
@@ -1141,7 +1143,7 @@ ${crumb(4, [{ name: s.region, slug: s.region_slug }, { name: s.district, slug: s
 ${bodyBlock}
 ${(() => { const ww = ['국어', '영어', '수학', '사회', '과학'].filter((x) => s.branches.some((br) => subsOf(br).includes(x))); return ww.length ? pick(COPY.wawaWay, key + 'way')(ww) : COPY.wawaWay[2](); })()}
 <h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2>
-<div class="tbl-scroll"><table class="info-table">${bRows}</table></div>
+<div class="tbl-scroll" tabindex="0" role="region" aria-label="다닐 수 있는 지점 표"><table class="info-table">${bRows}</table></div>
 ${(() => {
   const mpts = s.branches.filter((b) => b.lat && b.lng).map((b) => ({ n: b.name, la: b.lat, lo: b.lng, u: `../../${b.branch_slug}/` }));
   const scOk = geo && s.branches.some((b) => b.lat && b.lng && distM(geo.lat, geo.lng, b.lat, b.lng) <= 8000);
@@ -1199,7 +1201,7 @@ function schoolSubs(s) {
 function oneOrMore(s) { const bn = s.branches.map((b) => b.name); return bn[0] + (bn.length > 1 ? ` 외 ${bn.length - 1}곳` : ''); }
 // 학교에서 지점까지의 거리 표기는 학교 페이지(buildSchool)와 같은 규칙. up = 시군구 폴더까지 올라가는 경로
 function schoolBranchTable(s, up) {
-  const geo = SCHOOL_GEO[`${s.region}|${s.district}|${s.name}`];
+  const geo = schoolGeo(s);
   const rows = s.branches.map((b) => {
     let dist = '';
     if (geo && b.lat && b.lng) {
@@ -1209,7 +1211,7 @@ function schoolBranchTable(s, up) {
     const subs = (b.subjects || []).filter((sj) => offered(b, sj, s.level));
     return `<tr><th><a href="${up}${b.branch_slug}/" style="color:var(--brick);font-weight:600">${esc(b.name)}</a></th><td>${dist}${esc(b.address)}<br><span style="color:var(--ink-soft);font-size:13.5px">${esc([subs.join(' · ') || '과목은 상담 시 확인', openTimeTxt(b)].filter(Boolean).join(' · '))}</span></td></tr>`;
   }).join('');
-  return `<h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2><div class="tbl-scroll"><table class="info-table">${rows}</table></div>`;
+  return `<h2>${esc(s.name)} 학생이 다닐 수 있는 지점</h2><div class="tbl-scroll" tabindex="0" role="region" aria-label="다닐 수 있는 지점 표"><table class="info-table">${rows}</table></div>`;
 }
 function stepsHtml(steps) {
   return `<div class="steps wk st">${steps.map(([no, t, d]) => `<div class="step"><span class="no">${esc(no)}</span><div class="t">${esc(t)}</div><div class="d">${esc(d)}</div></div>`).join('')}</div>`;
@@ -1637,14 +1639,19 @@ ${crumb(1, [{ name: '상담 신청' }])}
     if(!lvEl.value||(!gdEl.disabled&&!gdEl.value)){alert('학년을 선택해 주세요.');(lvEl.value?gdEl:lvEl).focus();return;}
     if(!subj){alert('희망 과목을 1개 이상 선택해 주세요.');return;}
     if(!document.getElementById('fAgree').checked){alert('개인정보 수집·이용에 동의해 주셔야 상담 신청이 접수됩니다.');document.getElementById('fAgree').focus();return;}
-    btn.disabled=true;btn.textContent='⏳ 전송 중...';
+    var btnTxt=btn.textContent;btn.disabled=true;btn.textContent='⏳ 전송 중...';
     // iframe 팝업(embed=1)에서 보내면 유입페이지·유입경로가 iframe 값(/inquiry/?embed=1)이 되므로 같은 출처의 부모 창 값을 쓴다 (2026-09-30, 와와센터와 같은 방식)
     var P=window;try{if(window.parent!==window&&new URLSearchParams(location.search).get('embed')==='1'&&window.parent.location.host===location.host)P=window.parent;}catch(_e){P=window;}
     function normPhone(p,v){v=String(v||'').replace(/\\D/g,'');if(v.length===11)return v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);if(v.length===10)return v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);if(v.length===8)return p+'-'+v.slice(0,4)+'-'+v.slice(4);if(v.length===7)return p+'-'+v.slice(0,3)+'-'+v.slice(3);return p+'-'+v;}
     var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,성별:f.성별?f.성별.value:'',연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:(function(){var sc=f.학교?f.학교.value.trim():'',lv=f.학년급?f.학년급.value:'',gd=f.학년상세?f.학년상세.value:'';return sc?[sc,gd||lv].filter(Boolean).join(' '):[lv,gd].filter(Boolean).join(' ');})(),학교:f.학교?f.학교.value.trim():'',과목:subj,문의내용:f.문의내용?f.문의내용.value.trim():'',신청일:new Date().toLocaleString('ko-KR'),유입페이지:P.location.href,유입페이지제목:P.document.title,유입경로:P.document.referrer||'직접입력'};
     var q=Object.keys(data).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(data[k])}).join('&');
-    (new Image()).src='${GAS}?'+q;
-    setTimeout(function(){f.style.display='none';document.getElementById('ok').classList.add('on');},700);
+    /* GAS 는 CORS 헤더가 없어 응답은 못 읽지만, no-cors fetch 는 서버에 닿으면 resolve·못 닿으면 reject 라 전달 여부는 가려진다.
+       이미지 요청은 둘을 구분하지 못해 전송 실패도 접수 완료로 보였다(2026-11-10 점검 wstudy-B-2, 카네기1·러닝트래블과 같은 방식). t.js 는 fetch 도 후킹하므로 문의 집계는 그대로. */
+    var url='${GAS}?'+q,settled=false;
+    function finish(ok){if(settled)return;settled=true;if(ok){f.style.display='none';document.getElementById('ok').classList.add('on');}else{btn.disabled=false;btn.textContent=btnTxt;alert('접수가 전달되지 않았습니다. 인터넷 연결을 확인하고 다시 보내 주세요. 급하시면 전화로 연락 주셔도 됩니다.');}}
+    var timer=setTimeout(function(){finish(false);},10000);
+    if(window.fetch){fetch(url,{mode:'no-cors',cache:'no-store'}).then(function(){clearTimeout(timer);finish(true);},function(){clearTimeout(timer);finish(false);});}
+    else{(new Image()).src=url;setTimeout(function(){clearTimeout(timer);finish(true);},700);}
   });
 })();
 </script>`;
@@ -1850,10 +1857,10 @@ ${crumb(1, [{ name: '내신 등급 계산기' }])}
 <h2>석차등급은 이렇게 정해집니다</h2>
 <p>고등학교 성적표의 석차등급은 과목 석차를 수강자 수에 비춰 정합니다. 먼저 수강자 수에 등급별 누적 비율을 곱하고 반올림해 등급별 누적 인원을 구합니다. 석차가 그 인원 안에 들면 해당 등급입니다.</p>
 <p>예를 들어 5등급 체제에서 수강자가 178명이면 1등급 누적 인원은 17.8을 반올림한 18명이고, 2등급 누적 인원은 60.52를 반올림한 61명입니다. 석차 18등까지 1등급, 19등부터 61등까지 2등급입니다.</p>
-<div class="tbl-scroll"><table class="info-table calc-cuts"><tbody>
+<div class="tbl-scroll" tabindex="0" role="region" aria-label="5등급 누적 비율 표"><table class="info-table calc-cuts"><tbody>
 <tr><th>5등급<br><span>2025년 이후 입학</span></th>${cutRow(5)}</tr>
 </tbody></table></div>
-<div class="tbl-scroll"><table class="info-table calc-cuts"><tbody>
+<div class="tbl-scroll" tabindex="0" role="region" aria-label="9등급 누적 비율 표"><table class="info-table calc-cuts"><tbody>
 <tr><th>9등급<br><span>2024년 이전 입학</span></th>${cutRow(9)}</tr>
 </tbody></table></div>
 <p style="color:var(--ink-soft);font-size:14px">표의 숫자는 누적 비율입니다. 5등급 체제의 2등급은 10% 초과 34% 이하입니다.</p>

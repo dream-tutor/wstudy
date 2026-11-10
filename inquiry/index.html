@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css?v=781bc5cf">
+<link rel="stylesheet" href="../assets/style.css?v=65a57683">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://wstudycenter.com/"},{"@type":"ListItem","position":2,"name":"상담 신청"}]},{"@type":"WebPage","name":"상담 신청 | 와와학습학원","description":"와와학습학원 상담 신청. 학생의 학교·학년·희망 과목을 남겨 주시면 지점에서 연락드립니다.","url":"https://wstudycenter.com/inquiry/","datePublished":"2026-07-24","dateModified":"2026-09-27","inLanguage":"ko-KR"}]}</script>
 </head>
 <body>
@@ -192,14 +192,19 @@
     if(!lvEl.value||(!gdEl.disabled&&!gdEl.value)){alert('학년을 선택해 주세요.');(lvEl.value?gdEl:lvEl).focus();return;}
     if(!subj){alert('희망 과목을 1개 이상 선택해 주세요.');return;}
     if(!document.getElementById('fAgree').checked){alert('개인정보 수집·이용에 동의해 주셔야 상담 신청이 접수됩니다.');document.getElementById('fAgree').focus();return;}
-    btn.disabled=true;btn.textContent='⏳ 전송 중...';
+    var btnTxt=btn.textContent;btn.disabled=true;btn.textContent='⏳ 전송 중...';
     // iframe 팝업(embed=1)에서 보내면 유입페이지·유입경로가 iframe 값(/inquiry/?embed=1)이 되므로 같은 출처의 부모 창 값을 쓴다 (2026-09-30, 와와센터와 같은 방식)
     var P=window;try{if(window.parent!==window&&new URLSearchParams(location.search).get('embed')==='1'&&window.parent.location.host===location.host)P=window.parent;}catch(_e){P=window;}
     function normPhone(p,v){v=String(v||'').replace(/\D/g,'');if(v.length===11)return v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);if(v.length===10)return v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);if(v.length===8)return p+'-'+v.slice(0,4)+'-'+v.slice(4);if(v.length===7)return p+'-'+v.slice(0,3)+'-'+v.slice(3);return p+'-'+v;}
     var data={지점:f.지점.value||'일반문의(와와학습학원)',이름:f.이름.value,성별:f.성별?f.성별.value:'',연락처:normPhone(f.연락처앞?f.연락처앞.value:'010',f.연락처.value),거주주소:f.거주주소.value,학년:(function(){var sc=f.학교?f.학교.value.trim():'',lv=f.학년급?f.학년급.value:'',gd=f.학년상세?f.학년상세.value:'';return sc?[sc,gd||lv].filter(Boolean).join(' '):[lv,gd].filter(Boolean).join(' ');})(),학교:f.학교?f.학교.value.trim():'',과목:subj,문의내용:f.문의내용?f.문의내용.value.trim():'',신청일:new Date().toLocaleString('ko-KR'),유입페이지:P.location.href,유입페이지제목:P.document.title,유입경로:P.document.referrer||'직접입력'};
     var q=Object.keys(data).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(data[k])}).join('&');
-    (new Image()).src='https://script.google.com/macros/s/AKfycbybsuTZMjzlp3HkkVaUX0IUFnNlSfnnN0DGThb-2BOIwZ8IyZNnMgkwoWOb_muHCEx5/exec?'+q;
-    setTimeout(function(){f.style.display='none';document.getElementById('ok').classList.add('on');},700);
+    /* GAS 는 CORS 헤더가 없어 응답은 못 읽지만, no-cors fetch 는 서버에 닿으면 resolve·못 닿으면 reject 라 전달 여부는 가려진다.
+       이미지 요청은 둘을 구분하지 못해 전송 실패도 접수 완료로 보였다(2026-11-10 점검 wstudy-B-2, 카네기1·러닝트래블과 같은 방식). t.js 는 fetch 도 후킹하므로 문의 집계는 그대로. */
+    var url='https://script.google.com/macros/s/AKfycbybsuTZMjzlp3HkkVaUX0IUFnNlSfnnN0DGThb-2BOIwZ8IyZNnMgkwoWOb_muHCEx5/exec?'+q,settled=false;
+    function finish(ok){if(settled)return;settled=true;if(ok){f.style.display='none';document.getElementById('ok').classList.add('on');}else{btn.disabled=false;btn.textContent=btnTxt;alert('접수가 전달되지 않았습니다. 인터넷 연결을 확인하고 다시 보내 주세요. 급하시면 전화로 연락 주셔도 됩니다.');}}
+    var timer=setTimeout(function(){finish(false);},10000);
+    if(window.fetch){fetch(url,{mode:'no-cors',cache:'no-store'}).then(function(){clearTimeout(timer);finish(true);},function(){clearTimeout(timer);finish(false);});}
+    else{(new Image()).src=url;setTimeout(function(){clearTimeout(timer);finish(true);},700);}
   });
 })();
 </script>

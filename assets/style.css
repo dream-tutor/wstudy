@@ -763,3 +763,20 @@ article.body.privacy h2 { font-size: 18px; }
 /* 시즌 페이지 주차 일정 — 라벨('4주 전', '방학 첫 주')이 길어 번호 칸을 넓힌다 (2026-10-15) */
 .steps.wk .step { grid-template-columns: 5.2rem 1fr; }
 @media (max-width: 640px) { .steps.wk .step { grid-template-columns: 1fr; } }
+/* 가로로 넘치는 표: 넘칠 때만 그쪽 가장자리에 그림자가 생기고 끝까지 밀면 꺼진다(덮개 2장 local + 그림자 2장 scroll, 2026-09-23 전 사이트 규칙 · 2026-11-10 점검 wstudy-B-3).
+   표 자체 배경은 그림자를 가리므로 투명으로 두고 흰 바탕은 컨테이너가 표 높이만큼 깐다. 표의 위아래 바깥 여백은 컨테이너 안쪽 여백으로 옮겨 간격은 그대로다. */
+.tbl-scroll {
+  padding: 14px 0 22px;
+  background-image:
+    linear-gradient(to right, var(--white) 30%, rgba(255,255,255,0)),
+    linear-gradient(to left, var(--white) 30%, rgba(255,255,255,0)),
+    linear-gradient(to right, rgba(34,49,78,.16), rgba(34,49,78,0)),
+    linear-gradient(to left, rgba(34,49,78,.16), rgba(34,49,78,0)),
+    linear-gradient(var(--white), var(--white));
+  background-position: left 0 top 14px, right 0 top 14px, left 0 top 14px, right 0 top 14px, left 0 top 14px;
+  background-size: 40px calc(100% - 36px), 40px calc(100% - 36px), 14px calc(100% - 36px), 14px calc(100% - 36px), 100% calc(100% - 36px);
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll, scroll;
+}
+.tbl-scroll > .info-table, article.body .blk.band .tbl-scroll > .info-table { margin: 0; background: transparent; }
+.tbl-scroll:focus-visible { outline: 2px solid var(--brick); outline-offset: 2px; }
