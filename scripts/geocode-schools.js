@@ -9,7 +9,7 @@ const geo = fs.existsSync(OUT) ? JSON.parse(fs.readFileSync(OUT, 'utf8')) : {};
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function query(q) {
   const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=kr&q=' + encodeURIComponent(q);
-  const r = await fetch(url, { headers: { 'User-Agent': 'wstudycenter-site-build/1.0 (amystic57@gmail.com)' } });
+  const r = await fetch(url, { headers: { 'User-Agent': 'wstudycenter-site-build/1.0 (+https://wstudycenter.com)' } });
   if (!r.ok) return null;
   const d = await r.json();
   return d[0] ? { lat: +d[0].lat, lng: +d[0].lon } : null;
