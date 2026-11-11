@@ -13709,12 +13709,12 @@
  "청라점": {
   "name": "청라점",
   "region": "인천",
-  "district": "서구",
+  "district": "서해구",
   "dong": "청라동",
   "region_slug": "incheon",
-  "district_slug": "seogu",
+  "district_slug": "seohae",
   "branch_slug": "cheongla",
-  "address": "인천 서구 중봉대로 588 청라센트럴프라자 609",
+  "address": "인천 서해구 중봉대로 588 청라센트럴프라자 609",
   "location_guide": "",
   "subjects": [
    "국어",
@@ -13852,7 +13852,7 @@
   "lat": 37.5321086,
   "lng": 126.6502646,
   "kakao_link": "http://kko.to/iz25CQCDo",
-  "nearby_text": "인천 서구 청라동 / 청라풍림엑슬루타워아파트 인근",
+  "nearby_text": "인천 서해구 청라동 / 청라풍림엑슬루타워아파트 인근",
   "office": "와와학습코칭청라학원",
   "reg": "인천서부교육지원청 등록 서부 제1903호",
   "fee_link": "https://drive.google.com/file/d/1OXA3FyvfSKwzuGlWKMHeC11z4vCGqgv8/view?usp=sharing"
@@ -28205,12 +28205,12 @@
  "루원시티점": {
   "name": "루원시티점",
   "region": "인천",
-  "district": "서구",
+  "district": "서해구",
   "dong": "신현동",
   "region_slug": "incheon",
-  "district_slug": "seogu",
+  "district_slug": "seohae",
   "branch_slug": "luwonsiti",
-  "address": "인천 서구 새오개로111번안길 23 대릉빌딩 302호",
+  "address": "인천 서해구 새오개로111번안길 23 대릉빌딩 302호",
   "location_guide": "",
   "subjects": [
    "국어",
@@ -28346,7 +28346,7 @@
   "lat": 37.5224607,
   "lng": 126.6640258,
   "kakao_link": "http://kko.to/Cicqt3yc_",
-  "nearby_text": "인천 서구 신현동 / 루원시티 대성베르힐 아파트 앞",
+  "nearby_text": "인천 서해구 신현동 / 루원시티 대성베르힐 아파트 앞",
   "office": "루원시티점와와학습코칭학원",
   "reg": "인천서부교육지원청 등록 서부 제2212호",
   "fee_link": "https://drive.google.com/file/d/1vnp1MJv5LeEZDGL3JIddYzbNv80M1hjx/view?usp=sharing"

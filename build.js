@@ -862,7 +862,7 @@ function buildDistrict(r, d) {
   const body = `<div class="wrap">
 ${crumb(2, [{ name: r.name, slug: r.slug }, { name: d.name }])}
 <div class="page-head"><span class="tag">${esc(r.name)}</span><h1>${esc(d.name)} 초중고 학원, ${BRAND}</h1><div class="sub">${esc(d.name)} ${d.branches.length}개 지점에 인근 ${schoolsHere.length}개 학교 학생들이 다니고 있습니다.</div></div>
-<article class="body">
+<article class="body">${DISTRICT_NOTE[`${r.slug}/${d.slug}`] ? `\n<p style="color:var(--ink-soft);font-size:14px">${esc(DISTRICT_NOTE[`${r.slug}/${d.slug}`])}</p>` : ''}
 ${(() => {
   const dpts = d.branches.map((b) => ({ n: b.name, gu: guOf(b) || '', dong: b.dong || '', la: b.lat, lo: b.lng, u: `/${r.slug}/${d.slug}/${b.branch_slug}/` }));
   const gus = new Set(dpts.map((p) => p.gu).filter(Boolean));
@@ -1111,7 +1111,7 @@ ${ctaBand(b, 4)}
 // ── 학교 페이지 ──
 const SCHOOL_NO_SUBJ = []; // 이 학교급에 개설된 과목이 있는 지점이 하나도 없는 학교 (빌드 로그로 확인)
 function buildSchool(s) {
-  const key = `${s.region_slug}/${s.district_slug}/${s.name}`;
+  const key = `${seedDir(s.region_slug, s.district_slug)}/${s.name}`; // 문구 씨앗(옮긴 시군구는 옛 slug — SEED_DIR)
   const b0 = s.branches[0];
   const lede = pick(COPY.schoolLede[s.level], key)(s.name, b0.name, b0.dong);
   const bodyBlock = pick(COPY.schoolBody[s.level], key + 'b')(s.name);
@@ -1248,7 +1248,7 @@ const NEXT_INTRO = [
 ];
 
 function buildSchoolFinal(s) {
-  const key = `${s.region_slug}/${s.district_slug}/${s.name}/final`;
+  const key = `${seedDir(s.region_slug, s.district_slug)}/${s.name}/final`;
   const b0 = s.branches[0];
   const lv = s.level;
   const subs = schoolSubs(s);
@@ -1288,7 +1288,7 @@ ${schoolFeeSection(s, '../../../')}
 }
 
 function buildSchoolNext(s) {
-  const key = `${s.region_slug}/${s.district_slug}/${s.name}/next`;
+  const key = `${seedDir(s.region_slug, s.district_slug)}/${s.name}/next`;
   const b0 = s.branches[0];
   const lv = s.level;
   const subs = schoolSubs(s);
@@ -1724,6 +1724,27 @@ const SCHOOL_MOVED = {
   'gyeonggi/goyang': ['성라초 성사초', '화수중 성사중 원당중', '성사고 화수고'],
   'gyeonggi/namyangju': ['해밀초 화봉초', '풍양중 주곡중', '진접고 오남고'],
 };
+// 시군구 이름·주소가 바뀐 곳 (2026-11-11 사장님 "서해구 표기 바꿔줘" — 인천 행정구역 개편 2026-07-01, 「인천광역시 서구 명칭 변경에 관한 법률」).
+// 기준본 청라점·루원시티점을 서해구(seohae — 와와학원 학습가이드와 같은 slug)로 고쳤고, 옛 seogu 주소 중 사이트맵에 있던 36쪽은
+// 같은 하위 경로의 새 주소로 옮기는 noindex 안내만 둔다(GitHub Pages 라 301 불가 — BRANCH_MOVED·SCHOOL_RENAMED 와 같은 movedStub, 사이트맵 밖).
+// paths 는 공개됐던 주소만 적는다(공개된 적 없는 주소에 안내를 새로 만들지 않는다). 새 쪽에 같은 페이지가 없으면 한 단계씩 위로, 끝은 새 시군구 페이지.
+// 광주·대전 서구(seogu)는 개편과 무관하다 — 키에 시도까지 적는다.
+const DISTRICT_MOVED = {
+  'incheon/seogu': {
+    to: 'incheon/seohae',
+    paths: [
+      '', 'cheongla/', 'cheongla/korean/', 'cheongla/english/', 'cheongla/math/', 'cheongla/science/',
+      'luwonsiti/', 'luwonsiti/korean/', 'luwonsiti/english/', 'luwonsiti/math/',
+      ...['청라중', '해원중', '청라고', '해원고', '신현중', '신현여중', '가현중', '신현고'].flatMap((n) => [`school/${n}/`, `school/${n}/final-exam/`, `school/${n}/next-grade/`]),
+      'school/가현초/', 'school/가현초/next-grade/',
+    ],
+  },
+};
+// 옮긴 시군구는 문구 변형을 고르는 씨앗만 옛 slug 로 둔다 — 옮긴 학교·시즌 페이지 본문이 옛 주소 본문과 같게(이름·주소·날짜만 바뀜)
+const SEED_DIR = { 'incheon/seohae': 'incheon/seogu' };
+function seedDir(rs, ds) { return SEED_DIR[`${rs}/${ds}`] || `${rs}/${ds}`; }
+// 시군구 페이지 머리 아래 개편 안내 한 줄(옛 구 이름은 제목·설명문에 쓰지 않는다 — 가이드·레슨 GU_NOTE 와 같은 문장)
+const DISTRICT_NOTE = { 'incheon/seohae': '2026년 7월 1일 행정구역 개편으로 인천 서구는 서해구로 이름이 바뀌었고, 검단 지역은 검단구로 나뉘었습니다.' };
 // 기준본에 옛 이름·오타로 적혀 같은 학교 페이지가 두 벌 만들어졌던 주소 (2026-09-29, center ee2e47b0f와 같은 표기).
 // 기준본은 새 이름으로 고쳤고, 옛 주소는 새 이름 학교 페이지로 옮기는 noindex 안내만 남긴다. 사이트맵에는 넣지 않는다.
 const SCHOOL_RENAMED = {
@@ -1731,6 +1752,7 @@ const SCHOOL_RENAMED = {
   'daegu/suseong': { 동중: '대구동중' },
   'gangwon/chuncheon': { 춘여고: '춘천여고' },
   // 2026-11-06 루원시티점 '신형중'은 신현중(나이스 E10|7361094) 오타 — 본사 원자료부터 오타, 나이스에 '신형'이 든 학교 없음
+  // 2026-11-11 서해구 이전 뒤로는 옛 신형중 안내가 incheon/seohae 의 신현중으로 바로 간다(키는 옛 안내 자리라 seogu 그대로 — 아래 nowDir)
   'incheon/seogu': { 신형중: '신현중' },
 };
 // 학교 아래 시즌 페이지(/final-exam/·/next-grade/, 2026-10-16 생김)까지 공개된 뒤 이름을 고친 학교 — 옛 이름 시즌 주소도 같은 안내를 둔다.
@@ -1760,7 +1782,7 @@ const BRANCH_MOVED = {
   'seoul/mapo/mapo2ho': { to: 'seoul/mapo/mapo', subjects: ['korean', 'english', 'math', 'social'], schools: ['숭문중'] },
   'gyeonggi/hwaseong/hwaseongtaean': { to: 'gyeonggi/hwaseong/byeong', subjects: ['korean', 'english', 'math'], schools: ['송화초', '안용중'] },
 };
-const MOVED_LOG = { school: 0, subject: 0, branch: 0, skipped: [] };
+const MOVED_LOG = { school: 0, subject: 0, branch: 0, district: 0, skipped: [] };
 function buildMovedPages() {
   const built = new Set(urls);
   for (const [old, { to, subjects, schools: oldSchools = [] }] of Object.entries(BRANCH_MOVED)) {
@@ -1776,6 +1798,16 @@ function buildMovedPages() {
       MOVED_LOG.school++;
     }
   }
+  for (const [old, { to, paths }] of Object.entries(DISTRICT_MOVED)) {
+    for (const p of paths) {
+      if (built.has(`${old}/${p}`)) { MOVED_LOG.skipped.push(`${old}/${p}`); continue; } // 기준본이 옛 구로 돌아가 페이지가 다시 생겼으면 덮어쓰지 않는다
+      const seg = p.split('/').filter(Boolean);
+      while (seg.length && !built.has(`${to}/${seg.join('/')}/`)) seg.pop(); // 새 쪽에 같은 페이지가 없으면 한 단계씩 위로
+      const rel = seg.length ? `${to}/${seg.join('/')}/` : `${to}/`;
+      movedStub(`${old}/${p}index.html`, `${DOMAIN}/${rel.split('/').map((x) => encodeURIComponent(x)).join('/')}`);
+      MOVED_LOG.district++;
+    }
+  }
   for (const [dir, olds] of Object.entries(SCHOOL_MOVED)) {
     const [rs, ds] = dir.split('/');
     for (const old of olds) {
@@ -1788,18 +1820,19 @@ function buildMovedPages() {
     }
   }
   for (const [dir, map] of Object.entries(SCHOOL_RENAMED)) {
+    const nowDir = (DISTRICT_MOVED[dir] || {}).to || dir; // 시군구가 옮겨졌으면 새 시군구의 새 이름 학교로 바로(안내를 두 번 거치지 않게)
     for (const [old, now] of Object.entries(map)) {
       // 옛 이름이 기준본에 다시 들어와 페이지가 만들어졌으면 덮어쓰지 않고 로그로 알린다
       if (built.has(`${dir}/school/${old}/`)) { MOVED_LOG.skipped.push(`${dir}/school/${old}`); continue; }
-      const nowRel = `${dir}/school/${now}/`;
-      const target = built.has(nowRel) ? `${DOMAIN}/${dir}/school/${encodeURIComponent(now)}/` : `${DOMAIN}/${dir}/`;
+      const nowRel = `${nowDir}/school/${now}/`;
+      const target = built.has(nowRel) ? `${DOMAIN}/${nowDir}/school/${encodeURIComponent(now)}/` : `${DOMAIN}/${nowDir}/`;
       movedStub(`${dir}/school/${old}/index.html`, target);
       MOVED_LOG.school++;
       if (!SCHOOL_RENAMED_SEASON.includes(`${dir}/${old}`)) continue;
       for (const sub of ['final-exam', 'next-grade']) {
         // 새 이름 학교에 같은 시즌 페이지가 있으면 그쪽, 없으면(초등은 기말 없음) 새 이름 학교 페이지로
         const subRel = `${nowRel}${sub}/`;
-        movedStub(`${dir}/school/${old}/${sub}/index.html`, built.has(subRel) ? `${DOMAIN}/${dir}/school/${encodeURIComponent(now)}/${sub}/` : target);
+        movedStub(`${dir}/school/${old}/${sub}/index.html`, built.has(subRel) ? `${DOMAIN}/${nowDir}/school/${encodeURIComponent(now)}/${sub}/` : target);
         MOVED_LOG.school++;
       }
     }
@@ -2050,7 +2083,7 @@ fs.writeFileSync(path.join(ROOT, 'favicon.svg'),
 // 원본은 assets/icons/ (위 favicon.svg 를 래스터로 뽑은 것). svg 를 바꾸면 이 두 파일도 다시 뽑을 것.
 for (const f of ['favicon.ico', 'apple-touch-icon.png']) fs.copyFileSync(path.join(ROOT, 'assets', 'icons', f), path.join(ROOT, f));
 console.log('생성 완료:', urls.length, '페이지');
-console.log('이동 안내 페이지: 학교', MOVED_LOG.school, '· 과목', MOVED_LOG.subject, '· 지점', MOVED_LOG.branch, MOVED_LOG.skipped.length ? '· 건너뜀 ' + MOVED_LOG.skipped.join(', ') : '');
+console.log('이동 안내 페이지: 학교', MOVED_LOG.school, '· 과목', MOVED_LOG.subject, '· 지점', MOVED_LOG.branch, '· 시군구', MOVED_LOG.district, MOVED_LOG.skipped.length ? '· 건너뜀 ' + MOVED_LOG.skipped.join(', ') : '');
 if (DATA_WARN.length) console.warn('[데이터 경고]\n  ' + DATA_WARN.join('\n  '));
 console.log('지점 소개 글(strengths) 실린 지점:', STRENGTH_SHOWN, '/ 기준본', Object.values(BRANCHES).filter((b) => b.strengths).length, `· 일부만 덜어 낸 문장(STRENGTH_EDIT) ${STRENGTH_EDIT_USED.size}`, STRENGTH_DROPPED.length ? `· 문장을 뺀 지점 ${STRENGTH_DROPPED.length}(주말 칸·금지어·입학 상담·개설 과목)\n  ${STRENGTH_DROPPED.join('\n  ')}` : '');
 { const stale = [...STRENGTH_EDIT.keys()].filter((k) => !STRENGTH_EDIT_USED.has(k)); if (stale.length) console.warn(`[STRENGTH_EDIT 중 기준본에 없는 문장 ${stale.length} — 기준본 글이 바뀜, 지우거나 새 문장에 맞출 것]\n  ` + stale.join('\n  ')); }
