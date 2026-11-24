@@ -1518,12 +1518,11 @@ ${crumb(1, [{ name: '상담 신청' }])}
 <textarea name="문의내용" id="fMemo" rows="2" maxlength="500" placeholder="궁금한 점을 짧게 남겨 주세요"></textarea>
 <div class="agree-box">
 <label class="agree" for="fAgree"><input type="checkbox" id="fAgree" checked required onclick="if(!this.checked){alert('체크를 해제하시면 상담 신청이 어렵습니다.');this.checked=true;}"><span>개인정보 수집·이용에 동의합니다. <span class="hint">(필수)</span></span></label>
-<details class="agree-more"><summary>수집 항목·이용 목적·보유 기간 보기</summary>
+<details class="agree-more"><summary>수집 항목·이용 목적 보기</summary>
 <div class="agree-body">
 <b>수집 항목</b>: 학생 이름, 성별(선택), 학부모 연락처, 거주 주소, 학년, 희망 지점·과목, 학교 이름(선택), 문의 내용(선택). 신청 일시와 신청한 페이지 주소도 함께 저장됩니다.<br>
 <b>이용 목적</b>: 상담 연락과 수업·지점 안내<br>
 <b>보관</b>: 운영자가 관리하는 구글 시트와 상담 기록에 저장합니다. 서비스 서버가 국외에 있을 수 있습니다.<br>
-<b>보유 기간</b>: 상담이 끝난 뒤 6개월 이내에 파기합니다. 법령에 보관 의무가 있으면 그 기간 동안만 보관합니다.<br>
 동의하지 않으실 수 있습니다. 동의하지 않으시면 온라인 상담 신청은 할 수 없고, 전화 상담은 그대로 이용하실 수 있습니다.<br>
 <a href="../privacy/" target="_blank" rel="noopener">개인정보처리방침 보기</a><br>
 만 14세 미만 학생은 학부모가 작성해 주세요.
@@ -1533,8 +1532,7 @@ ${crumb(1, [{ name: '상담 신청' }])}
 <div class="agree-body">
 <b>받는 곳</b>: 상담을 맡을 와와 지점 — 고른 지점, 비워 두면 가까운 지점(지점마다 교육청에 따로 등록된 학원)<br>
 <b>제공 목적</b>: 상담 연락과 수업·교습비 안내<br>
-<b>제공 항목</b>: 학생 이름, 성별(적은 경우), 학부모 연락처, 거주 주소, 학년, 희망 과목, 학교 이름·문의 내용(적은 경우)<br>
-<b>받는 곳의 보유 기간</b>: 상담이 끝난 뒤 6개월 이내에 파기합니다. 등록하시면 그 뒤로는 등록한 학원의 개인정보처리방침을 따릅니다.
+<b>제공 항목</b>: 학생 이름, 성별(적은 경우), 학부모 연락처, 거주 주소, 학년, 희망 과목, 학교 이름·문의 내용(적은 경우)
 </div>
 </details>
 </div>
@@ -1670,7 +1668,8 @@ ${crumb(1, [{ name: '상담 신청' }])}
 
 // ── 개인정보처리방침 (2026-09-17 점검 code#0) ──
 // 폼·t.js가 실제로 모으는 것만 적는다. 운영 법인명·보호책임자처럼 확인되지 않은 정보는 지어 넣지 말 것.
-// ⚠ 2026-10-01 사장님 지시: 방침 본문은 '수집하는 정보'와 '보관 기간' 두 가지만 둔다(법정 기재사항이 빠진다는 점을 알린 뒤 받은 결정). 다시 늘리지 말 것.
+// ⚠ 2026-10-01 사장님 지시: 방침 본문은 짧게(법정 기재사항이 빠진다는 점을 알린 뒤 받은 결정). 다시 늘리지 말 것.
+//   2026-11-24 사장님: '보관 기간'도 뺐다(실제로 6개월 파기를 하지 않음) — 이제 '수집하는 정보' 하나만. 상담 폼 동의 안내에도 보유 기간을 넣지 말 것.
 function buildPrivacy() {
   const body = `<div class="wrap">
 ${crumb(1, [{ name: '개인정보처리방침' }])}
@@ -1678,14 +1677,12 @@ ${crumb(1, [{ name: '개인정보처리방침' }])}
 <article class="body privacy">
 <h2>수집하는 정보</h2>
 <p>학생 이름, 학부모 연락처, 주소, 학년, 희망 과목을 받습니다. 성별, 상담받을 지점, 학교 이름, 문의 내용은 원하실 때만 적습니다.</p>
-<h2>보관 기간</h2>
-<p>상담이 끝난 뒤 6개월 이내에 파기합니다.</p>
 </article>
 ${ctaBand(null, 1)}</div>`;
   write('privacy/index.html', shell({
     title: `개인정보처리방침 | ${BRAND}`,
-    desc: `${BRAND} 상담 신청 시 수집하는 개인정보 항목과 보유 기간.`,
-    canonical: `${DOMAIN}/privacy/`, body, depth: 1, robots: 'noindex,follow', fixedDate: '2026-09-17',
+    desc: `${BRAND} 상담 신청 시 수집하는 개인정보 항목.`,
+    canonical: `${DOMAIN}/privacy/`, body, depth: 1, robots: 'noindex,follow', fixedDate: '2026-11-24',
   }));
   urls.pop(); // noindex 페이지라 사이트맵에서 뺀다
 }
