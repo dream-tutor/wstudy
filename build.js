@@ -224,6 +224,41 @@ function subjLevels(b, subj) {
   const lv = ['초', '중', '고'].filter((c) => set.has(c));
   return lv.length ? lv : null;
 }
+// ── 자료 조건이 붙은 문구 변형 고르기 (2026-11-25 점검: 과목·학년을 박아 쓴 문구가 지점 자료 grades_by_subject 보다 넓게 말하던 것) ──
+// 조건은 lib/copy.js·season.js 의 need(…)(형식은 copy.js 머리말). 지점 묶음(brs) 가운데 한 곳이라도 그 과목을 그 학년에 열면 맞다.
+const LV_GRADES = { 초: GRADE_SEQ.slice(0, 6), 중: GRADE_SEQ.slice(6, 9), 고: GRADE_SEQ.slice(9) };
+// 지점 b 가 과목 sj 를 학년 grades 가운데 하나라도 여는가(grades 가 없으면 아무 학년이나). 학년 칸이 비면 offered() 처럼 막지 않는다
+function opensAt(b, sj, grades) {
+  if (!(b.subjects || []).includes(sj)) return false;
+  const g = String((b.grades_by_subject || {})[sj] || '').trim();
+  if (!g || !grades) return true;
+  const set = g.split(',').map((x) => x.trim());
+  return grades.some((x) => set.includes(x));
+}
+// 조건 목록이 모두 맞는가. 조건 { s: 과목, g: 학년·학년 목록·학교급 } — s 가 없으면 scope 과목(없으면 그 지점 과목 전체) 아무거나
+function needMet(req, brs, scope = null) {
+  return (req || []).every((r) => {
+    const grades = r.g == null ? null : LV_GRADES[r.g] || [].concat(r.g);
+    return brs.some((b) => (r.s ? [r.s] : scope || b.subjects || []).some((sj) => opensAt(b, sj, grades)));
+  });
+}
+// 해시로 고른 변형이 조건에 맞으면 그대로 둔다(이미 나간 글을 흔들지 않는다). 해시로 고른 것이 needTrim 변형이면 has(과목, 학년)를 넘겨
+// 자료에 없는 과목·학년 구절만 덜어 낸다(가장 작은 수정). 그 밖에는 맞는 변형 가운데 같은 키로 고르고, 맞는 변형이 없으면 needTrim 변형으로 덜어 낸다.
+// by 는 그 칸이 원래 쓰던 고르기 함수(pick·COPY.pickBy). trim 변형도 없으면 빌드 로그에 남기고 해시로 고른 것을 쓴다.
+const NEED_WARN = [];
+function pickFit(arr, key, by, brs, scope = null) {
+  const ok = (f) => !f.need || needMet(f.need, brs, scope);
+  const p = by(arr, key);
+  if (ok(p)) return p;
+  const has = (sj, g) => needMet([{ s: sj, g }], brs, scope);
+  if (p.trim) return (...a) => p(...a, has);
+  const fit = arr.filter(ok);
+  if (fit.length) return by(fit, key);
+  const trims = arr.filter((f) => f.trim);
+  if (!trims.length) { NEED_WARN.push(key); return p; }
+  const t = by(trims, key);
+  return (...a) => t(...a, has);
+}
 // description: 네이버 권고 80자 안에서 가장 긴 후보를 쓴다 (2026-09-17 점검 code#8). 후보는 긴 것부터 넘긴다.
 function fitDesc(...cands) {
   const clean = cands.filter(Boolean).map((c) => String(c).replace(/\s+/g, ' ').trim());
@@ -428,10 +463,10 @@ const SUBJ_GUIDES = {
   과학: ['science-explain', 'science-calc', 'exam-4weeks'],
   사회: ['social-structure', 'social-essay', 'exam-4weeks'],
 };
-// 전문관 배지 (글로리드=국어, W+=수학·과학)
-function specBadge(name) {
-  if (name.includes('글로리드')) return '<span class="tag spec">국어 전문관</span>';
-  if (name.includes('W+')) return '<span class="tag spec">수학·과학 전문관</span>';
+// 전문관 배지 (글로리드=국어, W+=수학·과학). W+ 배지 과목은 그 지점이 여는 과목만 — 은평점(W+)은 수학만 열어 '수학 전문관' (2026-11-25 점검 wplus-badge-science)
+function specBadge(b) {
+  if (b.name.includes('글로리드')) return '<span class="tag spec">국어 전문관</span>';
+  if (b.name.includes('W+')) { const t = ['수학', '과학'].filter((x) => (b.subjects || []).includes(x)).join('·'); return t ? `<span class="tag spec">${t} 전문관</span>` : ''; }
   return '';
 }
 // 주변 안내 토막('탄현마을12단지 인근 / 일산고등학교 인근')은 구분자를 두고 잇는다 (2026-09-17 점검 code#13)
@@ -907,6 +942,8 @@ ${ctaBand(null, 2)}</div>`;
 //   ② STRENGTH_BAN: 바꿔 쓸 말이 없는 낱말이 남은 문장은 문장째 뺀다. 입시 상담·진도를 앞서 나간다는 문장은 되살리지 않는다(lib/copy.js 머리말).
 //   ③ STRENGTH_SWAP: 1:1·1대1·일대일 → 개별·밀착, 컨설팅 → 상담.
 //   '특강'은 금지어 목록에 없어 거르지 않는다(넣을지는 사장님 판단 — 2026-11-10 점검 메모).
+//   2026-11-25 사장님 결정으로 기준본 원문을 다시 고쳤다(행신·산남·개신·신봉·이곡·가경·영통구청·수진·내발산·동소문·남외 — 과목·학년 자료에 맞춤,
+//   고3 을 열지 않는 지점은 수능·대학 입학 대신 모의고사·학교 시험). 원문이 바뀌어 열쇠가 안 맞게 된 줄(신봉 첫 문장·동소문)은 지웠고, 새 원문이 그대로 실린다.
 const STRENGTH_LESSON = '(수업|특강|보강|보충|강의|클리닉)';
 const STRENGTH_EDIT = new Map([
   ['학생 유형에 맞춘 수업을 하고, 상급 학교에 올라간 뒤의 학습 방향까지 폭넓게 상담합니다.', '학생 유형에 맞춘 수업을 진행합니다.'], // 사동
@@ -922,12 +959,10 @@ const STRENGTH_EDIT = new Map([
   ['시험 대비 플랜과 방학 학습 관리를 운영하고, 공부법·상급 학교 입학 상담을 수시로 진행합니다.', '시험 대비 플랜과 방학 학습 관리를 운영하고, 공부법 상담을 수시로 진행합니다.'], // 송파위례
   ['시험 기간에는 시험 대비 집중반을 운영해 학교 시험을 준비하고, 코칭데이를 따로 마련해 상급 학교에 올라간 뒤의 학습 방향을 함께 살핍니다.', '시험 기간에는 시험 대비 집중반을 운영해 학교 시험을 준비합니다.'], // 후곡
   ['대학 입학 설명회와 코칭데이도 정기적으로 진행합니다.', '코칭데이도 정기적으로 진행합니다.'], // 대구역
-  ['초등 기초부터 고등 수능까지 국어·영어·수학·과학을 수업합니다.', '초등 기초부터 고등까지 국어·영어·수학·과학을 수업합니다.'], // 신봉
   ['과목별 수강과 전과목 관리가 모두 가능하고, 내신·수능 대비 특별반과 매주 토요일 국어 특강을 운영합니다.', '과목별 수강과 전과목 관리가 모두 가능하고, 내신 대비 특별반과 매주 토요일 국어 특강을 운영합니다.'], // 신봉
   ['플래너 중심의 학습 지도와 AI 온라인 학습을 병행하며, 시험 기간에는 전 과목을 대비하고 대학 입학 준비도 함께 지도합니다.', '플래너 중심으로 학습을 지도하고, 시험 기간에는 전 과목을 대비합니다.'], // 충주용산
   ['플래너 중심의 학습 관리와 함께 수행평가·대학 입학 준비를 챙깁니다.', '플래너 중심의 학습 관리와 함께 수행평가 관리를 진행합니다.'], // 종암
   ['국어·영어·수학·사회·과학 전 과목을 수업하며, 과목 학습에 그치지 않고 대학 입학 상담까지 이어지는 All Care Class를 운영합니다.', '국어·영어·수학·사회·과학 전 과목을 수업합니다.'], // 영통
-  ['초등부터 대학 입학까지 내다보는 장기 로드맵으로 학습을 이어 갑니다.', '초등에서 고등까지 이어지는 장기 로드맵으로 학습을 연계합니다.'], // 동소문
 ]);
 const STRENGTH_BAN = /입시|(?<![가-힣])대입(?!니다|하|해)|진학|(?<![가-힣])진로|선행|(?<!교)과외|방문\s*수업|온라인|공부방(?!법)|교습소|종합학원|단과학원|최고(?!\s*학년)|최대(?!한)|제일(?![고중초여])|유일|일타|100\s*%/;
 // ④ 이 사이트 방침(lib/copy.js 머리말 — 입시 상담 문장은 싣지 않는다): 기준본이 금지어를 '대학 입학·상급 학교 입학'으로 고쳐 쓴 상담·설명회 문장과
@@ -987,10 +1022,11 @@ function buildBranch(r, d, b) {
   const subjPills = (b.subjects || []).map((sj) => { const g = (b.grades_by_subject || {})[sj]; return `<span class="sp">${esc(sj)}${g ? `<em>${esc(gradeRange(g))}</em>` : ''}</span>`; }).join('');
   const faq = faqHtml([COPY.faqPool.common[3], COPY.faqPool.common[0], COPY.faqPool.common[1], COPY.faqPool.common[2]], { tel: TEL, branchName: b.name });
   const levels = levelsOf(b);
-  const gradeBlocks = levels.map((lv) => pick(COPY.gradeBlock[lv], key + lv)()).join('');
+  // 학년 블록은 지점 자료 조건(연산=수학, 6학년=수학 초6, 자유학기=중1)에 맞는 변형으로 (2026-11-25 점검 — 수학을 열지 않는 지점에 연산 문장이 나가던 것)
+  const gradeBlocks = levels.map((lv) => pickFit(COPY.gradeBlock[lv], key + lv, pick, [b])()).join('');
   const body = `<div class="wrap">
 ${crumb(3, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { name: b.name }])}
-<div class="bh"><div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b.name)}<h1>${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
+<div class="bh"><div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b)}<h1>${BRAND} ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
 ${classPhoto(3, b.branch_slug)}</div>
 <article class="body">
 ${sectionize(`<h2>지점 안내</h2>
@@ -1060,14 +1096,15 @@ function buildSubject(r, d, b, subj) {
   const ctx = { dong: b.dong, district: d.name, branchName: b.name, schoolShort: schoolShort(b, levels), subject: subj };
   const lede = pick(elemOnly ? ELEM_SUBJ_LEDE : COPY.ledeSubject[subj], key)(ctx);
   const methodHtml = pick(elemOnly ? ELEM_SUBJ_METHOD : COPY.method[subj], key + 'm')(ctx);
-  const gradeBlocks = levels.map((lv) => pick(COPY.gradeBlock[lv], key + lv)()).join('');
+  // 학년 블록 자료 조건: 과목을 말하지 않는 조건(자유학기=중1)은 이 과목 학년으로, 연산·6학년 수학은 지점 수학으로 본다 (2026-11-25 점검)
+  const gradeBlocks = levels.map((lv) => pickFit(COPY.gradeBlock[lv], key + lv, pick, [b], [subj])()).join('');
   const grades = (b.grades_by_subject || {})[subj];
   const bv = branchVideo(b); // 지점 매칭 영상이 있을 때만 노출
-  const faq = faqHtml([elemOnly ? COPY.faqPool.elem[0] : COPY.faqPool.subject[0], COPY.faqPool.subject[1], COPY.faqPool.common[3], COPY.faqPool.common[1]], { tel: TEL, branchName: b.name, schoolShort: ctx.schoolShort, subject: subj });
+  const faq = faqHtml([elemOnly ? COPY.faqPool.elem[0] : COPY.faqPool.subject[0], COPY.faqPool.subject[1], COPY.faqPool.common[3], COPY.faqPool.common[1]], { tel: TEL, branchName: b.name, schoolShort: ctx.schoolShort, subject: subj, elemMath: opensAt(b, '수학', LV_GRADES.초) });
   const otherSubjects = (b.subjects || []).filter((s) => s !== subj).map((s) => `<a href="../${SUBJ_SLUG[s]}/">${esc(b.dong)} ${esc(s)}학원</a>`).join('');
   const body = `<div class="wrap">
 ${crumb(4, [{ name: r.name, slug: r.slug }, { name: d.name, slug: d.slug }, { name: b.name, slug: b.branch_slug }, { name: `${b.dong} ${subj}학원` }])}
-<div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b.name)}<h1>${esc(b.dong)} ${esc(subj)}학원 · ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
+<div class="page-head"><span class="tag">${esc(d.name)} ${esc(b.dong)}</span>${specBadge(b)}<h1>${esc(b.dong)} ${esc(subj)}학원 · ${esc(b.name)}</h1><div class="sub">${esc(lede)}</div></div>
 <article class="body">
 <h2>${esc(subj)} 수업은 이렇게 진행합니다</h2>
 ${methodHtml}
@@ -1113,14 +1150,15 @@ const SCHOOL_NO_SUBJ = []; // 이 학교급에 개설된 과목이 있는 지점
 function buildSchool(s) {
   const key = `${seedDir(s.region_slug, s.district_slug)}/${s.name}`; // 문구 씨앗(옮긴 시군구는 옛 slug — SEED_DIR)
   const b0 = s.branches[0];
-  const lede = pick(COPY.schoolLede[s.level], key)(s.name, b0.name, b0.dong);
-  const bodyBlock = pick(COPY.schoolBody[s.level], key + 'b')(s.name);
+  // 첫 문단은 이름을 대는 첫 지점(b0), 본문은 연결 지점들의 자료 조건에 맞는 변형으로 (2026-11-25 점검 — 연산·6학년 수학·영어 기초 문장)
+  const lede = pickFit(COPY.schoolLede[s.level], key, pick, [b0])(s.name, b0.name, b0.dong);
+  const bodyBlock = pickFit(COPY.schoolBody[s.level], key + 'b', pick, s.branches)(s.name);
   const bv = branchVideo(b0); // 해당 지점의 매칭 영상이 있을 때만 노출
   // 초등학교는 지필 정기고사·내신 성적이 없어 '내신 학원'·'시험 자료'로 안내하지 않는다 (2026-09-17 점검 copy#7)
   const isElem = s.level === '초';
   const faq = faqHtml(isElem
     ? [COPY.faqPool.elem[0], COPY.faqPool.subject[1], COPY.faqPool.common[0]]
-    : [COPY.faqPool.school[0], COPY.faqPool.school[1], COPY.faqPool.common[0]], { tel: TEL, school: s.name });
+    : [COPY.faqPool.school[0], COPY.faqPool.school[1], COPY.faqPool.common[0]], { tel: TEL, school: s.name, elemMath: s.branches.some((b) => opensAt(b, '수학', LV_GRADES.초)) });
   // 나이스 학교기본정보·학사일정은 2026-09-08 사용자 지시로 비노출(오류 데이터 많음). data/school-info.json·school-codes.json은 폴더에 남겨 두되 읽지도 렌더링하지도 않는다(미사용 require는 2026-09-30 제거).
   // 학사일정 위젯 (나이스 코드 확보된 학교만 — myschool 워커 API 경유, 24h 캐시)
   // 학교→지점 거리 (지오코딩 성공 + 8km 이내일 때만 — 좌표 오매칭 방지)
@@ -1297,18 +1335,21 @@ function buildSchoolNext(s) {
   if (open) fq.push(seasonFaq(SEASON.nextFaq.time, key));
   fq.push(COPY.faqPool.common[1]);
   const faq = faqHtml(fq, { school: s.name, branch: b0.name, branchName: b0.name, open });
-  const trans = SEASON.nextTransition[lv].map((alts, i) => COPY.pickBy(alts, key + 't' + i));
+  // 학년이 바뀌는 시점 안내: 그 학년을 여는 연결 지점이 없으면 그 주제는 싣지 않는다(고등 — 예비 고2·고3, 2026-11-25 점검). 문구는 전처럼 해시로 고른다
+  const trans = SEASON.nextTransition[lv]
+    .map((alts, i) => (needMet((SEASON.nextTransitionNeed[lv] || [])[i], s.branches) ? COPY.pickBy(alts, key + 't' + i) : null))
+    .filter(Boolean);
   const subjHtml = subs.length
     ? `<h2>${esc(s.name)} 학생 과목별 방학 공부</h2>${subs.map((x) => `<h3>${x}</h3><p>${esc(COPY.pickBy(SEASON.nextSubj[x], key + x)(s.name, lv))}</p>`).join('')}`
     : '';
   const guides = { 초: ['pre-middle', 'elem-habit', 'study-planner'], 중: ['pre-high', 'free-semester', 'daily-routine'], 고: ['high1-first-exam', 'high23-balance', 'daily-routine'] }[lv];
   const body = `<div class="wrap">
 ${seasonCrumb(s, '겨울방학 다음 학년 준비')}
-<div class="page-head"><span class="tag">${esc(s.district)} · ${LV_NAME[lv]} · 겨울방학</span><h1>${esc(s.name)} 겨울방학, 다음 학년 준비</h1><div class="sub">${esc(COPY.pickBy(SEASON.nextLede[lv], key)(s.name, b0.name, b0.dong))}</div></div>
+<div class="page-head"><span class="tag">${esc(s.district)} · ${LV_NAME[lv]} · 겨울방학</span><h1>${esc(s.name)} 겨울방학, 다음 학년 준비</h1><div class="sub">${esc(pickFit(SEASON.nextLede[lv], key, COPY.pickBy, [b0])(s.name, b0.name, b0.dong))}</div></div>
 <article class="body">
 <h2>${esc(s.name)} 겨울방학 공부 순서</h2>
 ${COPY.pickBy(NEXT_INTRO, key + 'i')(s.name)}
-${stepsHtml(COPY.pickBy(SEASON.nextSteps[lv], key + 'st')())}
+${stepsHtml(pickFit(SEASON.nextSteps[lv], key + 'st', COPY.pickBy, s.branches)())}
 ${trans.map((f) => f(esc(s.name))).join('\n')}
 ${subjHtml}
 ${COPY.pickBy(SEASON.nextHow, key + 'h')(esc(s.name))}
@@ -1486,6 +1527,8 @@ ${ctaBand(null, 1)}</div>`;
 // 2026-10-28 사장님 지시: 와와 네 사이트 상담 폼을 wcoachingcenter.com 지점 폼과 같은 구조로(칸 순서·문구·필수 별·details 두 개·버튼·전화 줄). 색·둥글기만 이 사이트 팔레트.
 //   전송 키·순서는 그대로(+문의내용), 과목은 알약 대신 체크박스(value 를 ', ' 로 이어 종전 꼴). 라벨이 들어간 글자는 네 사이트 같게 — 바꿀 때 네 곳 함께.
 //   같은 날 사장님 "체크표시 말고 버튼식으로·국영수사과(기타 없음)": 체크박스 네모는 CSS 로 숨기고 라벨 전체가 버튼(t.js 가 name="과목" 체크박스를 읽어 초안에 싣으므로 input 마크업은 유지), 순서 국어·영어·수학·사회·과학. 라벨 글자 앞 공백 없음(숨긴 뒤 글자가 가운데 오게).
+// 2026-11-25 사장님 "폼도 바꿔주고": 지점이 정해지면 그 지점이 열지 않는 학년·과목을 끈다(wstudycoaching 상담 창과 같은 방식 — 인라인 스크립트 updateSubjects).
+//   지점을 고르면 학년 칸 아래 안내 한 줄(#fBrNote)이 보인다. 칸 id·name·보내는 키·값은 그대로.
 function buildInquiry() {
   const body = `<div class="wrap">
 ${crumb(1, [{ name: '상담 신청' }])}
@@ -1511,6 +1554,7 @@ ${crumb(1, [{ name: '상담 신청' }])}
 <select name="학년급" id="fLv" required><option value="">선택</option><option>초등</option><option>중등</option><option>고등</option><option>기타</option></select>
 <select name="학년상세" id="fGrade" required disabled aria-label="학년 선택"><option value="">-</option></select>
 </div>
+<p class="field-note" id="fBrNote" hidden>고른 지점에서 열지 않는 학년·과목은 흐리게 보입니다. 지점을 비우면 모두 고를 수 있습니다.</p>
 <label for="fSchool">학교 이름 <span class="hint">(선택)</span></label><input name="학교" id="fSchool" placeholder="예: 덕풍중" maxlength="30">
 <label>희망 과목 <span class="req">*</span></label>
 <div class="subject-checks" role="group" aria-label="희망 과목">${['국어', '영어', '수학', '사회', '과학'].map((s) => `<label><input type="checkbox" name="과목" value="${s}">${s}</label>`).join('')}</div>
@@ -1549,7 +1593,7 @@ ${crumb(1, [{ name: '상담 신청' }])}
 <script>
 (function(){
   if(new URLSearchParams(location.search).get('embed')==='1'){document.documentElement.classList.add('embed');}
-  var DATA=${JSON.stringify(Object.fromEntries(Object.values(regions).map((r) => [r.name, Object.fromEntries(Object.values(r.districts).map((d) => [d.name, d.branches.map((b) => ({ n: b.name, d: b.dong, s: b.subjects, g: Object.fromEntries((b.subjects || []).map((sj) => [sj, (subjLevels(b, sj) || ['초', '중', '고']).join('')])) }))]))])))};
+  var DATA=${JSON.stringify(Object.fromEntries(Object.values(regions).map((r) => [r.name, Object.fromEntries(Object.values(r.districts).map((d) => [d.name, d.branches.map((b) => ({ n: b.name, d: b.dong, s: b.subjects, g: Object.fromEntries((b.subjects || []).map((sj) => [sj, GRADE_SEQ.reduce((m, x, i) => (opensAt(b, sj, [x]) ? m | (1 << i) : m), 0)])) }))]))])))};
   var sido=document.getElementById('fSido'),gu=document.getElementById('fGu'),sel=document.getElementById('fBranch');
   function fill(s,items,ph){s.innerHTML='<option value=\"\">'+ph+'</option>'+items.join('');s.disabled=false;}
   sido.addEventListener('change',function(){
@@ -1577,15 +1621,33 @@ ${crumb(1, [{ name: '상담 신청' }])}
   function syncSubj(cb){var l=cb.closest('label');if(l){if(cb.checked)l.classList.add('checked');else l.classList.remove('checked');}}
   subjBoxes.forEach(function(cb){cb.addEventListener('change',function(){syncSubj(cb)});syncSubj(cb);});
   // 지점 선택 시 해당 지점 미개설 과목은 선택 불가 처리. 학년급(초등·중등·고등)까지 고르면 그 학년급에 열리지 않은 과목도 막는다 (2026-09-17 점검 code#2)
+  // 2026-11-25: 지점이 정해지면 그 지점이 열지 않는 학년급·학년도 고를 수 없게 끄고, 과목은 고른 학년(안 골랐으면 학년급) 기준으로 끈다. 그때만 안내 한 줄(#fBrNote)을 보인다.
+  //   DATA 의 g 는 과목별 학년 비트(초1=1 … 고3=2048). 지점을 비우면 모두 켠다. 이미 고른 값이 막히면 그 값만 비운다(기타는 그대로).
+  var SEQ=['초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3'],LVC={'초등':'초','중등':'중','고등':'고'};
+  function gBit(k){var i=SEQ.indexOf(k);return i<0?0:1<<i;}
+  function lvMask(c){var m=0;for(var i=0;i<SEQ.length;i++)if(SEQ[i].charAt(0)===c)m|=1<<i;return m;}
   function updateSubjects(){
     var subs=null,gl=null;
     if(sel.value&&sido.value&&gu.value){
       (DATA[sido.value][gu.value]||[]).forEach(function(b){if(b.n===sel.value){subs=b.s||null;gl=b.g||null;}});
     }
-    var lvSel=document.getElementById('fLv'),L=({'초등':'초','중등':'중','고등':'고'})[lvSel?lvSel.value:'']||'';
+    var all=4095;if(gl){all=0;for(var k in gl)all|=gl[k];}
+    var note=document.getElementById('fBrNote');if(note)note.hidden=!gl;
+    var lvSel=document.getElementById('fLv'),gdSel=document.getElementById('fGrade');
+    if(lvSel){
+      for(var i=0;i<lvSel.options.length;i++){var o=lvSel.options[i],c0=LVC[o.value];o.disabled=!!c0&&!(all&lvMask(c0));}
+      // 고른 학년급을 지점이 열지 않으면 학년급만 비운다 — 학년 칸을 다시 채우는 처리(아래)가 이 함수를 다시 부른다
+      if(lvSel.selectedIndex>0&&lvSel.options[lvSel.selectedIndex].disabled){lvSel.value='';lvSel.dispatchEvent(new Event('change'));return;}
+    }
+    var L=LVC[lvSel?lvSel.value:'']||'';
+    if(gdSel&&L){
+      for(var j=1;j<gdSel.options.length;j++){var og=gdSel.options[j];og.disabled=!(all&gBit(L+parseInt(og.value,10)));}
+      if(gdSel.selectedIndex>0&&gdSel.options[gdSel.selectedIndex].disabled)gdSel.value='';
+    }
+    var want=L?(gdSel&&!gdSel.disabled&&gdSel.value?gBit(L+parseInt(gdSel.value,10)):lvMask(L)):4095;
     subjBoxes.forEach(function(cb){
       var v=cb.value,l=cb.closest('label');
-      var ok=(!subs||subs.indexOf(v)>-1)&&(!L||!gl||!gl[v]||gl[v].indexOf(L)>-1);
+      var ok=(!subs||subs.indexOf(v)>-1)&&(!gl||!gl[v]||!!(gl[v]&want));
       cb.disabled=!ok;
       if(l){if(ok)l.classList.remove('off');else l.classList.add('off');}
       if(!ok){cb.checked=false;syncSubj(cb);}
@@ -1594,7 +1656,8 @@ ${crumb(1, [{ name: '상담 신청' }])}
   sel.addEventListener('change',updateSubjects);
   gu.addEventListener('change',updateSubjects);
   sido.addEventListener('change',updateSubjects);
-  if(document.getElementById('fLv'))document.getElementById('fLv').addEventListener('change',updateSubjects);
+  // 학년급을 바꾸면 아래 학년 칸을 다시 채운 뒤 맞추고(그 처리 끝에서 부른다), 학년을 고르면 그 학년 기준으로 과목을 맞춘다
+  if(document.getElementById('fGrade'))document.getElementById('fGrade').addEventListener('change',updateSubjects);
   updateSubjects();
   var addrLayer=document.getElementById('addrLayer');
   function closeAddr(){addrLayer.style.display='none';document.getElementById('addrBox').innerHTML='';}
@@ -1626,6 +1689,7 @@ ${crumb(1, [{ name: '상담 신청' }])}
       gd.innerHTML='<option value="">'+(n?'학년 선택':'-')+'</option>';
       for(var i=1;i<=n;i++)gd.innerHTML+='<option>'+i+'학년</option>';
       gd.disabled=!n;
+      updateSubjects();
     });
   })();
   document.getElementById('f').addEventListener('submit',function(e){
@@ -2083,6 +2147,7 @@ console.log('생성 완료:', urls.length, '페이지');
 console.log('이동 안내 페이지: 학교', MOVED_LOG.school, '· 과목', MOVED_LOG.subject, '· 지점', MOVED_LOG.branch, '· 시군구', MOVED_LOG.district, MOVED_LOG.skipped.length ? '· 건너뜀 ' + MOVED_LOG.skipped.join(', ') : '');
 if (DATA_WARN.length) console.warn('[데이터 경고]\n  ' + DATA_WARN.join('\n  '));
 console.log('지점 소개 글(strengths) 실린 지점:', STRENGTH_SHOWN, '/ 기준본', Object.values(BRANCHES).filter((b) => b.strengths).length, `· 일부만 덜어 낸 문장(STRENGTH_EDIT) ${STRENGTH_EDIT_USED.size}`, STRENGTH_DROPPED.length ? `· 문장을 뺀 지점 ${STRENGTH_DROPPED.length}(주말 칸·금지어·입학 상담·개설 과목)\n  ${STRENGTH_DROPPED.join('\n  ')}` : '');
+if (NEED_WARN.length) console.warn(`[자료 조건에 맞는 문구 변형이 없는 칸 ${NEED_WARN.length} — lib/copy.js·season.js 에 과목·학년을 말하지 않는 변형이나 needTrim 을 둘 것]\n  ` + NEED_WARN.slice(0, 20).join('\n  '));
 { const stale = [...STRENGTH_EDIT.keys()].filter((k) => !STRENGTH_EDIT_USED.has(k)); if (stale.length) console.warn(`[STRENGTH_EDIT 중 기준본에 없는 문장 ${stale.length} — 기준본 글이 바뀜, 지우거나 새 문장에 맞출 것]\n  ` + stale.join('\n  ')); }
 if (SCHOOL_NO_SUBJ.length) console.warn('[학교급에 개설 과목 없는 학교 페이지]', SCHOOL_NO_SUBJ.length, SCHOOL_NO_SUBJ.slice(0, 10).join(', '));
 // description 80자(네이버 권고) 전수 점검 — 넘으면 목록을 출력한다 (2026-09-17 점검 code#8)
