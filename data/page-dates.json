@@ -2217,7 +2217,7 @@
   "/chungbuk/cheongju/gagyeong/": "2026-11-25",
   "/daegu/donggu/isiapolliseu/": "2026-11-11",
   "/seoul/gangseo/naebalsan/": "2026-11-25",
-  "/seoul/geumcheon/geumcheon/": "2026-11-11",
+  "/seoul/geumcheon/geumcheon/": "2026-11-27",
   "/gyeonggi/yongin/bola/": "2026-11-11",
   "/gyeonggi/namyangju/jinjeob/": "2026-11-11",
   "/incheon/": "2026-11-11",
@@ -2457,6 +2457,11 @@
   "/ulsan/bukgu/school/연암중/next-grade/": "2026-11-25",
   "/ulsan/junggu/namoe/": "2026-11-25",
   "/ulsan/junggu/school/남외중/next-grade/": "2026-11-25",
-  "/ulsan/junggu/school/울산중/next-grade/": "2026-11-25"
+  "/ulsan/junggu/school/울산중/next-grade/": "2026-11-25",
+  "/gyeonggi/namyangju/byeolgalam/english/": "2026-11-27",
+  "/gyeonggi/namyangju/byeolgalam/": "2026-11-27",
+  "/gyeonggi/namyangju/byeolgalam/korean/": "2026-11-27",
+  "/gyeonggi/uijeongbu/singog/": "2026-11-27",
+  "/gyeonggi/uijeongbu/singog/social/": "2026-11-27"
  }
 }
