@@ -176,7 +176,7 @@
       }).embed(document.getElementById('addrBox'));
     }
     if(window.daum&&window.daum.Postcode){openPost();return;}
-    var s=document.createElement('script');s.src='https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';s.onload=openPost;s.onerror=function(){alert('주소 검색을 불러오지 못했습니다. 주소를 칸에 직접 입력해 주세요.');addrManual();};document.head.appendChild(s);
+    var s=document.createElement('script');s.src='https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';s.onload=openPost;s.onerror=function(){alert('주소 검색을 불러오지 못했습니다. 주소를 칸에 직접 입력해 주세요.');addrManual();};document.head.appendChild(s);
   });
   /* 주소 칸을 누르면 바로 주소 검색(2026-11-06 사장님 "주소 빈칸 누르면 도로명주소 검색") — 휴대폰 글자판이 먼저 뜨지 않게 inputmode none(스크립트가 붙인다 — 스크립트가 안 돌면 보통 칸).
      ×·바깥을 눌러 닫거나 검색을 못 불러오면 그때부터 손으로 적는다. 칸은 readonly 로 막지 않는다(루트 규칙 — readonly 면 required 검사가 빠지고 직접 입력도 못 한다). */
